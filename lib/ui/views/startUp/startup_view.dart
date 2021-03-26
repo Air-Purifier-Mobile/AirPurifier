@@ -1,10 +1,7 @@
-import 'package:air_purifier/app/locator.dart';
-import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/ui/views/startup/startUp_viewModel.dart';
 import 'package:flutter/material.dart';
-
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
+
 
 class StartUpView extends StatelessWidget {
   const StartUpView({Key key}) : super(key: key);

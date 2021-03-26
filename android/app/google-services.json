@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "667546909632-0shiluf0t67774dmb76chic4dbppnk2m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.air_purifier",
+            "certificate_hash": "375fddca9cdf779971aff839a620e2a9e78d39db"
+          }
+        },
+        {
           "client_id": "667546909632-bqso9lna5otgqmlea9p6hr0bmek69k07.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
