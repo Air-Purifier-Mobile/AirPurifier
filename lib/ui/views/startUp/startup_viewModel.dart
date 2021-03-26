@@ -12,7 +12,7 @@ class StartUpViewModel extends BaseViewModel {
   void onModelReady() {
     Future.delayed(Duration(seconds: 0), () {
       _authenticationService.getLogInStatus()
-          ? _navigationService.replaceWith(Routes.homeView)
+          ? _navigationService.replaceWith(Routes.bluetoothView)
           : _navigationService.replaceWith(Routes.loginView);
     });
   }

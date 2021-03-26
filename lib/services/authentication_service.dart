@@ -44,7 +44,7 @@ class AuthenticationService {
         );
         _auth.signInWithCredential(credentials).then((userCredentials) {
           print("---------Signed in ---------");
-          _navigationService.replaceWith(Routes.homeView);
+          _navigationService.replaceWith(Routes.bluetoothView);
           print("--------- Going to Home View ---------");
         });
       });

@@ -31,11 +31,6 @@ class BluetoothService{
 
   void initState(){
 
-    // Get current state
-    bluetooth.state.then((state) {
-      bluetoothState = state;
-    });
-
     if(connection != null && connection.isConnected)
       isConnected = true;
     else isConnected = false;
@@ -58,7 +53,7 @@ class BluetoothService{
   }
 
   Future<void> enableBluetooth() async {
-    if (bluetoothState == BluetoothState.STATE_OFF) {
+    if (bluetoothState != BluetoothState.STATE_ON) {
       await FlutterBluetoothSerial.instance.requestEnable();
       await getPairedDevices();
       return true;
@@ -80,6 +75,8 @@ class BluetoothService{
     // Store the [devices] list in the [devicesList] for accessing
     // the list outside this class
     devicesList = devices;
+    print(devicesList.toString());
+    connect(devicesList[0]);
   }
 
   void dispose(){
@@ -118,4 +115,6 @@ class BluetoothService{
       isConnected = false;
     }
   }
+
+
 }

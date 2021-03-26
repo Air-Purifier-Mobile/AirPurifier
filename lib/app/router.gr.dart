@@ -9,6 +9,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../ui/views/bluetooth/bluetooth_view.dart';
 import '../ui/views/dummyView/dummy_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/login/login_view.dart';
@@ -19,11 +20,13 @@ class Routes {
   static const String dummyView = '/dummy-view';
   static const String loginView = '/login-view';
   static const String homeView = '/home-view';
+  static const String bluetoothView = '/bluetooth-view';
   static const all = <String>{
     startUpView,
     dummyView,
     loginView,
     homeView,
+    bluetoothView,
   };
 }
 
@@ -35,6 +38,7 @@ class Router extends RouterBase {
     RouteDef(Routes.dummyView, page: DummyView),
     RouteDef(Routes.loginView, page: LoginView),
     RouteDef(Routes.homeView, page: HomeView),
+    RouteDef(Routes.bluetoothView, page: BluetoothView),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -60,6 +64,12 @@ class Router extends RouterBase {
     HomeView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const HomeView(),
+        settings: data,
+      );
+    },
+    BluetoothView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const BluetoothView(),
         settings: data,
       );
     },
