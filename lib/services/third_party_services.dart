@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:air_purifier/services/authentication_service.dart';
+import 'package:air_purifier/services/bluetooth_service.dart';
 
 @module
 abstract class ThirdPartyServicesModule {
@@ -12,4 +13,7 @@ abstract class ThirdPartyServicesModule {
 
   @lazySingleton
   AuthenticationService get authenticationService;
+
+  @lazySingleton
+  BluetoothService get bluetoothService;
 }

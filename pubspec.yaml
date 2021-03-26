@@ -26,10 +26,10 @@ dependencies:
 
   # Stacked Architecture
   stacked: ^1.9.7
-  stacked_services: ^0.7.3
-  auto_route: ^0.6.9
-  get_it: ^6.0.0
-  injectable: ^1.2.0
+  stacked_services:
+  auto_route:
+  get_it:
+  injectable:
 
   # Shared Preferences
   streaming_shared_preferences: ^1.0.2
@@ -42,6 +42,8 @@ dependencies:
   # External Services
   permission_handler: ^6.1.1
   geolocator: ^7.0.1
+  flutter_bluetooth_serial: ^0.2.2
+
 
   # UI
   hexcolor: ^2.0.3
@@ -59,9 +61,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  auto_route_generator: ^0.6.10
-  build_runner: ^1.11.1
-  injectable_generator: ^1.1.2
+  auto_route_generator:
+  build_runner:
+  injectable_generator:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

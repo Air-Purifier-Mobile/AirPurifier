@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import '../ui/views/dummyView/dummy_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../ui/views/login/login_view.dart';
-import '../ui/views/startup/startUp_view.dart';
+import '../ui/views/startUp/startup_view.dart';
 
 class Routes {
   static const String startUpView = '/start-up-view';
