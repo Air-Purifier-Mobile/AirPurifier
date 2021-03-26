@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "667546909632",
+    "project_id": "air-purifier-383bc",
+    "storage_bucket": "air-purifier-383bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667546909632:android:ee98b4148dea842711a625",
+        "android_client_info": {
+          "package_name": "com.example.air_purifier"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667546909632-bqso9lna5otgqmlea9p6hr0bmek69k07.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.air_purifier",
+            "certificate_hash": "d5bcd9c71237e29183f6fda5448d9451fa01a4c4"
+          }
+        },
+        {
+          "client_id": "667546909632-16hucptsboc6pdau9lsutlsfubhjbmgt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnOqL1D84cxZcLpAob1FW-5o4k2fdpWA4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "667546909632-16hucptsboc6pdau9lsutlsfubhjbmgt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
