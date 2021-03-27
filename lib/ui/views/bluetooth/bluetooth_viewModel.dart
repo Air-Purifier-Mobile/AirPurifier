@@ -6,7 +6,9 @@ class BluetoothViewModel extends BaseViewModel {
   final BluetoothService bluetoothService = locator<BluetoothService>();
 
   void onModelReady(){
-    bluetoothService.initState();
-
+    bluetoothService.enableBluetooth().then((isEnabled) {
+      if(isEnabled)
+        bluetoothService.startScanningDevices();
+    });
   }
 }

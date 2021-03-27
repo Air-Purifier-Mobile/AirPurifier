@@ -1,4 +1,5 @@
 import 'package:air_purifier/app/locator.dart';
+import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:air_purifier/app/router.gr.dart' as customRouter;
@@ -8,9 +9,9 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   setupLocator();
-  // StreamingSharedPreferencesService streamingSharedPreferencesService =
-  //     locator<StreamingSharedPreferencesService>();
-  // await streamingSharedPreferencesService.init();
+  StreamingSharedPreferencesService streamingSharedPreferencesService =
+      locator<StreamingSharedPreferencesService>();
+  await streamingSharedPreferencesService.init();
   runApp(MyApp());
 }
 

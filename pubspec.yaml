@@ -42,8 +42,8 @@ dependencies:
   # External Services
   permission_handler: ^6.1.1
   geolocator: ^7.0.1
+  flutter_blue: ^0.8.0
   flutter_bluetooth_serial: ^0.2.2
-
 
   # UI
   hexcolor: ^2.0.3
