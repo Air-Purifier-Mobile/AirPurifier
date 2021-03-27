@@ -1,3 +1,5 @@
+import 'package:air_purifier/ui/shared/ui_helpers.dart';
+import 'package:air_purifier/ui/widgets/busy_button.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
@@ -15,8 +17,43 @@ class BluetoothView extends StatelessWidget {
       builder: (context, model, child) {
         return Scaffold(
           appBar: AppBar(),
-          body: Center(
-            child: Text(model.displayText),
+          body: SingleChildScrollView(
+            child: Container(
+              height: height,
+              width: width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Text(
+                      model.displayText,
+                    ),
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: width / 2,
+                    child: BusyButton(
+                      title: "AT",
+                      onPressed: () {
+                        model.at();
+                      },
+                    ),
+                  ),
+                  verticalSpaceMedium,
+                  Container(
+                    height: 50.0,
+                    width: width / 2,
+                    child: BusyButton(
+                      title: "MAC",
+                      onPressed: () {
+                        model.mac();
+                      },
+                    ),
+                  ),
+                  verticalSpaceMedium,
+                ],
+              ),
+            ),
           ),
         );
       },

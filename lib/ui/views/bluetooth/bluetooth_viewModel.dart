@@ -4,8 +4,10 @@ import 'package:stacked/stacked.dart';
 
 class BluetoothViewModel extends BaseViewModel {
   final BluetoothService bluetoothService = locator<BluetoothService>();
-  List<dynamic> deviceIds = [];
   String displayText = "Please switch On the Bluetooth";
+
+  void at() {}
+  void mac() {}
 
   void onModelReady() {
     bluetoothService.enableBluetooth().then((isEnabled) {
