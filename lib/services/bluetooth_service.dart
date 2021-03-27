@@ -15,38 +15,44 @@ class BluetoothService {
   StreamSubscription _streamSubscription;
   BluetoothConnection connection;
   NavigationService _navigationService = locator<NavigationService>();
+  Function changeDisplayText;
+  Function changeToWifiScreen;
 
-  void init(Function callback) {
-    connection.input.listen((event) {}).onData((utfData) {
+  void init() {
+    connection.input.listen((event) {
+      Fluttertoast.showToast(msg: "Device Response: " + utf8.decode(event));
+    }).onData((utfData) {
       String response = utf8.decode(utfData);
-      callback(response, response == "OK");
+      changeDisplayText(response);
+      if (response == "OK") {
+        changeToWifiScreen();
+      }
     });
   }
 
-  Future<bool> enableBluetooth() async {
+  Future<bool> enableBluetooth(
+      Function changeDisplayCallBack, Function goToWifi) async {
+    changeDisplayText = changeDisplayCallBack;
+    changeToWifiScreen = goToWifi;
     return await flutterBluetoothSerial.requestEnable();
   }
 
-  void startScanningDevices(Function callBack) async {
+  void startScanningDevices() async {
     print("Bluetooth scan started----");
     _streamSubscription =
         flutterBluetoothSerial.startDiscovery().listen((event) {
-      callBack('Searching for Air Purifier', false);
+      changeDisplayText('Searching for Air Purifier');
       allDevices.add(event);
     }, onError: (error) {
-      callBack('Error on discovery' + error.toString(), false);
+      changeDisplayText('Error on discovery' + error.toString());
     });
     _streamSubscription.onDone(() {
       stopScanningDevices();
-      bool isPurifier = false;
       allDevices.forEach((r) {
         print("Name----" + r.device.name);
         if (r.device.name == 'Airpurifier') {
-          connectDevice(r.device, callBack);
-          isPurifier = true;
-          callBack('Air Purifier Found ' + r.device.address, false);
-        } else {
-          callBack('Device-' + r.device.name, false);
+          connectDevice(r.device);
+          changeDisplayText('Air Purifier Found ' + r.device.address);
         }
       });
     });
@@ -60,27 +66,24 @@ class BluetoothService {
 
   void connectDevice(
     BluetoothDevice device,
-    Function callback,
   ) async {
     connectedDevice = device;
-    callback("Connecting to Device : ${device.name}", false);
+    changeDisplayText("Connecting to Device : ${device.name}");
     await BluetoothConnection.toAddress(device.address).then((_connection) {
       connection = _connection;
-      init(callback);
       _connection.isConnected
-          ? callback("Device Connected SuccessFully", false)
-          : callback("Purifier Not Connected", false);
-      Future.delayed(Duration(seconds: 3), () {
-        sendMessage();
-      });
+          ? changeDisplayText("Device Connected SuccessFully")
+          : changeDisplayText("Purifier Not Connected");
+      sendMessage();
+      init();
     }).onError((error, stackTrace) =>
-        callback("Device Connection Failed " + error.toString(), false));
+        changeDisplayText("Device Connection Failed " + error.toString()));
   }
 
   void sendMessage() async {
     print('Sending AT to device');
-    // callback('Sending AT to device. Waiting for response');
-    connection.output.add(utf8.encode("AT"));
+    changeDisplayText('Sending AT to device. Waiting for response');
+    connection.output.add(utf8.encode("AT\r\n"));
     await connection.output.allSent;
   }
 

@@ -28,7 +28,7 @@ class BluetoothView extends StatelessWidget {
                     if (model.goingForWifi)
                       model.wifiRefresh();
                     else
-                      model.wifiRefresh();
+                      model.onModelReady();
                   }),
             ],
           ),
