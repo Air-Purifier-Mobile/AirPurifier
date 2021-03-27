@@ -1,52 +1,57 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart'
-    as serialBluetooth;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class BluetoothService {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
-  // StreamingSharedPreferencesService streamingSharedPreferencesService =
-  //     locator<StreamingSharedPreferencesService>();
+
+  FlutterBluetoothSerial flutterBluetoothSerial = FlutterBluetoothSerial.instance;
   BluetoothDevice connectedDevice;
+  List<BluetoothDiscoveryResult> allDevices = [];
+  StreamSubscription _streamSubscription;
+  BluetoothConnection connection;
+
+  void init(){
+    connection.input.listen(_receiveMessage).onDone(() {
+        print("init ran------");
+    });
+  }
+
   Future<bool> enableBluetooth() async {
-    return await serialBluetooth.FlutterBluetoothSerial.instance
+    return await flutterBluetoothSerial
         .requestEnable();
   }
 
   void startScanningDevices(Function callBack) async {
-    print("Bluetooth scan started----");
-    flutterBlue.startScan(timeout: Duration(seconds: 5)).asStream().listen(
-        (event) {
-      // print("Scan function return" + event.toString() + "------------");
-      // print("\n\n");
-      // print(event.runtimeType.toString());
-    }, onError: (error) {
-      callBack(
-          "Some Error In Searching device. :\n ${error.runtimeType.toString()} \n ${error.toString()}");
-    }).onData((data) {
-      callBack("Stopping Scanning Devices");
-      stopScanningDevices();
-      bool gotDevice = false;
-      String deviceList = "";
-      data.forEach((result) {
-        print("Scan function data : " + result.device.name + "------------");
-        print(data.runtimeType.toString());
-        deviceList += result.device.name + " " + result.device.id.id + "\n";
-        if (result.device.name == "Airpurifier") {
-          connectDevice(result.device, callBack);
-          gotDevice = true;
-        }
+      print("Bluetooth scan started----");
+      _streamSubscription = flutterBluetoothSerial.startDiscovery().listen((event) {
+        callBack('Searching for Air Purifier');
+        allDevices.add(event);
+      },onError: (error){
+        callBack('Error on discovery'+error.toString());
       });
-      if (!gotDevice) {
-        callBack(
-            "Device named 'Airpurifier' Not Found\n List Of possible Devices:\n $deviceList");
-      }
-    });
+      _streamSubscription.onDone(() {
+        stopScanningDevices();
+        bool isPurifier = false;
+        allDevices.forEach((r) {
+          print("Name----"+r.device.name);
+          if(r.device.name == 'Airpurifier') {
+            connectDevice(r.device, callBack);
+            isPurifier = true;
+            callBack('Air Purifier Found '+r.device.address);
+          }
+          else{
+            callBack('Device-'+r.device.name);
+          }
+        });
+      });
   }
 
   void stopScanningDevices() async {
     print("Stopped Scanning Devices");
-    await flutterBlue.stopScan();
+    _streamSubscription.cancel();
+    //await flutterBluetoothSerial.cancelDiscovery();
   }
 
   void connectDevice(
@@ -55,19 +60,27 @@ class BluetoothService {
   ) async {
     connectedDevice = device;
     callback("Connecting to Device : ${device.name}");
-    await serialBluetooth.BluetoothConnection.toAddress(device.id.id)
+    await BluetoothConnection.toAddress(device.address)
         .then((_connection) {
+          connection = _connection;
+          init();
       _connection.isConnected
           ? callback("Device Connected SuccessFully")
-          : callback("Device Not Connected");
+          : callback("Purifier Not Connected");
+          Future.delayed(Duration(seconds: 3),
+              () {
+              sendMessage(callback);
+              });
     }).onError((error, stackTrace) =>
-            callback("Device Connection FAiled due to some reasons"));
-    // await device.connect().onError((error, stackTrace) {
-    //   callback(error.toString());
-    // });
+            callback("Device Connection Failed "+error.toString()));
   }
-
-  void getServices() {
-    // serialBluetooth.
+  void sendMessage(Function callback) async{
+    print('Sending AT to device');
+    callback('Sending AT to device. Waiting for response');
+    connection.output.add(utf8.encode("AT"));
+    await connection.output.allSent;
+  }
+  void _receiveMessage(Uint8List data) async{
+    Fluttertoast.showToast(msg: ''+utf8.decode(data));
   }
 }

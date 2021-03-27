@@ -6,9 +6,6 @@ class BluetoothViewModel extends BaseViewModel {
   final BluetoothService bluetoothService = locator<BluetoothService>();
   String displayText = "Please switch On the Bluetooth";
 
-  void at() {}
-  void mac() {}
-
   void onModelReady() {
     bluetoothService.enableBluetooth().then((isEnabled) {
       if (isEnabled) {
