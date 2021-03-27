@@ -1,42 +1,46 @@
-import 'package:air_purifier/app/locator.dart';
-import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as BluetoothEnable;
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart'
+    as BluetoothEnable;
 
-class BluetoothService{
-  FlutterBlue flutterBlue  = FlutterBlue.instance;
+class BluetoothService {
+  FlutterBlue flutterBlue = FlutterBlue.instance;
   List<BluetoothDevice> allDevices = [];
-  StreamingSharedPreferencesService streamingSharedPreferencesService =
-  locator<StreamingSharedPreferencesService>();
+  // StreamingSharedPreferencesService streamingSharedPreferencesService =
+  //     locator<StreamingSharedPreferencesService>();
 
-  Future<bool> enableBluetooth() async{
-      return await BluetoothEnable.FlutterBluetoothSerial.instance.requestEnable();
+  Future<bool> enableBluetooth() async {
+    return await BluetoothEnable.FlutterBluetoothSerial.instance
+        .requestEnable();
   }
 
-  Future<List<BluetoothDevice>> startScanningDevices() async{
-    await flutterBlue.startScan(timeout: Duration(seconds: 6));
+  void startScanningDevices(Function callBack) async {
     print("Bluetooth scan started----");
-    // flutterBlue.connectedDevices
-    //     .asStream()
-    //     .listen((List<BluetoothDevice> devices) {
-    // for (BluetoothDevice device in devices) {
-    //   print(device.name + "connected devices-" + device.id.toString());
-    //   allDevices.add(device);
-    // }});
-    Future<List<BluetoothDevice>> _connectedDevices = flutterBlue.connectedDevices;
-    flutterBlue.scanResults.listen((results) {
-      for (ScanResult r in results) {
-      print(r.device.name+'${r.device.id.toString()} found! total devices found: ${results.length}');
-      allDevices.add(r.device);
-    }
-    print("List of all available devices------"+allDevices.toString());
+    flutterBlue.startScan(timeout: Duration(seconds: 5)).asStream().listen(
+        (event) {
+      // print("Scan function return" + event.toString() + "------------");
+      // print("\n\n");
+      // print(event.runtimeType.toString());
+    }, onError: (error) {
+      callBack("There was some error in searching devices.");
+    }).onData((data) {
+      data.forEach((result) {
+        print(
+            "Scan function data : " + data.length.toString() + "------------");
+        print("\n\n");
+        print(data.runtimeType.toString());
+        allDevices.add(result.device);
+        callBack("Got Devices. Now Connecting to Air Purifier.");
+        stopScanningDevices();
+      });
     });
-    
   }
-  void stopScanningDevices() async{
+
+  void stopScanningDevices() async {
     await flutterBlue.stopScan();
   }
-  void connectDevice(BluetoothDevice device) async{
+
+  void connectDevice(BluetoothDevice device) async {
     await device.connect();
     print("device connected----");
   }

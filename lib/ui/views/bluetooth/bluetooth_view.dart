@@ -16,7 +16,7 @@ class BluetoothView extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(),
           body: Center(
-            child: Text("Configure Device"),
+            child: Text(model.displayText),
           ),
         );
       },
