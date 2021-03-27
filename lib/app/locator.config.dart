@@ -10,14 +10,15 @@ import 'package:stacked_services/stacked_services.dart' as _i5;
 
 import '../services/authentication_service.dart' as _i3;
 import '../services/bluetooth_service.dart' as _i4;
-import '../services/third_party_services.dart' as _i7;
+import '../services/streaming_shared_preferences_service.dart' as _i6;
+import '../services/third_party_services.dart' as _i8;
 import '../services/wifi_service.dart'
-    as _i6; // ignore_for_file: unnecessary_lambdas
+    as _i7; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars
 /// initializes the registration of provided dependencies inside of [GetIt]
 _i1.GetIt $initGetIt(_i1.GetIt get,
-    {String? environment, _i2.EnvironmentFilter? environmentFilter}) {
+    {String environment, _i2.EnvironmentFilter environmentFilter}) {
   final gh = _i2.GetItHelper(get, environment, environmentFilter);
   final thirdPartyServicesModule = _$ThirdPartyServicesModule();
   gh.lazySingleton<_i3.AuthenticationService>(
@@ -28,11 +29,13 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
       () => thirdPartyServicesModule.dialogService);
   gh.lazySingleton<_i5.NavigationService>(
       () => thirdPartyServicesModule.navigationService);
-  gh.lazySingleton<_i6.WifiService>(() => thirdPartyServicesModule.wifiService);
+  gh.lazySingleton<_i6.StreamingSharedPreferencesService>(
+      () => thirdPartyServicesModule.streamingSharedPreferencesService);
+  gh.lazySingleton<_i7.WifiService>(() => thirdPartyServicesModule.wifiService);
   return get;
 }
 
-class _$ThirdPartyServicesModule extends _i7.ThirdPartyServicesModule {
+class _$ThirdPartyServicesModule extends _i8.ThirdPartyServicesModule {
   @override
   _i3.AuthenticationService get authenticationService =>
       _i3.AuthenticationService();
@@ -43,5 +46,8 @@ class _$ThirdPartyServicesModule extends _i7.ThirdPartyServicesModule {
   @override
   _i5.NavigationService get navigationService => _i5.NavigationService();
   @override
-  _i6.WifiService get wifiService => _i6.WifiService();
+  _i6.StreamingSharedPreferencesService get streamingSharedPreferencesService =>
+      _i6.StreamingSharedPreferencesService();
+  @override
+  _i7.WifiService get wifiService => _i7.WifiService();
 }

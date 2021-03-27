@@ -9,9 +9,9 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   setupLocator();
-  // StreamingSharedPreferencesService streamingSharedPreferencesService =
-  //     locator<StreamingSharedPreferencesService>();
-  // await streamingSharedPreferencesService.init();
+  StreamingSharedPreferencesService streamingSharedPreferencesService =
+      locator<StreamingSharedPreferencesService>();
+  await streamingSharedPreferencesService.init();
   runApp(MyApp());
 }
 

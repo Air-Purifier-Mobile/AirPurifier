@@ -1,3 +1,4 @@
+import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:air_purifier/services/wifi_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -20,4 +21,7 @@ abstract class ThirdPartyServicesModule {
 
   @lazySingleton
   WifiService get wifiService;
+
+  @lazySingleton
+  StreamingSharedPreferencesService get streamingSharedPreferencesService;
 }
