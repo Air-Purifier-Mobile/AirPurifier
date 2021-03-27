@@ -1,3 +1,4 @@
+import 'package:air_purifier/services/wifi_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:air_purifier/services/authentication_service.dart';
@@ -16,4 +17,7 @@ abstract class ThirdPartyServicesModule {
 
   @lazySingleton
   BluetoothService get bluetoothService;
+
+  @lazySingleton
+  WifiService get wifiService;
 }
