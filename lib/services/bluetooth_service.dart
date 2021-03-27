@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart'
     as serialBluetooth;
@@ -20,21 +21,25 @@ class BluetoothService {
       // print("\n\n");
       // print(event.runtimeType.toString());
     }, onError: (error) {
-      callBack("There was some error in searching devices.");
+      callBack(
+          "Some Error In Searching device. :\n ${error.runtimeType.toString()} \n ${error.toString()}");
     }).onData((data) {
       callBack("Stopping Scanning Devices");
       stopScanningDevices();
       bool gotDevice = false;
+      String deviceList = "";
       data.forEach((result) {
         print("Scan function data : " + result.device.name + "------------");
         print(data.runtimeType.toString());
+        deviceList += result.device.name + " " + result.device.id.id + "\n";
         if (result.device.name == "Airpurifier") {
           connectDevice(result.device, callBack);
           gotDevice = true;
         }
       });
       if (!gotDevice) {
-        callBack("Device named 'Airpurifier' Not Found");
+        callBack(
+            "Device named 'Airpurifier' Not Found\n List Of possible Devices:\n $deviceList");
       }
     });
   }
