@@ -76,7 +76,7 @@ class BluetoothService {
   }
   void sendMessage(Function callback) async{
     print('Sending AT to device');
-    callback('Sending AT to device. Waiting for response');
+    // callback('Sending AT to device. Waiting for response');
     connection.output.add(utf8.encode("AT"));
     await connection.output.allSent;
   }
