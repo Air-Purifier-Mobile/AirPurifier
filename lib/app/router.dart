@@ -16,5 +16,4 @@ import 'package:air_purifier/ui/views/bluetooth/bluetooth_view.dart';
     MaterialRoute(page: WifiView, initial: false, name: "wifiView"),
   ],
 )
-class $Router {
-}
+class $Router {}

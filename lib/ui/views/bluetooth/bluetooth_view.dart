@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:progress_indicators/progress_indicators.dart';
 import 'package:stacked/stacked.dart';
 
 import 'bluetooth_viewModel.dart';
@@ -14,23 +16,67 @@ class BluetoothView extends StatelessWidget {
       onModelReady: (model) => model.onModelReady(),
       builder: (context, model, child) {
         return Scaffold(
-          appBar: AppBar(),
-          body: SingleChildScrollView(
-            child: Container(
-              height: height,
-              width: width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Text(
-                      model.displayText,
+          appBar: AppBar(
+            title: Text(
+                model.goingForWifi ? "Configure Wifi" : "Configure Bluetooth"),
+            actions: [
+              IconButton(
+                  icon: Icon(
+                    Icons.refresh,
+                  ),
+                  onPressed: () {
+                    if (model.goingForWifi)
+                      model.wifiRefresh();
+                    else
+                      model.wifiRefresh();
+                  }),
+            ],
+          ),
+          body: !model.goingForWifi
+              ? SingleChildScrollView(
+                  child: Container(
+                    height: height,
+                    width: width,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Text(
+                            model.displayText,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                )
+              : !model.isBusy
+                  ? ListView.builder(
+                      itemCount: model.ssids.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          key: Key(model.ssids[index]),
+                          title: Text(
+                            model.ssids[index],
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {
+                              model.onPressed(model.ssids[index], context);
+                            },
+                          ),
+                        );
+                      },
+                    )
+                  : Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(model.displayWifiText),
+                          FadingText("...."),
+                        ],
+                      ),
+                    ),
         );
       },
     );

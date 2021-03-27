@@ -10,10 +10,13 @@ class StartUpViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
 
   void onModelReady() {
-    Future.delayed(Duration(seconds: 0), () {
-      _authenticationService.getLogInStatus()
-          ? _navigationService.replaceWith(Routes.bluetoothView)
-          : _navigationService.replaceWith(Routes.loginView);
-    });
+    Future.delayed(
+      Duration(seconds: 0),
+      () {
+        _authenticationService.getLogInStatus()
+            ? _navigationService.replaceWith(Routes.bluetoothView)
+            : _navigationService.replaceWith(Routes.loginView);
+      },
+    );
   }
 }
