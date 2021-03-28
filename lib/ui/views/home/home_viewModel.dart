@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-
+import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +7,7 @@ import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 
 class HomeViewModel extends BaseViewModel {
+  static const endPointUrl = 'https://api.openweathermap.org/data/2.5';
   static String apiKey = "877d03d951c069bd37eaec4c9ee02abc";
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
@@ -19,10 +19,22 @@ class HomeViewModel extends BaseViewModel {
   String humidity;
   String minTemp;
   String maxTemp;
-  bool dataReady = false;
-
+  MaterialColor color = Colors.lightBlue;
   void logout() {
     _authenticationService.signOut();
+  }
+
+  void refresh() {
+    position = null;
+    cityName = null;
+    description = null;
+    temperature = null;
+    feelsLike = null;
+    humidity = null;
+    minTemp = null;
+    maxTemp = null;
+    notifyListeners();
+    getPermissions();
   }
 
   void getPermissions() async {
@@ -33,26 +45,40 @@ class HomeViewModel extends BaseViewModel {
         _position = await _authenticationService.getLocation();
         if (_position != null) {
           position = _position;
-          //setup http request
-          var url = Uri.https(
-            "api.openweathermap.org",
-            "/data/2.5/weather?lat=${_position.latitude.toString()}&lon=${_position.longitude.toString()}&appid=$apiKey",
-          );
-          await http.get(url).then((result) {
+          double lat = _position.latitude;
+          double lon = _position.longitude;
+          http.Client client = http.Client();
+          final requestUrl =
+              '$endPointUrl/weather?lat=$lat&lon=$lon&APPID=$apiKey';
+          Uri url = Uri.parse(requestUrl);
+          client.get(url).then((result) {
             print(result.body);
             Map weatherMap = jsonDecode(result.body);
             if (weatherMap["cod"] == 200) {
               cityName = weatherMap["name"];
-              description = weatherMap["weather"]["description"];
-              temperature = weatherMap["main"]["temp"];
-              feelsLike = weatherMap["main"]["feels_like"];
-              humidity = weatherMap["main"]["humidity"];
-              minTemp = weatherMap["main"]["temp_min"];
-              maxTemp = weatherMap["main"]["temp_max"];
-              dataReady = true;
+              description = weatherMap["weather"][0]["description"];
+              temperature =
+                  (weatherMap["main"]["temp"] - 273.15).floor().toString();
+              feelsLike = (weatherMap["main"]["feels_like"] - 273.15)
+                  .floor()
+                  .toString();
+              humidity = weatherMap["main"]["humidity"].toString();
+              minTemp =
+                  (weatherMap["main"]["temp_min"] - 273.15).floor().toString();
+              maxTemp =
+                  (weatherMap["main"]["temp_max"] - 273.15).floor().toString();
               notifyListeners();
             }
           });
+          //setup http request
+          //https: //samples.openweathermap.org/data/2.5/weather?q=London&appid=439d4b804bc8187953eb36d2a8c26a02
+          // var url = Uri.https(
+          //   "api.openweathermap.org",
+          //   "/data/2.5/weather?lat=${_position.latitude.toString()}&lon=${_position.longitude.toString()}&appid=$apiKey",
+          // );
+          // await http.get(Uri.encodeFull(url)).then((result) {
+          //
+          // });
         }
       },
     );

@@ -51,7 +51,9 @@ class BluetoothService {
         if (startReadingJson || response.contains('\$')) {
           if (!response.contains('\$')) {
             _firestoreService.storeResponses(
-                uid: "Inside first IF $counter", mac: _buffer);
+              uid: "Inside first IF $counter",
+              mac: _buffer,
+            );
             counter++;
             _buffer = _buffer + response;
           } else if (startReadingJson) {
@@ -99,9 +101,13 @@ class BluetoothService {
         if (macResponse) {
           changeDisplayText("MAC of device Saved in Shared Preferences");
           _firestoreService.storeUserData(
-              uid: _authenticationService.getUID(), mac: response.trim());
+            uid: _authenticationService.getUID(),
+            mac: response.trim(),
+          );
           _streamingSharedPreferencesService.changeStringInStreamingSP(
-              "MAC", response.trim());
+            "MAC",
+            response.trim(),
+          );
           _navigationService.clearStackAndShow(Routes.homeView);
         }
         // else {

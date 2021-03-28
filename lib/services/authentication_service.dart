@@ -1,5 +1,7 @@
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/app/router.gr.dart';
+import 'package:air_purifier/services/firestore_service.dart';
+import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +10,9 @@ import 'package:stacked_services/stacked_services.dart';
 
 class AuthenticationService {
   final NavigationService _navigationService = locator<NavigationService>();
+  final FirestoreService _firestoreService = locator<FirestoreService>();
+  final StreamingSharedPreferencesService _sharedPreferencesService =
+      locator<StreamingSharedPreferencesService>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -15,7 +20,7 @@ class AuthenticationService {
     return _auth.currentUser != null;
   }
 
-  String getUID(){
+  String getUID() {
     return _auth.currentUser.uid;
   }
 
@@ -48,7 +53,21 @@ class AuthenticationService {
         );
         _auth.signInWithCredential(credentials).then((userCredentials) {
           print("---------Signed in ---------");
-          _navigationService.replaceWith(Routes.bluetoothView);
+          _firestoreService
+              .retrieveUserDocument(userCredentials.user.uid)
+              .then((snap) {
+            if (snap.exists) {
+              Map map = snap.data();
+              _sharedPreferencesService.changeStringInStreamingSP(
+                "MAC",
+                map["MAC"],
+              );
+              _navigationService.replaceWith(Routes.homeView);
+            } else {
+              _navigationService.replaceWith(Routes.bluetoothView);
+            }
+          });
+
           print("--------- Going to Home View ---------");
         });
       });
