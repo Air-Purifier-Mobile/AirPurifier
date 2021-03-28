@@ -17,12 +17,12 @@ class BluetoothService {
   List<BluetoothDiscoveryResult> allDevices = [];
   StreamSubscription _streamSubscription;
   BluetoothConnection connection;
+  NavigationService _navigationService = locator<NavigationService>();
   StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
-  FirestoreService _firestoreService =
-  locator<FirestoreService>();
+  FirestoreService _firestoreService = locator<FirestoreService>();
   Function changeDisplayText;
   Function changeToWifiScreen;
   Function updateSSIDListCallback;
@@ -30,55 +30,62 @@ class BluetoothService {
   String password;
   String selectedSSID;
   int failedResponseCount = 0;
-  Map<String,dynamic> jsonMap;
-  String _buffer='';
+  Map<String, dynamic> jsonMap;
+  String _buffer = '';
   bool startReadingJson = false;
-
+  bool macResponse = false;
+  int messageOrder = 0;
+  int counter = 0;
   void init() {
     try {
       connection.input.listen((event) {}).onData((utfData) {
         String response = utf8.decode(utfData).toString();
-        _firestoreService.storeUserData(uid: response, mac: response);
+        _firestoreService.storeResponses(
+          uid: "Responses $messageOrder",
+          mac: response,
+        );
+        messageOrder++;
         // changeDisplayText(response);
         // Fluttertoast.showToast(msg: "Device Response: " + response);
-
-        if(startReadingJson || response.contains('\$'))
-          {
-
-            if(!response.contains('\$')) {
-              _buffer = _buffer + response;
+        if (startReadingJson || response.contains('\$')) {
+          if (!response.contains('\$')) {
+            _firestoreService.storeResponses(
+                uid: "Inside first IF $counter", mac: _buffer);
+            counter++;
+            _buffer = _buffer + response;
+          } else if (startReadingJson) {
+            if (response.length > 1) {
+              _buffer = (_buffer + response).trim();
+              _buffer = _buffer.substring(0, _buffer.length - 1).trim();
             }
-            else if(startReadingJson) {
-              if(response.length>1) {
-                _buffer = _buffer + response;
-                _buffer = _buffer.substring(0, _buffer.length - 1);
-              }
-              changeDisplayText("buffer-"+_buffer);
+            changeDisplayText("buffer-" + _buffer);
             startReadingJson = false;
             String temp = _buffer;
-            _buffer ='';
+            _buffer = '';
             jsonMap = jsonDecode(temp);
             updateSSIDListCallback(jsonMap['SSID']);
             changeToWifiScreen();
-            }
-            else
-             startReadingJson = true;
-          }
-
-        if (response == password) {
+          } else
+            startReadingJson = true;
+        }
+        if (response == "" || response == " ") {
+          Fluttertoast.showToast(
+              msg: "Received spaces or empty String in message");
+        }
+        if (password != null && response == password) {
           changeDisplayText("Password Set In device");
           sendCommand("+CONNECT\r\n");
         }
-
         if (response == "OK") {
           changeDisplayText("Sending command to fetch SSIDs");
           sendCommand("+SCAN?\r\n");
         }
-         if (response == "WIFI CONNECTED") {
+        if (response == "WIFI CONNECTED") {
           changeDisplayText("Device Connected To $selectedSSID");
+          macResponse = true;
           sendCommand("+MAC?\r\n");
         }
-         if (response == "WIFI FAIL") {
+        if (response == "WIFI FAIL") {
           changeDisplayText("Device failed to Connect to $selectedSSID");
           failedResponseCount++;
           if (failedResponseCount == 15) {
@@ -87,45 +94,54 @@ class BluetoothService {
             changeDisplayText(
                 "Restarting Device...\nRefresh when device ready to connect.");
           }
-          }
-          // else {
-          // try {
-          //   temp = jsonDecode(response);
-          //   Fluttertoast.showToast(msg: 'json decode ran');
-          //   changeDisplayText(temp.toString());
-          //   if (temp.containsKey("Total_SSID")) {
-          //     updateSSIDListCallback(temp["SSID"]);
-          //     changeDisplayText('Length of list'+temp['SSID'].length);
-          //     changeToWifiScreen();
-          //   }
-          //   else{
-          //     updateSSIDListCallback(temp["SSID"]);
-          //     //changeDisplayText('Length of list'+temp['SSID'].length);
-          //     changeToWifiScreen();
-          //   }
-          //   changeDisplayText('Error in parsing');
-          // } catch (error) {
-          //   if (response == password) {
-          //   changeDisplayText("Password Set In device");
-          //   sendCommand("+CONNECT\r\n");
-          // }
-          //    else if (response == selectedSSID) {
-          //   } else {
-          //     Future.delayed(Duration(seconds: 2),(){
-          //       _streamingSharedPreferencesService.changeStringInStreamingSP(
-          //         "MAC_ID",
-          //         response,
-          //       );
-          //       changeDisplayText("MAC ID of Device is: ${error.toString()}");
-          //       //_firestoreService.storeUserData(uid: _authenticationService.getUID(), mac: response);
-          //     });
-          //   }
-          // }
+        }
+        if (macResponse) {
+          changeDisplayText("MAC of device Saved in Shared Preferences");
+          _firestoreService.storeUserData(
+              uid: _authenticationService.getUID(), mac: response.trim());
+          _streamingSharedPreferencesService.changeStringInStreamingSP(
+              "MAC", response.trim());
+          _navigationService.clearStackAndShow(Routes.homeView);
+        }
+        // else {
+        // try {
+        //   temp = jsonDecode(response);
+        //   Fluttertoast.showToast(msg: 'json decode ran');
+        //   changeDisplayText(temp.toString());
+        //   if (temp.containsKey("Total_SSID")) {
+        //     updateSSIDListCallback(temp["SSID"]);
+        //     changeDisplayText('Length of list'+temp['SSID'].length);
+        //     changeToWifiScreen();
+        //   }
+        //   else{
+        //     updateSSIDListCallback(temp["SSID"]);
+        //     //changeDisplayText('Length of list'+temp['SSID'].length);
+        //     changeToWifiScreen();
+        //   }
+        //   changeDisplayText('Error in parsing');
+        // } catch (error) {
+        //   if (response == password) {
+        //   changeDisplayText("Password Set In device");
+        //   sendCommand("+CONNECT\r\n");
+        // }
+        //    else if (response == selectedSSID) {
+        //   } else {
+        //     Future.delayed(Duration(seconds: 2),(){
+        //       _streamingSharedPreferencesService.changeStringInStreamingSP(
+        //         "MAC_ID",
+        //         response,
+        //       );
+        //       changeDisplayText("MAC ID of Device is: ${error.toString()}");
+        //       //_firestoreService.storeUserData(uid: _authenticationService.getUID(), mac: response);
+        //     });
+        //   }
+        // }
         // }
       });
     } catch (error) {
       Fluttertoast.showToast(
-          msg: "Error in Listening device response" + error.toString());
+        msg: "Error in Listening device response" + error.toString(),
+      );
     }
   }
 
