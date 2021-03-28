@@ -91,7 +91,7 @@ class BluetoothService {
         if (response == "WIFI FAIL") {
           changeDisplayText("Device failed to Connect to $selectedSSID");
           failedResponseCount++;
-          if (failedResponseCount == 15) {
+          if (true) {
             changeToBluetoothScreen();
             connection.dispose();
             changeDisplayText(
