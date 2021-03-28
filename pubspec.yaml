@@ -46,6 +46,7 @@ dependencies:
   flutter_bluetooth_serial: ^0.2.2
   wifi_configuration: ^1.2.1
   http: ^0.13.1
+  mqtt_client: ^9.0.0
 
   # UI
   hexcolor: ^2.0.3

@@ -1,4 +1,5 @@
 import 'package:air_purifier/services/firestore_service.dart';
+import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:air_purifier/services/wifi_service.dart';
 import 'package:injectable/injectable.dart';
@@ -28,4 +29,7 @@ abstract class ThirdPartyServicesModule {
 
   @lazySingleton
   FirestoreService get firestoreService;
+
+  @lazySingleton
+  MqttService get mqttService;
 }

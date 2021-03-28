@@ -222,6 +222,7 @@ class HomeView extends StatelessWidget {
                             ),
                             onPressed: () {
                               ///Remote
+                              model.gotoRemoteScreen();
                             }),
                       ),
                       verticalSpaceLarge,

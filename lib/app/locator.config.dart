@@ -11,10 +11,11 @@ import 'package:stacked_services/stacked_services.dart' as _i5;
 import '../services/authentication_service.dart' as _i3;
 import '../services/bluetooth_service.dart' as _i4;
 import '../services/firestore_service.dart' as _i6;
-import '../services/streaming_shared_preferences_service.dart' as _i7;
-import '../services/third_party_services.dart' as _i9;
+import '../services/mqtt_service.dart' as _i7;
+import '../services/streaming_shared_preferences_service.dart' as _i8;
+import '../services/third_party_services.dart' as _i10;
 import '../services/wifi_service.dart'
-    as _i8; // ignore_for_file: unnecessary_lambdas
+    as _i9; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars
 /// initializes the registration of provided dependencies inside of [GetIt]
@@ -30,15 +31,16 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
       () => thirdPartyServicesModule.dialogService);
   gh.lazySingleton<_i6.FirestoreService>(
       () => thirdPartyServicesModule.firestoreService);
+  gh.lazySingleton<_i7.MqttService>(() => thirdPartyServicesModule.mqttService);
   gh.lazySingleton<_i5.NavigationService>(
       () => thirdPartyServicesModule.navigationService);
-  gh.lazySingleton<_i7.StreamingSharedPreferencesService>(
+  gh.lazySingleton<_i8.StreamingSharedPreferencesService>(
       () => thirdPartyServicesModule.streamingSharedPreferencesService);
-  gh.lazySingleton<_i8.WifiService>(() => thirdPartyServicesModule.wifiService);
+  gh.lazySingleton<_i9.WifiService>(() => thirdPartyServicesModule.wifiService);
   return get;
 }
 
-class _$ThirdPartyServicesModule extends _i9.ThirdPartyServicesModule {
+class _$ThirdPartyServicesModule extends _i10.ThirdPartyServicesModule {
   @override
   _i3.AuthenticationService get authenticationService =>
       _i3.AuthenticationService();
@@ -49,10 +51,12 @@ class _$ThirdPartyServicesModule extends _i9.ThirdPartyServicesModule {
   @override
   _i6.FirestoreService get firestoreService => _i6.FirestoreService();
   @override
+  _i7.MqttService get mqttService => _i7.MqttService();
+  @override
   _i5.NavigationService get navigationService => _i5.NavigationService();
   @override
-  _i7.StreamingSharedPreferencesService get streamingSharedPreferencesService =>
-      _i7.StreamingSharedPreferencesService();
+  _i8.StreamingSharedPreferencesService get streamingSharedPreferencesService =>
+      _i8.StreamingSharedPreferencesService();
   @override
-  _i8.WifiService get wifiService => _i8.WifiService();
+  _i9.WifiService get wifiService => _i9.WifiService();
 }

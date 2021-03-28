@@ -1,16 +1,19 @@
 import 'dart:convert';
+import 'package:air_purifier/app/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
+import 'package:stacked_services/stacked_services.dart';
 
 class HomeViewModel extends BaseViewModel {
   static const endPointUrl = 'https://api.openweathermap.org/data/2.5';
   static String apiKey = "877d03d951c069bd37eaec4c9ee02abc";
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
+  final NavigationService _navigationService = locator<NavigationService>();
   Position position;
   String cityName;
   String description;
@@ -82,6 +85,11 @@ class HomeViewModel extends BaseViewModel {
         }
       },
     );
+  }
+
+  void gotoRemoteScreen(){
+    _navigationService.navigateTo(Routes.remoteControlView);
+    notifyListeners();
   }
 
   Map dummy = {
