@@ -37,6 +37,7 @@ class BluetoothService {
   int messageOrder = 0;
   int counter = 0;
   void init() {
+    //Went to Beta
     try {
       connection.input.listen((event) {}).onData((utfData) {
         String response = utf8.decode(utfData).toString();

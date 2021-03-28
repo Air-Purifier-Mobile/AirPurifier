@@ -48,6 +48,23 @@ class HomeView extends StatelessWidget {
               Text(
                 model.position?.latitude.toString() ?? "",
               ),
+              model.dataReady
+                  ? Text(
+                      (model.cityName +
+                          "\n" +
+                          model.description +
+                          "\n" +
+                          model.temperature +
+                          "\n" +
+                          model.feelsLike +
+                          "\n" +
+                          model.humidity +
+                          "\n" +
+                          model.minTemp +
+                          "\n" +
+                          model.maxTemp),
+                    )
+                  : Text("Fetching Weather Data"),
               verticalSpaceLarge,
               Center(
                 child: Text("I am Home"),
