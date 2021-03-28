@@ -43,6 +43,7 @@ class BluetoothView extends StatelessWidget {
                         Center(
                           child: Text(
                             model.displayText,
+                            softWrap: true,
                           ),
                         ),
                       ],
