@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/app/router.gr.dart';
+import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -14,10 +15,15 @@ class BluetoothService {
   List<BluetoothDiscoveryResult> allDevices = [];
   StreamSubscription _streamSubscription;
   BluetoothConnection connection;
-  NavigationService _navigationService = locator<NavigationService>();
+  StreamingSharedPreferencesService _streamingSharedPreferencesService =
+      locator<StreamingSharedPreferencesService>();
   Function changeDisplayText;
   Function changeToWifiScreen;
   Function updateSSIDListCallback;
+  Function changeToBluetoothScreen;
+  String password;
+  String selectedSSID;
+  int failedResponseCount = 0;
   var temp;
 
   void init() {
@@ -29,31 +35,55 @@ class BluetoothService {
         if (response == "OK") {
           changeDisplayText("Sending command to fetch SSIDs");
           sendCommand("+SCAN?\r\n");
-        }
-        else{
+        } else if (response == "WIFI CONNECTED") {
+          changeDisplayText("Device Connected To $selectedSSID");
+          sendCommand("+MAC?\r\n");
+        } else if (response == "WIFI FAIL") {
+          changeDisplayText("Device failed to Connect to $selectedSSID");
+          failedResponseCount++;
+          if (failedResponseCount == 15) {
+            changeToBluetoothScreen();
+            connection.dispose();
+            changeDisplayText(
+                "Restarting Device...\nRefresh when device ready to connect.");
+          }
+        } else {
           try {
             temp = jsonDecode(response);
-            if(temp.containsKey("Total_SSID"))
-            {
-             updateSSIDListCallback(temp["SSID"]);
-             changeToWifiScreen();
+            if (temp.containsKey("Total_SSID")) {
+              updateSSIDListCallback(temp["SSID"]);
+              changeToWifiScreen();
             }
-          }catch(error){
-            
-            changeDisplayText("Not a Json String");
+          } catch (error) {
+            if (response == password) {
+              changeDisplayText("Password Set In device");
+              sendCommand("+CONNECT\r\n");
+            } else if (response == selectedSSID) {
+            } else {
+              _streamingSharedPreferencesService.changeStringInStreamingSP(
+                "MAC_ID",
+                response,
+              );
+              changeDisplayText("MAC ID of Device is: $response");
+            }
           }
         }
-
       });
-    }catch(error){
-      Fluttertoast.showToast(msg: "Error in Listening device response"+error.toString() );
+    } catch (error) {
+      Fluttertoast.showToast(
+          msg: "Error in Listening device response" + error.toString());
     }
   }
 
   Future<bool> enableBluetooth(
-      Function changeDisplayCallBack, Function goToWifi, Function updateSSIDList) async {
+    Function changeDisplayCallBack,
+    Function goToWifi,
+    Function updateSSIDList,
+    Function goToBluetoothCallback,
+  ) async {
     changeDisplayText = changeDisplayCallBack;
     changeToWifiScreen = goToWifi;
+    changeToBluetoothScreen = goToBluetoothCallback;
     updateSSIDListCallback = updateSSIDList;
     return await flutterBluetoothSerial.requestEnable();
   }

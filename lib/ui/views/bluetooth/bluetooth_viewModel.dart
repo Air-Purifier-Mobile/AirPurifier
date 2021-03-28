@@ -13,7 +13,6 @@ class BluetoothViewModel extends BaseViewModel {
   final TextEditingController passController = TextEditingController();
   String displayText = "Please switch On the Bluetooth";
   bool goingForWifi = false;
-  String displayWifiText = "Fetching available wifi devices..";
   List ssids = [];
   bool gotList = false;
 
@@ -28,14 +27,24 @@ class BluetoothViewModel extends BaseViewModel {
     try {
       goingForWifi = true;
       notifyListeners();
-    }catch(error){
-      Fluttertoast.showToast(msg: "Error in goToWifiScreen"+error.toString() );
+    } catch (error) {
+      Fluttertoast.showToast(msg: "Error in goToWifiScreen" + error.toString());
+    }
+  }
+
+  void goToBluetoothScreen() {
+    try {
+      goingForWifi = false;
+      notifyListeners();
+    } catch (error) {
+      Fluttertoast.showToast(msg: "Error in goToWifiScreen" + error.toString());
     }
   }
 
   void onModelReady() {
     bluetoothService
-        .enableBluetooth(changeDisplayTextCallBack, goToWifiScreen, updateSSIDList)
+        .enableBluetooth(changeDisplayTextCallBack, goToWifiScreen,
+            updateSSIDList, goToBluetoothScreen)
         .then((isEnabled) {
       if (isEnabled) {
         displayText = "Getting Devices";
@@ -49,22 +58,9 @@ class BluetoothViewModel extends BaseViewModel {
     //     });
   }
 
-  void updateSSIDList(List list){
+  void updateSSIDList(List list) {
     ssids = list;
     notifyListeners();
-  }
-
-  void onWifiModelReady() {
-    // try {
-    //   _wifiService.getListOfWifi(changeDisplayTextCallBack).then((value) {
-    //     ssids = value;
-    //     gotList = true;
-    //     Fluttertoast.showToast(msg: 'Length of SSID list'+ssids.length.toString());
-    //     notifyListeners();
-    //   });
-    // }catch(error){
-    //   Fluttertoast.showToast(msg: "Error in Wifi model"+error.toString() );
-    // }
   }
 
   void wifiRefresh() {
@@ -77,77 +73,81 @@ class BluetoothViewModel extends BaseViewModel {
   void onPressed(String ssid, BuildContext context) async {
     goingForWifi = false;
     displayText = "Sending SSID : $ssid to device";
+    bluetoothService.selectedSSID = ssid;
     bluetoothService.sendCommand("+SSID,$ssid\r\n");
     //Fluttertoast.showToast(msg: ssid);
     notifyListeners();
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: true,
-    //   builder: (context) {
-    //     return Center(
-    //       child: Container(
-    //         height: MediaQuery.of(context).size.height / 7,
-    //         width: MediaQuery.of(context).size.width * 3 / 4,
-    //         child: Material(
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //             mainAxisSize: MainAxisSize.min,
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               Expanded(
-    //                 flex: 5,
-    //                 child: Padding(
-    //                   padding: EdgeInsets.fromLTRB(
-    //                     20.0,
-    //                     20.0,
-    //                     0.0,
-    //                     0.0,
-    //                   ),
-    //                   child: Text(
-    //                     "Enter Password",
-    //                   ),
-    //                 ),
-    //               ),
-    //               Expanded(
-    //                 flex: 3,
-    //                 child: Row(
-    //                   children: [
-    //                     Expanded(
-    //                       flex: 5,
-    //                       child: Padding(
-    //                         padding: EdgeInsets.fromLTRB(
-    //                           20.0,
-    //                           20.0,
-    //                           20.0,
-    //                           10.0,
-    //                         ),
-    //                         child: TextField(
-    //                           controller: passController,
-    //                         ),
-    //                       ),
-    //                     ),
-    //                     Expanded(
-    //                       flex: 1,
-    //                       child: IconButton(
-    //                         icon: Icon(
-    //                           Icons.check_circle,
-    //                           size: 30.0,
-    //                         ),
-    //                         onPressed: () {
-    //                           ///Send Password to Device
-    //                           Navigator.of(context).pop();
-    //                         },
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height / 7,
+            width: MediaQuery.of(context).size.width * 3 / 4,
+            child: Material(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        20.0,
+                        20.0,
+                        0.0,
+                        0.0,
+                      ),
+                      child: Text(
+                        "Enter Password",
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              20.0,
+                              20.0,
+                              20.0,
+                              10.0,
+                            ),
+                            child: TextField(
+                              controller: passController,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.check_circle,
+                              size: 30.0,
+                            ),
+                            onPressed: () {
+                              ///Send Password to Device
+                              bluetoothService.password = passController.text;
+                              bluetoothService.sendCommand(
+                                  "+PSS,${passController.text}\r\n");
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

@@ -49,7 +49,7 @@ class BluetoothView extends StatelessWidget {
                     ),
                   ),
                 )
-              : model.ssids.length!=0
+              : model.ssids.length != 0
                   ? ListView.builder(
                       itemCount: model.ssids.length,
                       itemBuilder: (context, index) {
@@ -72,7 +72,7 @@ class BluetoothView extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(model.displayWifiText),
+                          Text(model.displayText),
                           FadingText("...."),
                         ],
                       ),
