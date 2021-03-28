@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wifi_configuration/wifi_configuration.dart';
 
 class WifiService {
@@ -7,6 +8,9 @@ class WifiService {
     return await WifiConfiguration.getWifiList().then((list) {
       callBack("Got list");
       return list;
+    }).onError((error, stackTrace) {
+      Fluttertoast.showToast(msg: 'Wifi Service err-'+error.toString());
+      return [];
     });
   }
 }

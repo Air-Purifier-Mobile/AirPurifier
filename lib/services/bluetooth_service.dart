@@ -17,23 +17,44 @@ class BluetoothService {
   NavigationService _navigationService = locator<NavigationService>();
   Function changeDisplayText;
   Function changeToWifiScreen;
+  Function updateSSIDListCallback;
+  var temp;
 
   void init() {
-    connection.input.listen((event) {
-      Fluttertoast.showToast(msg: "Device Response: " + utf8.decode(event));
-    }).onData((utfData) {
-      String response = utf8.decode(utfData);
-      changeDisplayText(response);
-      if (response == "OK") {
-        changeToWifiScreen();
-      }
-    });
+    try {
+      connection.input.listen((event) {}).onData((utfData) {
+        String response = utf8.decode(utfData);
+        changeDisplayText(response);
+        Fluttertoast.showToast(msg: "Device Response: " + response);
+        if (response == "OK") {
+          changeDisplayText("Sending command to fetch SSIDs");
+          sendCommand("+SCAN?\r\n");
+        }
+        else{
+          try {
+            temp = jsonDecode(response);
+            if(temp.containsKey("Total_SSID"))
+            {
+             updateSSIDListCallback(temp["SSID"]);
+             changeToWifiScreen();
+            }
+          }catch(error){
+            
+            changeDisplayText("Not a Json String");
+          }
+        }
+
+      });
+    }catch(error){
+      Fluttertoast.showToast(msg: "Error in Listening device response"+error.toString() );
+    }
   }
 
   Future<bool> enableBluetooth(
-      Function changeDisplayCallBack, Function goToWifi) async {
+      Function changeDisplayCallBack, Function goToWifi, Function updateSSIDList) async {
     changeDisplayText = changeDisplayCallBack;
     changeToWifiScreen = goToWifi;
+    updateSSIDListCallback = updateSSIDList;
     return await flutterBluetoothSerial.requestEnable();
   }
 

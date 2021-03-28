@@ -49,7 +49,7 @@ class BluetoothView extends StatelessWidget {
                     ),
                   ),
                 )
-              : !model.isBusy
+              : model.ssids.length!=0
                   ? ListView.builder(
                       itemCount: model.ssids.length,
                       itemBuilder: (context, index) {

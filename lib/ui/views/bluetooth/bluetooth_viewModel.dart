@@ -13,6 +13,9 @@ class BluetoothViewModel extends BaseViewModel {
   final TextEditingController passController = TextEditingController();
   String displayText = "Please switch On the Bluetooth";
   bool goingForWifi = false;
+  String displayWifiText = "Fetching available wifi devices..";
+  List ssids = [];
+  bool gotList = false;
 
   //Callback for changing display text
   void changeDisplayTextCallBack(String event) {
@@ -22,14 +25,17 @@ class BluetoothViewModel extends BaseViewModel {
 
   //Callback for changing to wifi
   void goToWifiScreen() {
-    goingForWifi = true;
-    onWifiModelReady();
-    notifyListeners();
+    try {
+      goingForWifi = true;
+      notifyListeners();
+    }catch(error){
+      Fluttertoast.showToast(msg: "Error in goToWifiScreen"+error.toString() );
+    }
   }
 
   void onModelReady() {
     bluetoothService
-        .enableBluetooth(changeDisplayTextCallBack, goToWifiScreen)
+        .enableBluetooth(changeDisplayTextCallBack, goToWifiScreen, updateSSIDList)
         .then((isEnabled) {
       if (isEnabled) {
         displayText = "Getting Devices";
@@ -37,47 +43,42 @@ class BluetoothViewModel extends BaseViewModel {
         notifyListeners();
       }
     });
+    // Future.delayed(Duration(seconds: 3),
+    //     (){
+    //       goToWifiScreen();
+    //     });
   }
 
-  String displayWifiText = "Fetching available wifi devices..";
-  List ssids = [];
-  bool gotList = false;
-  WifiService _wifiService = locator<WifiService>();
+  void updateSSIDList(List list){
+    ssids = list;
+    notifyListeners();
+  }
 
   void onWifiModelReady() {
-    setBusy(true);
-    _wifiService.getListOfWifi((String text) {
-      displayText = text;
-      notifyListeners();
-    }).then((value) {
-      ssids = value;
-      gotList = true;
-      setBusy(false);
-      notifyListeners();
-    });
+    // try {
+    //   _wifiService.getListOfWifi(changeDisplayTextCallBack).then((value) {
+    //     ssids = value;
+    //     gotList = true;
+    //     Fluttertoast.showToast(msg: 'Length of SSID list'+ssids.length.toString());
+    //     notifyListeners();
+    //   });
+    // }catch(error){
+    //   Fluttertoast.showToast(msg: "Error in Wifi model"+error.toString() );
+    // }
   }
 
   void wifiRefresh() {
-    setBusy(true);
-    displayText = "Fetching available wifi devices..";
-    ssids = [];
     gotList = false;
+    displayText = "Sending command to fetch SSIDs";
+    bluetoothService.sendCommand("+SCAN?\r\n");
     notifyListeners();
-    _wifiService.getListOfWifi((String text) {
-      displayText = text;
-      notifyListeners();
-    }).then((value) {
-      ssids = value;
-      gotList = true;
-      setBusy(false);
-      notifyListeners();
-    });
   }
 
   void onPressed(String ssid, BuildContext context) async {
     goingForWifi = false;
     displayText = "Sending SSID : $ssid to device";
     bluetoothService.sendCommand("+SSID,$ssid\r\n");
+    //Fluttertoast.showToast(msg: ssid);
     notifyListeners();
     // showDialog(
     //   context: context,
