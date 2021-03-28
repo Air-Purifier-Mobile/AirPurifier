@@ -15,7 +15,13 @@ class HomeViewModel extends BaseViewModel {
     Future.delayed(
       Duration(seconds: 0),
       () async {
-        position = await _authenticationService.getLocation();
+        Position _position;
+        _position = await _authenticationService.getLocation();
+        if(_position!=null){
+          position = _position;
+          //setup http request
+
+        }
         notifyListeners();
       },
     );

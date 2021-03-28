@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/app/router.gr.dart';
+import 'package:air_purifier/services/authentication_service.dart';
+import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,6 +19,10 @@ class BluetoothService {
   BluetoothConnection connection;
   StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
+  AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
+  FirestoreService _firestoreService =
+  locator<FirestoreService>();
   Function changeDisplayText;
   Function changeToWifiScreen;
   Function updateSSIDListCallback;
@@ -65,6 +71,7 @@ class BluetoothService {
                 response,
               );
               changeDisplayText("MAC ID of Device is: $response");
+              _firestoreService.storeUserData(uid: _authenticationService.getUID(), mac: response);
             }
           }
         }
@@ -137,13 +144,6 @@ class BluetoothService {
     connection.output.add(utf8.encode("AT\r\n"));
     await connection.output.allSent;
   }
-
-  // void _receiveMessage(Uint8List data) async {
-  //   Fluttertoast.showToast(msg: '' + utf8.decode(data));
-  //   // Future.delayed(Duration(seconds: 2), () {
-  //   //   _navigationService.replaceWith(Routes.wifiView);
-  //   // });
-  // }
 
   void sendCommand(String command) async {
     connection.output.add(utf8.encode(command));

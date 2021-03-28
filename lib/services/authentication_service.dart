@@ -15,6 +15,10 @@ class AuthenticationService {
     return _auth.currentUser != null;
   }
 
+  String getUID(){
+    return _auth.currentUser.uid;
+  }
+
   Future<Position> getLocation() async {
     return await Geolocator.requestPermission().then((permissions) async {
       if (permissions == LocationPermission.whileInUse ||
