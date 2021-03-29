@@ -10,6 +10,7 @@ class RemoteControlView extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     return ViewModelBuilder<RemoteControlViewModel>.reactive(
       viewModelBuilder: () => RemoteControlViewModel(),
+      onModelReady: (model) => model.onModelReady(),
       builder: (context, model, child) {
         return Scaffold(
           appBar: AppBar(),
