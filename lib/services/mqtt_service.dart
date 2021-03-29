@@ -89,16 +89,13 @@ class MqttService{
   }
 
   void listener(){
-    int i=0;
     _client.updates.listen((event) {
 
     }).onData((c) {
-      while(c.length!=i) {
-        final MqttPublishMessage message = c[i++].payload;
+        final MqttPublishMessage message = c[0].payload;
         final payload =
         MqttPublishPayload.bytesToStringAsString(message.payload.message);
         print('Received message:$payload from topic: ${c[0].topic}>');
-      }
     });
   }
 }
