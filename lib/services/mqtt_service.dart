@@ -23,13 +23,11 @@ class MqttService {
     _client.onSubscribed = onSubscribed;
     _client.onSubscribeFail = onSubscribeFail;
     _client.pongCallback = pong;
-
     // SecurityContext context = new SecurityContext()
     //   ..setClientAuthorities('package:air_purifier/constants/dioty_ca.crt',
     //       password: '7b35b817');
     // _client.secure = true;
-    // _client.securityContext = context;
-
+    // _client.securityContext = context;-
     final connMessage = MqttConnectMessage()
         .authenticateAs('sushrutpatwardhan@gmail.com', 'a03131df')
         .keepAliveFor(60)
@@ -55,27 +53,27 @@ class MqttService {
     print('Connected');
   }
 
-// unconnected
+  // unconnected
   void onDisconnected() {
     print('Disconnected');
   }
 
-// subscribe to topic succeeded
+  // subscribe to topic succeeded
   void onSubscribed(String topic) {
     print('Subscribed topic: $topic');
   }
 
-// subscribe to topic failed
+  // subscribe to topic failed
   void onSubscribeFail(String topic) {
     print('Failed to subscribe $topic');
   }
 
-// unsubscribe succeeded
+  // unsubscribe succeeded
   void onUnsubscribed(String topic) {
     print('Unsubscribed topic: $topic');
   }
 
-// PING response received
+  // PING response received
   void pong() {
     print('Ping response client callback invoked');
   }
