@@ -31,7 +31,7 @@ class MqttService {
     // _client.securityContext = context;
 
     final connMessage = MqttConnectMessage()
-        .authenticateAs('tdharmik76@gmail.com', '7b35b817')
+        .authenticateAs('sushrutpatwardhan@gmail.com', 'a03131df')
         .keepAliveFor(60)
         .withWillTopic('will topic')
         .withWillMessage('will message')
@@ -89,7 +89,7 @@ class MqttService {
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
-      if (ownMessage != payload) {
+      if (true) {
         print('Received message:$payload from topic: ${c[0].topic}>');
         changeDisplayText('Received message:$payload');
       }

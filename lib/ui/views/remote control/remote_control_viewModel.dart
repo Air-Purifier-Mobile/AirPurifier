@@ -6,8 +6,9 @@ import 'package:stacked/stacked.dart';
 class RemoteControlViewModel extends BaseViewModel {
   bool isConnected = false;
   String displayText = '';
+  int i = 0;
   MqttService _mqttService = locator<MqttService>();
-  String rootTopic = "/tdharmik76@gmail.com/";
+  String rootTopic = "/sushrutpatwardhan@gmail.com/";
 
   void unsubscribeToTopic() {
     _mqttService.unSubscribeToTopic(rootTopic);
@@ -24,7 +25,8 @@ class RemoteControlViewModel extends BaseViewModel {
   }
 
   void publishMessage() {
-    _mqttService.publishPayload('Testing', '');
+    i++;
+    _mqttService.publishPayload('Sent from app' + i.toString(), '');
   }
 
   void changeDisplayText(String display) {
