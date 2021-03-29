@@ -89,7 +89,7 @@ class MqttService {
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
-      if (true) {
+      if (payload != ownMessage) {
         print('Received message:$payload from topic: ${c[0].topic}>');
         changeDisplayText('Received message:$payload');
       }
@@ -102,8 +102,7 @@ class MqttService {
     ownMessage = message;
 
     ///Change root topic
-    _client.publishMessage("/sushrutpatwardhan@gmail.com/" + _topic,
-        MqttQos.atLeastOnce, builder.payload);
+    _client.publishMessage(_topic, MqttQos.atLeastOnce, builder.payload);
   }
 
   void unSubscribeToTopic(String topic) {

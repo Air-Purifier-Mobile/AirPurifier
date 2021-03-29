@@ -9,7 +9,7 @@ class RemoteControlViewModel extends BaseViewModel {
   int i = 0;
   MqttService _mqttService = locator<MqttService>();
   String rootTopic = "/sushrutpatwardhan@gmail.com/";
-
+  String subscribedTopic = "/sushrutpatwardhan@gmail.com/";
   void unsubscribeToTopic() {
     _mqttService.unSubscribeToTopic(rootTopic);
   }
@@ -24,9 +24,16 @@ class RemoteControlViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void publishMessage() {
+  void publishMessage(String topic) {
     i++;
-    _mqttService.publishPayload('Sent from app' + i.toString(), '');
+    _mqttService.publishPayload('Sent from app' + i.toString(), topic);
+  }
+
+  void subscribeToTopic() {
+    _mqttService.subscribeToTopic(rootTopic + 'test');
+    subscribedTopic = rootTopic + 'test';
+    notifyListeners();
+    changeDisplayText("Subscribing to Topic Test");
   }
 
   void changeDisplayText(String display) {
