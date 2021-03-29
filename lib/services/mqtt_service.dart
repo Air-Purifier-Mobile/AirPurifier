@@ -93,7 +93,7 @@ class MqttService{
 
     }).onData((c) {
         final MqttPublishMessage message = c[0].payload;
-        final payload =
+        String payload =
         MqttPublishPayload.bytesToStringAsString(message.payload.message);
         print('Received message:$payload from topic: ${c[0].topic}>');
     });
