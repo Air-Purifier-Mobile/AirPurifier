@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:air_purifier/app/locator.dart';
+import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -7,13 +10,23 @@ class MqttService {
   MqttServerClient _client;
   Function connectionSuccessful;
   Function changeDisplayText;
+  Function setInitialValues;
+  Function refreshCallBack;
   String ownMessage;
+  String mac;
   List<MqttReceivedMessage<MqttMessage>> responseList = [];
-
+  final StreamingSharedPreferencesService _streamingSharedPreferencesService =
+      locator<StreamingSharedPreferencesService>();
   void setupConnection(
-      Function _connectionSuccessful, Function _changeDisplayText) async {
+    Function _connectionSuccessful,
+    Function _changeDisplayText,
+    Function setInit,
+    Function refresh,
+  ) async {
     connectionSuccessful = _connectionSuccessful;
     changeDisplayText = _changeDisplayText;
+    setInitialValues = setInit;
+    refreshCallBack = refresh;
     _client =
         MqttServerClient.withPort('mqtt.dioty.co', '3C:61:05:12:EA:F4', 1883);
     _client.logging(on: true);
@@ -49,6 +62,7 @@ class MqttService {
   // connection succeeded
   void onConnected() {
     listener();
+    mac = _streamingSharedPreferencesService.readStringFromStreamingSP("MAC");
     connectionSuccessful();
     print('Connected');
   }
@@ -87,9 +101,29 @@ class MqttService {
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
+
       if (payload != ownMessage) {
         print('Received message:$payload from topic: ${c[0].topic}>');
         changeDisplayText('Received message:$payload');
+      }
+      if (c[0].topic ==
+          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
+        setInitialValues(jsonDecode(payload));
+      }
+      if (c[0].topic ==
+          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/BUTTON") {
+        refreshCallBack();
+      }
+      if (c[0].topic ==
+          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/SPEED") {
+        refreshCallBack();
+      }
+      if (c[0].topic == "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 1.0" ||
+          c[0].topic ==
+              "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
+          c[0].topic ==
+              "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 10") {
+        setInitialValues(payload, c[0].topic);
       }
     });
   }

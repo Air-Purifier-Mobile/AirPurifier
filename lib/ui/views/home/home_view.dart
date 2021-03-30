@@ -41,10 +41,11 @@ class HomeView extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      stops: [0, 1.0],
+                      stops: [0, 0.5, 1.0],
                       colors: [
                         model.color[800],
-                        model.color[400],
+                        model.color[600],
+                        model.color[200],
                       ],
                     ),
                   ),
@@ -204,8 +205,114 @@ class HomeView extends StatelessWidget {
                         ),
                       ),
 
+                      ///PM 1.0
+                      Container(
+                        height: height / 18,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'PM 1.0 : ',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            model.pm1 == null
+                                ? FadingText(
+                                    "....",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  )
+                                : Text(
+                                    '${model.pm1}',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+
+                      ///PM 2.5
+                      Container(
+                        height: height / 18,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'PM 2.5 : ',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            model.pm2 == null
+                                ? FadingText(
+                                    "....",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  )
+                                : Text(
+                                    '${model.pm2}',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+
+                      ///PM 10
+                      Container(
+                        height: height / 18,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'PM 10 : ',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            model.pm10 == null
+                                ? FadingText(
+                                    "....",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  )
+                                : Text(
+                                    '${model.pm10}',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+
                       verticalSpaceMassive,
 
+                      ///Re-Configure Button
                       Container(
                         height: 50.0,
                         width: width / 2.5,
@@ -213,44 +320,63 @@ class HomeView extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
-                        child: BusyButton(
-                            title: "Goto Remote",
-                            textStyle: TextStyle(
-                              fontSize: 20,
+                        child: MaterialButton(
+                          splashColor: model.color[600],
+                          onPressed: () {
+                            model.goToBluetoothScreen();
+                          },
+                          child: Text(
+                            "Reconfigure",
+                            style: TextStyle(
+                              fontSize: 21,
                               color: Colors.black,
                               fontWeight: FontWeight.w300,
                             ),
-                            onPressed: () {
-                              ///Remote
-                              model.gotoRemoteScreen();
-                            }),
+                          ),
+                        ),
+                        // child: BusyButton(
+                        //   title: "Reconfigure",
+
+                        //   onPressed: () {},
+                        // ),
                       ),
+
                       verticalSpaceLarge,
+
+                      ///Got to Remote Button
                       Container(
                         height: 50.0,
                         width: width / 2.5,
                         decoration: BoxDecoration(
-                          color: Colors.red[300],
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          color: Colors.white,
                         ),
-                        child: BusyButton(
-                            title: "Logout",
-                            textStyle: TextStyle(
-                              fontSize: 20,
+                        child: MaterialButton(
+                          splashColor: model.color[600],
+                          onPressed: () {
+                            model.gotoRemoteScreen();
+                          },
+                          child: Text(
+                            "Goto Remote",
+                            style: TextStyle(
+                              fontSize: 21,
                               color: Colors.black,
                               fontWeight: FontWeight.w300,
                             ),
-                            onPressed: () {
-                              ///Remote
-                              model.logout();
-                            }),
+                          ),
+                        ),
+                        // child: BusyButton(
+                        //   title: "Reconfigure",
+
+                        //   onPressed: () {},
+                        // ),
                       ),
                     ],
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(
-                    0.0,
+                    width / 1.1,
                     10.0,
                     10.0,
                     0.0,
@@ -266,6 +392,28 @@ class HomeView extends StatelessWidget {
                       ),
                       onPressed: () {
                         model.refresh();
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    10.0,
+                    10.0,
+                    width / 1.1,
+                    0.0,
+                  ),
+                  child: Container(
+                    width: 50.0,
+                    height: 50.0,
+                    color: Colors.transparent,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        model.logout();
                       },
                     ),
                   ),

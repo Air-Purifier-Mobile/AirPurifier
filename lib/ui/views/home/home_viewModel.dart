@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:air_purifier/app/router.gr.dart';
+import 'package:air_purifier/services/mqtt_service.dart';
+import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
@@ -14,6 +16,9 @@ class HomeViewModel extends BaseViewModel {
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   final NavigationService _navigationService = locator<NavigationService>();
+  final MqttService _mqttService = locator<MqttService>();
+  final StreamingSharedPreferencesService _streamingSharedPreferencesService =
+      locator<StreamingSharedPreferencesService>();
   Position position;
   String cityName;
   String description;
@@ -22,6 +27,11 @@ class HomeViewModel extends BaseViewModel {
   String humidity;
   String minTemp;
   String maxTemp;
+  String pm1;
+  String pm2;
+  String pm10;
+  String mac;
+  String rootTopic = "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/";
   MaterialColor color = Colors.lightBlue;
   void logout() {
     _authenticationService.signOut();
@@ -36,6 +46,9 @@ class HomeViewModel extends BaseViewModel {
     humidity = null;
     minTemp = null;
     maxTemp = null;
+    pm1 = null;
+    pm2 = null;
+    pm10 = null;
     notifyListeners();
     getPermissions();
   }
@@ -73,23 +86,49 @@ class HomeViewModel extends BaseViewModel {
               notifyListeners();
             }
           });
-          //setup http request
-          //https: //samples.openweathermap.org/data/2.5/weather?q=London&appid=439d4b804bc8187953eb36d2a8c26a02
-          // var url = Uri.https(
-          //   "api.openweathermap.org",
-          //   "/data/2.5/weather?lat=${_position.latitude.toString()}&lon=${_position.longitude.toString()}&appid=$apiKey",
-          // );
-          // await http.get(Uri.encodeFull(url)).then((result) {
-          //
-          // });
         }
+        print(" =============================MAC :" +
+            _streamingSharedPreferencesService
+                .readStringFromStreamingSP("MAC"));
+        setBusy(true);
+        _mqttService.setupConnection(
+          connectionSuccessful,
+          changeDisplayText,
+          setInitialValues,
+          getPermissions,
+        );
       },
     );
   }
 
-  void gotoRemoteScreen(){
+  void gotoRemoteScreen() {
     _navigationService.navigateTo(Routes.remoteControlView);
+  }
+
+  void connectionSuccessful() {
+    mac = _streamingSharedPreferencesService.readStringFromStreamingSP("MAC") +
+        "/";
+    _mqttService.subscribeToTopic(rootTopic + mac + "PM 1.0");
+    _mqttService.subscribeToTopic(rootTopic + mac + "PM 2.5");
+    _mqttService.subscribeToTopic(rootTopic + mac + "PM 10");
     notifyListeners();
+  }
+
+  void changeDisplayText(String display) {}
+
+  void setInitialValues(String value, String topic) {
+    if (topic == rootTopic + mac + "PM 1.0") {
+      pm1 = value;
+    } else if (topic == rootTopic + mac + "PM 2.5") {
+      pm2 = value;
+    } else if (topic == rootTopic + mac + "PM 10") {
+      pm10 = value;
+    }
+    notifyListeners();
+  }
+
+  void goToBluetoothScreen() {
+    _navigationService.navigateTo(Routes.bluetoothView);
   }
 
   Map dummy = {

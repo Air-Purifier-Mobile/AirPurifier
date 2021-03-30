@@ -71,12 +71,7 @@ class BluetoothViewModel extends BaseViewModel {
   }
 
   void onPressed(String ssid, BuildContext context) async {
-    goingForWifi = false;
-    displayText = "Sending SSID : $ssid to device";
-    bluetoothService.selectedSSID = ssid;
-    bluetoothService.sendCommand("+SSID,$ssid\r\n");
     //Fluttertoast.showToast(msg: ssid);
-    notifyListeners();
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -133,8 +128,14 @@ class BluetoothViewModel extends BaseViewModel {
                             onPressed: () {
                               ///Send Password to Device
                               bluetoothService.password = passController.text;
+                              goingForWifi = false;
+                              displayText = "Sending SSID : $ssid to device";
+                              bluetoothService.selectedSSID = ssid;
+                              bluetoothService.sendCommand("+SSID,$ssid\r\n");
                               bluetoothService.sendCommand(
-                                  "+PSS,${passController.text}\r\n");
+                                "+PSS,${passController.text}\r\n",
+                              );
+                              notifyListeners();
                               Navigator.of(context).pop();
                             },
                           ),

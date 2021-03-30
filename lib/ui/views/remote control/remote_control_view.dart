@@ -6,15 +6,24 @@ import 'package:air_purifier/ui/widgets/busy_button.dart';
 import 'package:air_purifier/ui/widgets/circular_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:stacked/stacked.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
-class RemoteControlView extends StatelessWidget {
+class RemoteControlView extends StatefulWidget {
   const RemoteControlView({Key key}) : super(key: key);
+
+  @override
+  _RemoteControlViewState createState() => _RemoteControlViewState();
+}
+
+class _RemoteControlViewState extends State<RemoteControlView> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    print("Rebuilding");
     return ViewModelBuilder<RemoteControlViewModel>.reactive(
       viewModelBuilder: () => RemoteControlViewModel(),
       onModelReady: (model) => model.onModelReady(),
@@ -33,212 +42,255 @@ class RemoteControlView extends StatelessWidget {
           },
           child: Scaffold(
             body: SafeArea(
-              child: Container(
-                height: height,
-                width: width,
-                color: Colors.purpleAccent,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        10,
-                        15,
-                        10,
-                        0,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            height: height / 12,
-                            width: width / 5,
-                            color: Colors.amber,
-                          ),
-                        ],
-                      ),
-                    ),
-                    verticalSpaceLarge,
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        10,
-                        15,
-                        10,
-                        0,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: height / 15,
-                            width: width / 3,
-                            color: Colors.amber,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        10,
-                        15,
-                        10,
-                        0,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            height: height / 15,
-                            width: width / 4,
-                            color: Colors.amber,
-                          ),
-                          Container(
-                            height: height / 15,
-                            width: width / 4,
-                            color: Colors.amber,
-                          ),
-                          Container(
-                            height: height / 15,
-                            width: width / 4,
-                            color: Colors.amber,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        10,
-                        15,
-                        10,
-                        0,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            height: height / 15,
-                            width: width / 3.5,
-                            color: Colors.amber,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                height: height / 15,
-                                width: width / 4,
-                                color: Colors.amber,
+              child: SingleChildScrollView(
+                child: model.isBusy
+                    ? Container(
+                        height: height,
+                        width: width,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : Container(
+                        height: height,
+                        width: width,
+                        color: Colors.blueAccent[100],
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                10,
+                                15,
+                                10,
+                                0,
                               ),
-                              Container(
-                                height: height / 15,
-                                width: width / 4,
-                                color: Colors.amber,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ToggleSwitch(
+                                    labels: [
+                                      "OFF",
+                                      "ON",
+                                    ],
+                                    activeBgColors: [
+                                      Colors.red,
+                                      Colors.green[800]
+                                    ],
+                                    initialLabelIndex:
+                                        model.initialIndexForSwitch,
+                                    onToggle: (index) {
+                                      model.publishMessage(
+                                        index == 0 ? "APOFF" : "APON",
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            verticalSpaceLarge,
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                10,
+                                15,
+                                10,
+                                0,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    height: height / 20,
+                                    width: width / 3,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[500],
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Purifier Mode",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  ToggleSwitch(
+                                    labels: [
+                                      "Auto",
+                                      "Manual",
+                                      "Sleep",
+                                    ],
+                                    initialLabelIndex:
+                                        model.initialIndexForPMode,
+                                    onToggle: (index) {
+                                      switch (index) {
+                                        case 0:
+                                          {
+                                            model.publishMessage("APMA");
+                                          }
+                                          break;
+                                        case 1:
+                                          {
+                                            model.publishMessage("APMM");
+                                          }
+                                          break;
+                                        case 2:
+                                          {
+                                            model.publishMessage("APMS");
+                                          }
+                                          break;
+                                        default:
+                                          {
+                                            Fluttertoast.showToast(
+                                              msg: "What was the input? $index",
+                                            );
+                                          }
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            verticalSpaceMedium,
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                10,
+                                15,
+                                10,
+                                0,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    height: height / 20,
+                                    width: width / 3,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[500],
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "LED Mode",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  ToggleSwitch(
+                                    initialLabelIndex:
+                                        model.initialIndexForLEDMode,
+                                    labels: [
+                                      "Auto",
+                                      "Manual",
+                                    ],
+                                    onToggle: (index) {
+                                      model.publishMessage(
+                                          index == 0 ? "APLA" : "APLM");
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            verticalSpaceMedium,
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                10,
+                                15,
+                                10,
+                                0,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: height / 20,
+                                    width: width / 3,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[500],
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Fan Speed",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            verticalSpaceMedium,
+                            ToggleSwitch(
+                              initialLabelIndex: model.initialIndexForFanSpeed,
+                              labels: [
+                                "1",
+                                "2",
+                                "3",
+                                "4",
+                              ],
+                              minWidth: width / 3,
+                              onToggle: (index) {
+                                switch (index) {
+                                  case 0:
+                                    {
+                                      model.publishMessage("1");
+                                    }
+                                    break;
+                                  case 1:
+                                    {
+                                      model.publishMessage("2");
+                                    }
+                                    break;
+                                  case 2:
+                                    {
+                                      model.publishMessage("3");
+                                    }
+                                    break;
+                                  case 3:
+                                    {
+                                      model.publishMessage("4");
+                                    }
+                                    break;
+                                  default:
+                                    {
+                                      Fluttertoast.showToast(
+                                        msg: "What was the input? $index",
+                                      );
+                                    }
+                                }
+                              },
+                            ),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ChameleonContainerView(),
+                                KnobsView(
+                                  initialBlue: model.blue,
+                                  initialGreen: model.green,
+                                  initialRed: model.red,
+                                  publishColorCallBack: model.publishMessage,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    // Padding(
-                    //   padding: EdgeInsets.fromLTRB(
-                    //     width / 50,
-                    //     15,
-                    //     width / 50,
-                    //     0,
-                    //   ),
-                    //   child: Container(
-                    //     height: height / 2.1,
-                    //     width: width / 1.05,
-                    //     padding: EdgeInsets.all(width / 50),
-                    //     color: Color.fromRGBO(
-                    //       model.red,
-                    //       model.green,
-                    //       model.blue,
-                    //       1,
-                    //     ),
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //       children: [
-                    //         Container(
-                    //           decoration: BoxDecoration(
-                    //             color: Colors.black,
-                    //             borderRadius:
-                    //                 BorderRadius.circular(height / 12),
-                    //           ),
-                    //           height: width / 3.4,
-                    //           width: width / 3.4,
-                    //           child: CircularSlider(
-                    //             changeColor: model.changeColor,
-                    //             color: Color.fromARGB(255, 255, 0, 0),
-                    //             colorCode: 'r',
-                    //           ),
-                    //           // child: SleekCircularSlider(
-                    //           //   min: 0,
-                    //           //   max: 255,
-                    //           //   initialValue: 128,
-                    //           //   appearance: CircularSliderAppearance(
-                    //           //     size: height / 16,
-                    //           //     angleRange: 270,
-                    //           //     animationEnabled: true,
-                    //           //     infoProperties: InfoProperties(
-                    //           //       modifier: (value) {
-                    //           //         return value.floor().toString();
-                    //           //       },
-                    //           //       mainLabelStyle: TextStyle(
-                    //           //         fontSize: 20,
-                    //           //         color: Colors.white,
-                    //           //       ),
-                    //           //     ),
-                    //           //     customWidths: CustomSliderWidths(
-                    //           //       trackWidth: 20,
-                    //           //       progressBarWidth: 20,
-                    //           //     ),
-                    //           //   ),
-                    //           // ),
-                    //         ),
-                    //         Container(
-                    //           decoration: BoxDecoration(
-                    //             color: Colors.white,
-                    //             borderRadius:
-                    //                 BorderRadius.circular(height / 12),
-                    //           ),
-                    //           height: width / 3.4,
-                    //           width: width / 3.4,
-                    //           child: CircularSlider(
-                    //             changeColor: model.changeColor,
-                    //             color: Color.fromARGB(255, 0, 255, 0),
-                    //             colorCode: 'g',
-                    //           ),
-                    //         ),
-                    //         Container(
-                    //           decoration: BoxDecoration(
-                    //             color: Colors.cyanAccent,
-                    //             borderRadius:
-                    //                 BorderRadius.circular(height / 12),
-                    //           ),
-                    //           height: width / 3.4,
-                    //           width: width / 3.4,
-                    //           child: CircularSlider(
-                    //             changeColor: model.changeColor,
-                    //             color: Color.fromARGB(255, 0, 0, 255),
-                    //             colorCode: 'b',
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ChameleonContainerView(),
-                        KnobsView(),
-                      ],
-                    ),
-                  ],
-                ),
               ),
             ),
           ),

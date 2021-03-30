@@ -5,13 +5,29 @@ import 'package:stacked/stacked.dart';
 import 'knobs_viewModel.dart';
 
 class KnobsView extends StatelessWidget {
-  const KnobsView({Key key}) : super(key: key);
+  final Function publishColorCallBack;
+  final int initialRed;
+  final int initialGreen;
+  final int initialBlue;
+  const KnobsView({
+    Key key,
+    this.publishColorCallBack,
+    this.initialBlue,
+    this.initialGreen,
+    this.initialRed,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return ViewModelBuilder<KnobsViewModel>.reactive(
       viewModelBuilder: () => KnobsViewModel(),
+      onModelReady: (model) => model.onModelReady(
+        publishColorCallBack,
+        initialRed,
+        initialGreen,
+        initialBlue,
+      ),
       builder: (context, model, child) {
         return Container(
           height: height / 2.1,
@@ -23,7 +39,7 @@ class KnobsView extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(height / 12),
                 ),
                 height: width / 3.4,
@@ -32,31 +48,9 @@ class KnobsView extends StatelessWidget {
                   initialValue: model.red,
                   color: Color.fromARGB(255, 255, 0, 0),
                   changeColor: model.updateRGBValues,
+                  publishChange: model.changeColor,
                   colorCode: 'r',
                 ),
-                // child: SleekCircularSlider(
-                //   min: 0,
-                //   max: 255,
-                //   initialValue: 128,
-                //   appearance: CircularSliderAppearance(
-                //     size: height / 16,
-                //     angleRange: 270,
-                //     animationEnabled: true,
-                //     infoProperties: InfoProperties(
-                //       modifier: (value) {
-                //         return value.floor().toString();
-                //       },
-                //       mainLabelStyle: TextStyle(
-                //         fontSize: 20,
-                //         color: Colors.white,
-                //       ),
-                //     ),
-                //     customWidths: CustomSliderWidths(
-                //       trackWidth: 20,
-                //       progressBarWidth: 20,
-                //     ),
-                //   ),
-                // ),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -69,12 +63,13 @@ class KnobsView extends StatelessWidget {
                   initialValue: model.green,
                   color: Color.fromARGB(255, 0, 255, 0),
                   changeColor: model.updateRGBValues,
+                  publishChange: model.changeColor,
                   colorCode: 'g',
                 ),
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.cyanAccent,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(height / 12),
                 ),
                 height: width / 3.4,
@@ -83,6 +78,7 @@ class KnobsView extends StatelessWidget {
                   initialValue: model.blue,
                   color: Color.fromARGB(255, 0, 0, 255),
                   changeColor: model.updateRGBValues,
+                  publishChange: model.changeColor,
                   colorCode: 'b',
                 ),
               ),

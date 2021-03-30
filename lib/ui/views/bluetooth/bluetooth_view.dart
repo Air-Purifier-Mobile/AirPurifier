@@ -1,3 +1,4 @@
+import 'package:air_purifier/ui/shared/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_indicators/progress_indicators.dart';
@@ -21,15 +22,16 @@ class BluetoothView extends StatelessWidget {
                 model.goingForWifi ? "Configure Wifi" : "Configure Bluetooth"),
             actions: [
               IconButton(
-                  icon: Icon(
-                    Icons.refresh,
-                  ),
-                  onPressed: () {
-                    if (model.goingForWifi)
-                      model.wifiRefresh();
-                    else
-                      model.onModelReady();
-                  }),
+                icon: Icon(
+                  Icons.refresh,
+                ),
+                onPressed: () {
+                  if (model.goingForWifi)
+                    model.wifiRefresh();
+                  else
+                    model.onModelReady();
+                },
+              ),
             ],
           ),
           body: !model.goingForWifi
@@ -40,11 +42,15 @@ class BluetoothView extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Center(
-                          child: Text(
-                            model.displayText,
-                            softWrap: true,
-                          ),
+                        Container(
+                          height: width / 12,
+                          width: width / 12,
+                          child: CircularProgressIndicator(),
+                        ),
+                        verticalSpaceMedium,
+                        Text(
+                          model.displayText,
+                          softWrap: true,
                         ),
                       ],
                     ),

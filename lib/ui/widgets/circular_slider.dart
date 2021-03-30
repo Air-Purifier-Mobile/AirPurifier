@@ -3,6 +3,7 @@ import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class CircularSlider extends StatefulWidget {
   final Function changeColor;
+  final Function publishChange;
   final Color color;
   final String colorCode;
   final int initialValue;
@@ -11,6 +12,7 @@ class CircularSlider extends StatefulWidget {
     this.color,
     this.colorCode,
     this.initialValue,
+    this.publishChange,
   });
 
   @override
@@ -23,9 +25,10 @@ class _CircularSliderState extends State<CircularSlider> {
     return SleekCircularSlider(
       min: 0,
       max: 255,
-      initialValue: widget.initialValue.toDouble(),
-      onChangeEnd: (val) {
-        print(val);
+      initialValue: widget.initialValue.toDouble() ?? 20.0,
+      onChangeEnd: (value) {
+        widget.publishChange();
+        print(value);
       },
       appearance: CircularSliderAppearance(
         customColors: CustomSliderColors(

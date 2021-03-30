@@ -14,15 +14,18 @@ class ChameleonContainerView extends StatelessWidget {
       builder: (context, model, child) {
         return GestureDetector(
           child: Container(
-            height: height / 2.1,
+            height: height / 2.5,
             width: width / 1.05,
-            padding: EdgeInsets.all(width / 50),
-            color: Color.fromRGBO(
-              model.red,
-              model.green,
-              model.blue,
-              1,
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(
+                model.red,
+                model.green,
+                model.blue,
+                1,
+              ),
+              borderRadius: BorderRadius.circular(25),
             ),
+            padding: EdgeInsets.all(width / 50),
           ),
           onTap: () {
             model.notifyListeners();

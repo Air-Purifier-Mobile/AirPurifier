@@ -9,6 +9,5 @@ class ChameleonContainerViewModel extends ReactiveViewModel {
   int get blue => _rgbService.blue;
 
   @override
-  // TODO: implement reactiveServices
   List<ReactiveServiceMixin> get reactiveServices => [_rgbService];
 }

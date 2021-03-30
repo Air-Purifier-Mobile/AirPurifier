@@ -55,6 +55,7 @@ dependencies:
   keyboard_dismisser: ^2.0.0
   google_fonts: ^2.0.0
   progress_indicators:
+  toggle_switch: ^0.1.9
 
   # Alerts
   fluttertoast:
