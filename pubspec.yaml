@@ -30,6 +30,7 @@ dependencies:
   auto_route:
   get_it:
   injectable:
+  observable_ish:
 
   # Shared Preferences
   streaming_shared_preferences: ^1.0.2

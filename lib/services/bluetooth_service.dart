@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/authentication_service.dart';

@@ -10,6 +10,14 @@ class RemoteControlViewModel extends BaseViewModel {
   MqttService _mqttService = locator<MqttService>();
   String rootTopic = "/sushrutpatwardhan@gmail.com/";
   String subscribedTopic = "/sushrutpatwardhan@gmail.com/";
+  int red = 255;
+  int green = 255;
+  int blue = 255;
+  void changeBlue() {
+    blue -= 10;
+    notifyListeners();
+  }
+
   void unsubscribeToTopic() {
     _mqttService.unSubscribeToTopic(rootTopic);
   }
