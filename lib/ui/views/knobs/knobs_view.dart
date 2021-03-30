@@ -39,8 +39,15 @@ class KnobsView extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(height / 12),
+                  color: Color.fromRGBO(36, 37, 41, 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      offset: Offset(0.0, 6.0),
+                      blurRadius: 6.0,
+                    ),
+                  ],
                 ),
                 height: width / 3.4,
                 width: width / 3.4,
@@ -54,7 +61,14 @@ class KnobsView extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Color.fromRGBO(36, 37, 41, 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      offset: Offset(0.0, 6.0),
+                      blurRadius: 6.0,
+                    ),
+                  ],
                   borderRadius: BorderRadius.circular(height / 12),
                 ),
                 height: width / 3.4,
@@ -69,7 +83,14 @@ class KnobsView extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Color.fromRGBO(36, 37, 41, 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      offset: Offset(0.0, 6.0),
+                      blurRadius: 6.0,
+                    ),
+                  ],
                   borderRadius: BorderRadius.circular(height / 12),
                 ),
                 height: width / 3.4,

@@ -23,6 +23,13 @@ class ChameleonContainerView extends StatelessWidget {
                 model.blue,
                 1,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                  offset: Offset(0.0, 6.0),
+                  blurRadius: 6.0,
+                ),
+              ],
               borderRadius: BorderRadius.circular(25),
             ),
             padding: EdgeInsets.all(width / 50),

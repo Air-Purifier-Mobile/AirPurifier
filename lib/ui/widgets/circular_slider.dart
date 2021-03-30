@@ -43,7 +43,7 @@ class _CircularSliderState extends State<CircularSlider> {
           },
           mainLabelStyle: TextStyle(
             fontSize: 20,
-            color: Color.fromARGB(255, 255, 0, 0),
+            color: widget.color,
           ),
         ),
       ),

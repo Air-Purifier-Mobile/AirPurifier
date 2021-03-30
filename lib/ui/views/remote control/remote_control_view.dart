@@ -47,6 +47,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                     ? Container(
                         height: height,
                         width: width,
+                        color: Color.fromRGBO(36, 37, 41, 1),
                         child: Center(
                           child: CircularProgressIndicator(),
                         ),
@@ -54,7 +55,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                     : Container(
                         height: height,
                         width: width,
-                        color: Colors.blueAccent[100],
+                        color: Color.fromRGBO(36, 37, 41, 1),
                         child: Column(
                           children: [
                             Padding(
@@ -68,22 +69,36 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                 mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  ToggleSwitch(
-                                    labels: [
-                                      "OFF",
-                                      "ON",
-                                    ],
-                                    activeBgColors: [
-                                      Colors.red,
-                                      Colors.green[800]
-                                    ],
-                                    initialLabelIndex:
-                                        model.initialIndexForSwitch,
-                                    onToggle: (index) {
-                                      model.publishMessage(
-                                        index == 0 ? "APOFF" : "APON",
-                                      );
-                                    },
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Color.fromRGBO(42, 46, 51, 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          offset: Offset(0.0, 5.0),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: ToggleSwitch(
+                                      inactiveFgColor: Colors.white,
+                                      labels: [
+                                        "OFF",
+                                        "ON",
+                                      ],
+                                      activeBgColors: [
+                                        Colors.red,
+                                        Colors.green[800]
+                                      ],
+                                      initialLabelIndex:
+                                          model.initialIndexForSwitch,
+                                      onToggle: (index) {
+                                        model.publishMessage(
+                                          index == 0 ? "APOFF" : "APON",
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -105,8 +120,15 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     height: height / 20,
                                     width: width / 3,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[500],
-                                      borderRadius: BorderRadius.circular(20),
+                                      color: Color.fromRGBO(42, 46, 51, 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          offset: Offset(0.0, 5.0),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
                                     ),
                                     child: Center(
                                       child: Text(
@@ -119,39 +141,59 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                       ),
                                     ),
                                   ),
-                                  ToggleSwitch(
-                                    labels: [
-                                      "Auto",
-                                      "Manual",
-                                      "Sleep",
-                                    ],
-                                    initialLabelIndex:
-                                        model.initialIndexForPMode,
-                                    onToggle: (index) {
-                                      switch (index) {
-                                        case 0:
-                                          {
-                                            model.publishMessage("APMA");
-                                          }
-                                          break;
-                                        case 1:
-                                          {
-                                            model.publishMessage("APMM");
-                                          }
-                                          break;
-                                        case 2:
-                                          {
-                                            model.publishMessage("APMS");
-                                          }
-                                          break;
-                                        default:
-                                          {
-                                            Fluttertoast.showToast(
-                                              msg: "What was the input? $index",
-                                            );
-                                          }
-                                      }
-                                    },
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Color.fromRGBO(42, 46, 51, 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          offset: Offset(0.0, 5.0),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: ToggleSwitch(
+                                      labels: [
+                                        "Auto",
+                                        "Manual",
+                                        "Sleep",
+                                      ],
+                                      inactiveFgColor: Colors.white,
+                                      activeBgColors: [
+                                        Color.fromRGBO(239, 173, 75, 1),
+                                        Color.fromRGBO(239, 173, 75, 1),
+                                        Color.fromRGBO(239, 173, 75, 1),
+                                      ],
+                                      initialLabelIndex:
+                                          model.initialIndexForPMode,
+                                      onToggle: (index) {
+                                        switch (index) {
+                                          case 0:
+                                            {
+                                              model.publishMessage("APMA");
+                                            }
+                                            break;
+                                          case 1:
+                                            {
+                                              model.publishMessage("APMM");
+                                            }
+                                            break;
+                                          case 2:
+                                            {
+                                              model.publishMessage("APMS");
+                                            }
+                                            break;
+                                          default:
+                                            {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "What was the input? $index",
+                                              );
+                                            }
+                                        }
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -173,8 +215,15 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     height: height / 20,
                                     width: width / 3,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[500],
-                                      borderRadius: BorderRadius.circular(20),
+                                      color: Color.fromRGBO(42, 46, 51, 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          offset: Offset(0.0, 5.0),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
                                     ),
                                     child: Center(
                                       child: Text(
@@ -187,17 +236,36 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                       ),
                                     ),
                                   ),
-                                  ToggleSwitch(
-                                    initialLabelIndex:
-                                        model.initialIndexForLEDMode,
-                                    labels: [
-                                      "Auto",
-                                      "Manual",
-                                    ],
-                                    onToggle: (index) {
-                                      model.publishMessage(
-                                          index == 0 ? "APLA" : "APLM");
-                                    },
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Color.fromRGBO(42, 46, 51, 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          offset: Offset(0.0, 5.0),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: ToggleSwitch(
+                                      initialLabelIndex:
+                                          model.initialIndexForLEDMode,
+                                      inactiveFgColor: Colors.white,
+                                      activeBgColors: [
+                                        Color.fromRGBO(239, 173, 75, 1),
+                                        Color.fromRGBO(239, 173, 75, 1),
+                                        Color.fromRGBO(239, 173, 75, 1),
+                                      ],
+                                      labels: [
+                                        "Auto",
+                                        "Manual",
+                                      ],
+                                      onToggle: (index) {
+                                        model.publishMessage(
+                                            index == 0 ? "APLA" : "APLM");
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -218,8 +286,15 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     height: height / 20,
                                     width: width / 3,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[500],
-                                      borderRadius: BorderRadius.circular(20),
+                                      color: Color.fromRGBO(42, 46, 51, 1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          offset: Offset(0.0, 5.0),
+                                          blurRadius: 5.0,
+                                        ),
+                                      ],
                                     ),
                                     child: Center(
                                       child: Text(
@@ -232,49 +307,72 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                       ),
                                     ),
                                   ),
+
+                                  /// Add Fan Icon
                                 ],
                               ),
                             ),
                             verticalSpaceMedium,
-                            ToggleSwitch(
-                              initialLabelIndex: model.initialIndexForFanSpeed,
-                              labels: [
-                                "1",
-                                "2",
-                                "3",
-                                "4",
-                              ],
-                              minWidth: width / 3,
-                              onToggle: (index) {
-                                switch (index) {
-                                  case 0:
-                                    {
-                                      model.publishMessage("1");
-                                    }
-                                    break;
-                                  case 1:
-                                    {
-                                      model.publishMessage("2");
-                                    }
-                                    break;
-                                  case 2:
-                                    {
-                                      model.publishMessage("3");
-                                    }
-                                    break;
-                                  case 3:
-                                    {
-                                      model.publishMessage("4");
-                                    }
-                                    break;
-                                  default:
-                                    {
-                                      Fluttertoast.showToast(
-                                        msg: "What was the input? $index",
-                                      );
-                                    }
-                                }
-                              },
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(42, 46, 51, 1),
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    offset: Offset(0.0, 5.0),
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                              ),
+                              child: ToggleSwitch(
+                                initialLabelIndex:
+                                    model.initialIndexForFanSpeed,
+                                labels: [
+                                  "1",
+                                  "2",
+                                  "3",
+                                  "4",
+                                ],
+                                inactiveFgColor: Colors.white,
+                                activeBgColors: [
+                                  Color.fromRGBO(239, 173, 75, 1),
+                                  Color.fromRGBO(239, 173, 75, 1),
+                                  Color.fromRGBO(239, 173, 75, 1),
+                                  Color.fromRGBO(239, 173, 75, 1),
+                                ],
+                                minWidth: width / 3,
+                                onToggle: (index) {
+                                  switch (index) {
+                                    case 0:
+                                      {
+                                        model.publishMessage("1");
+                                      }
+                                      break;
+                                    case 1:
+                                      {
+                                        model.publishMessage("2");
+                                      }
+                                      break;
+                                    case 2:
+                                      {
+                                        model.publishMessage("3");
+                                      }
+                                      break;
+                                    case 3:
+                                      {
+                                        model.publishMessage("4");
+                                      }
+                                      break;
+                                    default:
+                                      {
+                                        Fluttertoast.showToast(
+                                          msg: "What was the input? $index",
+                                        );
+                                      }
+                                  }
+                                },
+                              ),
                             ),
                             Stack(
                               alignment: Alignment.center,
