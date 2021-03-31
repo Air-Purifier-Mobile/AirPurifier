@@ -1,4 +1,5 @@
 import 'package:air_purifier/app/locator.dart';
+import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/bluetooth_service.dart';
 import 'package:air_purifier/services/wifi_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,7 @@ class BluetoothViewModel extends BaseViewModel {
   final BluetoothService bluetoothService = locator<BluetoothService>();
   final DialogService _dialogService = locator<DialogService>();
   final TextEditingController passController = TextEditingController();
+  final NavigationService _navigationService = locator<NavigationService>();
   String displayText = "Please switch On the Bluetooth";
   bool goingForWifi = false;
   List ssids = [];
@@ -20,6 +22,11 @@ class BluetoothViewModel extends BaseViewModel {
   void changeDisplayTextCallBack(String event) {
     displayText = event;
     notifyListeners();
+  }
+
+  ///goto login screen
+  void goToLoginScreen() {
+    _navigationService.clearStackAndShow(Routes.loginView);
   }
 
   //Callback for changing to wifi

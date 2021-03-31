@@ -1,5 +1,6 @@
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
+import 'package:air_purifier/services/phone_auth_service.dart';
 import 'package:air_purifier/services/rgbColor_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:air_purifier/services/wifi_service.dart';
@@ -36,4 +37,7 @@ abstract class ThirdPartyServicesModule {
 
   @lazySingleton
   RGBService get rgbService;
+
+  @lazySingleton
+  PhoneAuthenticationService get phoneAuthenticationService;
 }

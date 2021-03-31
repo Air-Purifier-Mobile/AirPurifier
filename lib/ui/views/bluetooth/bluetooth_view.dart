@@ -24,6 +24,12 @@ class BluetoothView extends StatelessWidget {
               title: Text(model.goingForWifi
                   ? "Configure Wifi"
                   : "Configure Bluetooth"),
+              leading: IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () {
+                  model.goToLoginScreen();
+                },
+              ),
               actions: [
                 IconButton(
                   icon: Icon(

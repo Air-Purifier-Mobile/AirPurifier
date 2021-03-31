@@ -15,6 +15,7 @@ import '../ui/views/home/home_view.dart';
 import '../ui/views/login/login_view.dart';
 import '../ui/views/remote%20control/remote_control_view.dart';
 import '../ui/views/startUp/startup_view.dart';
+import '../ui/views/phoneAuth/phone_auth_view.dart';
 
 class Routes {
   static const String StartUpView = '/start-up-view';
@@ -23,6 +24,7 @@ class Routes {
   static const String homeView = '/home-view';
   static const String bluetoothView = '/bluetooth-view';
   static const String remoteControlView = '/remote-control-view';
+  static const String phoneAuthView = '/phone-auth-view';
   static const all = <String>{
     StartUpView,
     dummyView,
@@ -30,6 +32,7 @@ class Routes {
     homeView,
     bluetoothView,
     remoteControlView,
+    phoneAuthView,
   };
 }
 
@@ -43,6 +46,7 @@ class Router extends RouterBase {
     RouteDef(Routes.homeView, page: HomeView),
     RouteDef(Routes.bluetoothView, page: BluetoothView),
     RouteDef(Routes.remoteControlView, page: RemoteControlView),
+    RouteDef(Routes.phoneAuthView, page: PhoneAuthView),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -80,6 +84,12 @@ class Router extends RouterBase {
     RemoteControlView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const RemoteControlView(),
+        settings: data,
+      );
+    },
+    PhoneAuthView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const PhoneAuthView(),
         settings: data,
       );
     },
