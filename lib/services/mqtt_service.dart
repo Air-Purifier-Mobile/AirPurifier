@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class MqttService {
   MqttServerClient _client;
@@ -17,18 +19,19 @@ class MqttService {
   List<MqttReceivedMessage<MqttMessage>> responseList = [];
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
+  final NavigationService _navigationService = locator<NavigationService>();
   void setupConnection(
     Function _connectionSuccessful,
     Function _changeDisplayText,
     Function setInit,
     Function refresh,
   ) async {
+    String clientID = getRandomString(20).toString();
     connectionSuccessful = _connectionSuccessful;
     changeDisplayText = _changeDisplayText;
     setInitialValues = setInit;
     refreshCallBack = refresh;
-    _client =
-        MqttServerClient.withPort('mqtt.dioty.co', '3C:61:05:12:EA:F4', 1883);
+    _client = MqttServerClient.withPort('mqtt.dioty.co', clientID, 1883);
     _client.logging(on: true);
     _client.onConnected = onConnected;
     _client.onDisconnected = onDisconnected;
@@ -48,7 +51,7 @@ class MqttService {
         .withWillMessage('will message')
         .startClean()
         .withWillQos(MqttQos.atLeastOnce)
-        .withClientIdentifier('3C:61:05:12:EA:F4');
+        .withClientIdentifier(clientID);
 
     _client.connectionMessage = connMessage;
     try {
@@ -69,7 +72,12 @@ class MqttService {
 
   // unconnected
   void onDisconnected() {
+    _navigationService.back();
     print('Disconnected');
+  }
+
+  void disconnectBroker() {
+    _client.disconnect();
   }
 
   // subscribe to topic succeeded
@@ -107,6 +115,13 @@ class MqttService {
         changeDisplayText('Received message:$payload');
       }
       if (c[0].topic ==
+          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/IN") {
+        if (payload != ownMessage) {
+          print('Received message:$payload from topic: ${c[0].topic}>');
+          refreshCallBack();
+        }
+      }
+      if (c[0].topic ==
           "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
         setInitialValues(jsonDecode(payload));
       }
@@ -140,4 +155,12 @@ class MqttService {
   void unSubscribeToTopic(String topic) {
     _client.unsubscribe(topic);
   }
+
+  ///RANDOM generation id
+  String _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 }

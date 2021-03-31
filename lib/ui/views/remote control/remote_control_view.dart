@@ -31,7 +31,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
         Future<bool> _onBackPressed() {
           return Future.delayed(Duration(seconds: 0), () {
             model.unsubscribeToTopic();
-            Navigator.of(context).pop();
+
             return true;
           });
         }
@@ -41,6 +41,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
             return _onBackPressed();
           },
           child: Scaffold(
+            backgroundColor: Color.fromRGBO(36, 37, 41, 1),
             body: SafeArea(
               child: SingleChildScrollView(
                 child: model.isBusy
@@ -54,9 +55,9 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                       )
                     : SingleChildScrollView(
                         child: Container(
-                          height: height,
+                          height: height / 1.05,
                           width: width,
-                          color: Color.fromRGBO(36, 37, 41, 1),
+                          color: Colors.transparent,
                           child: Column(
                             children: [
                               Padding(
