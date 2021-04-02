@@ -5,6 +5,7 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -48,25 +49,31 @@ class BluetoothService {
         // changeDisplayText(response);
         // Fluttertoast.showToast(msg: "Device Response: " + response);
         if (startReadingJson || response.contains('\$')) {
+          _buffer = (_buffer + response).trim();
           if (!response.contains('\$')) {
             _firestoreService.storeResponses(
               uid: "Inside first IF $counter",
               mac: _buffer,
             );
             counter++;
-            _buffer = _buffer + response;
           } else if (startReadingJson) {
-            if (response.length > 1) {
-              _buffer = (_buffer + response).trim();
-              _buffer = _buffer.substring(0, _buffer.length - 1).trim();
+            int dollarPosition = _buffer.lastIndexOf('\$');
+            if (dollarPosition == _buffer.length - 1) {
+              // if dollar position is at end of the string
+              if ('}' == _buffer[_buffer.length - 2] &&
+                  ']' == _buffer[_buffer.length - 3]) {
+                //reading json completed
+                _buffer = _buffer.substring(0, _buffer.length - 1).trim();
+                changeDisplayText("buffer-" + _buffer);
+                startReadingJson = false;
+                String temp = _buffer;
+                _buffer = '';
+                jsonMap = jsonDecode(temp);
+                updateSSIDListCallback(jsonMap['SSID']);
+                changeToWifiScreen();
+              }
+              // still continuing the search of json
             }
-            changeDisplayText("buffer-" + _buffer);
-            startReadingJson = false;
-            String temp = _buffer;
-            _buffer = '';
-            jsonMap = jsonDecode(temp);
-            updateSSIDListCallback(jsonMap['SSID']);
-            changeToWifiScreen();
           } else
             startReadingJson = true;
         }
