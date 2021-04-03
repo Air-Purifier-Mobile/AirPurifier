@@ -111,7 +111,7 @@ class MqttService {
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
 
       if (payload != ownMessage) {
-        print('Received message:$payload from topic: ${c[0].topic}>');
+        print('Received message:$payload from topic: ${c[0].topic}');
         changeDisplayText('Received message:$payload');
       }
       if (c[0].topic ==

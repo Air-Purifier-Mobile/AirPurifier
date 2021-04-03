@@ -102,6 +102,7 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void gotoRemoteScreen() {
+    _mqttService.disconnectBroker();
     _navigationService.navigateTo(Routes.remoteControlView);
   }
 

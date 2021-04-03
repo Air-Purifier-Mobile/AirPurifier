@@ -1,6 +1,7 @@
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
 
 class RemoteControlViewModel extends BaseViewModel {
@@ -28,6 +29,7 @@ class RemoteControlViewModel extends BaseViewModel {
   }
 
   void unsubscribeToTopic() {
+    Fluttertoast.showToast(msg: 'Disconnect');
     _mqttService.disconnectBroker();
   }
 
@@ -39,8 +41,13 @@ class RemoteControlViewModel extends BaseViewModel {
       connectionSuccessful,
       changeDisplayText,
       setInitialValues,
-      onModelReady,
+      refreshDeviceState,
     );
+  }
+
+  void refreshDeviceState() {
+    _mqttService.publishPayload("GET", rootTopic + mac + "DEVICE");
+    notifyListeners();
   }
 
   void connectionSuccessful() {
@@ -57,6 +64,9 @@ class RemoteControlViewModel extends BaseViewModel {
 
   void publishMessage(String message) {
     String topic = rootTopic + mac + "IN";
+    // _mqttService.publishPayload(
+    //     '{"AP motor":"OFF","AP mode":"MANUAL","LED mode":"AUTO","AP speed":1,"R color":0,"G color":0,"B color":0}',
+    //     rootTopic + mac + "RESPONSE");
     _mqttService.publishPayload(message, topic);
   }
 
