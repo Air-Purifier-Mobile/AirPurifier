@@ -42,99 +42,77 @@ class BluetoothService {
     try {
       connection.input.listen((event) {}).onData((utfData) {
         String response = utf8.decode(utfData).toString();
-        _firestoreService.storeResponses(
-          uid: "Responses $messageOrder",
-          mac: response,
-        );
-        messageOrder++;
-        // changeDisplayText(response);
-        // Fluttertoast.showToast(msg: "Device Response: " + response);
-
-        if (startReadingJson || response.contains('\$' * 40)) {
-          if (response.contains('\#' * 40)) {
-            startReadingJson = false;
-            changeDisplayText(allWifiDevices.toString());
-            updateSSIDListCallback(allWifiDevices);
-            changeToWifiScreen();
-          }
-          if (startReadingJson)
-            allWifiDevices.add(response);
-          else if (response.contains('\$' * 40)) startReadingJson = true;
-        }
-
-        if (response == "" || response == " ") {
-          Fluttertoast.showToast(
-              msg: "Received spaces or empty String in message");
-        }
-        if (password != null && response == password) {
-          changeDisplayText("Password Set In device");
-          sendCommand("+CONNECT\r\n");
-        }
-        if (response == "OK") {
-          macResponse = true;
-          sendCommand("+MAC?\r\n");
-        }
-        if (response == "WIFI CONNECTED") {
-          changeDisplayText("Device Connected To $selectedSSID");
-          _navigationService.clearStackAndShow(Routes.homeView);
-        }
-        if (response == "WIFI FAIL") {
-          changeDisplayText("Device failed to Connect to $selectedSSID");
-          failedResponseCount++;
-          if (true) {
-            changeToBluetoothScreen();
-            connection.dispose();
-            changeDisplayText(
-                "Restarting Device...\nRefresh when device ready to connect.");
-          }
-        }
-        if (macResponse) {
-          changeDisplayText("MAC of device Saved in Shared Preferences");
-          _firestoreService.storeUserData(
-            uid: _authenticationService.getUID(),
-            mac: response.trim(),
+        if (response != "" &&
+            response != "\r\n" &&
+            response != "\n" &&
+            response != "\r" &&
+            response != " " &&
+            response != " \r\n") {
+          _firestoreService.storeResponses(
+            uid: "Responses $messageOrder",
+            mac: response,
           );
-          _streamingSharedPreferencesService.changeStringInStreamingSP(
-            "MAC",
-            response.trim(),
-          );
-          changeDisplayText("Sending command to fetch SSIDs");
-          sendCommand("+SCAN?\r\n");
+          messageOrder++;
+          // changeDisplayText(response);
+          // Fluttertoast.showToast(msg: "Device Response: " + response);
+
+          if (startReadingJson || response.contains('\$' * 40)) {
+            if (response.contains('\#' * 40)) {
+              startReadingJson = false;
+              changeDisplayText(allWifiDevices.toString());
+              _firestoreService.storeResponses(
+                uid: "Responses Final list",
+                mac: allWifiDevices.toString(),
+              );
+              updateSSIDListCallback(allWifiDevices);
+              changeToWifiScreen();
+            }
+            if (startReadingJson)
+              allWifiDevices.add(response);
+            else if (response.contains('\$' * 40)) startReadingJson = true;
+          }
+
+          if (response == "" || response == " ") {
+            Fluttertoast.showToast(
+                msg: "Received spaces or empty String in message");
+          }
+          if (password != null && response == password) {
+            changeDisplayText("Password Set In device");
+            sendCommand("+CONNECT\r\n");
+          }
+          if (macResponse) {
+            changeDisplayText("MAC of device Saved in Shared Preferences");
+            _firestoreService.storeUserData(
+              uid: _authenticationService.getUID(),
+              mac: response.trim(),
+            );
+            _streamingSharedPreferencesService.changeStringInStreamingSP(
+              "MAC",
+              response.trim(),
+            );
+            changeDisplayText("Sending command to fetch SSIDs");
+            macResponse = false;
+            sendCommand("+SCAN?\r\n");
+          }
+          if (response == "OK") {
+            macResponse = true;
+            sendCommand("+MAC?\r\n");
+          }
+          if (response == "WIFI CONNECTED") {
+            changeDisplayText("Device Connected To $selectedSSID");
+            _navigationService.clearStackAndShow(Routes.homeView);
+          }
+          if (response == "WIFI FAIL") {
+            changeDisplayText("Device failed to Connect to $selectedSSID");
+            failedResponseCount++;
+            if (true) {
+              changeToBluetoothScreen();
+              connection.dispose();
+              changeDisplayText(
+                  "Restarting Device...\nRefresh when device ready to connect.");
+            }
+          }
         }
-        // else {
-        // try {
-        //   temp = jsonDecode(response);
-        //   Fluttertoast.showToast(msg: 'json decode ran');
-        //   changeDisplayText(temp.toString());
-        //   if (temp.containsKey("Total_SSID")) {
-        //     updateSSIDListCallback(temp["SSID"]);
-        //     changeDisplayText('Length of list'+temp['SSID'].length);
-        //     changeToWifiScreen();
-        //   }
-        //   else{
-        //     updateSSIDListCallback(temp["SSID"]);
-        //     //changeDisplayText('Length of list'+temp['SSID'].length);
-        //     changeToWifiScreen();
-        //   }
-        //   changeDisplayText('Error in parsing');
-        // } catch (error) {
-        //   if (response == password) {
-        //   changeDisplayText("Password Set In device");
-        //   sendCommand("+CONNECT\r\n");
-        // }
-        //    else if (response == selectedSSID) {
-        //   } else {
-        //     Future.delayed(Duration(seconds: 2),(){
-        //       _streamingSharedPreferencesService.changeStringInStreamingSP(
-        //         "MAC_ID",
-        //         response,
-        //       );
-        //       changeDisplayText("MAC ID of Device is: ${error.toString()}");
-        //       //_firestoreService.storeUserData(uid: _authenticationService.getUID(), mac: response);
-        //     });
-        //   }
-        // }
-        // }
       });
     } catch (error) {
       Fluttertoast.showToast(

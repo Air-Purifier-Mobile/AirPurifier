@@ -15,7 +15,7 @@ class BluetoothViewModel extends BaseViewModel {
   final NavigationService _navigationService = locator<NavigationService>();
   String displayText = "Please switch On the Bluetooth";
   bool goingForWifi = false;
-  List ssids = [];
+  List<String> ssids = [];
   bool gotList = false;
 
   //Callback for changing display text
@@ -59,13 +59,9 @@ class BluetoothViewModel extends BaseViewModel {
         notifyListeners();
       }
     });
-    // Future.delayed(Duration(seconds: 3),
-    //     (){
-    //       goToWifiScreen();
-    //     });
   }
 
-  void updateSSIDList(List list) {
+  void updateSSIDList(List<String> list) {
     ssids = list;
     notifyListeners();
   }
@@ -73,6 +69,7 @@ class BluetoothViewModel extends BaseViewModel {
   void wifiRefresh() {
     gotList = false;
     displayText = "Sending command to fetch SSIDs";
+    bluetoothService.allWifiDevices = [];
     bluetoothService.sendCommand("+SCAN?\r\n");
     notifyListeners();
   }

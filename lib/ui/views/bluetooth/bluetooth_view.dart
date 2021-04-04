@@ -72,19 +72,18 @@ class BluetoothView extends StatelessWidget {
                     ),
                   )
                 : model.ssids.length != 0
-                    ? SingleChildScrollView(
-                        child: Container(
-                          color: Color.fromRGBO(36, 37, 41, 1),
-                          child: ListView.builder(
+                    ? Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
                             itemCount: model.ssids.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: EdgeInsets.fromLTRB(3, 5, 3, 5),
                                 child: ListTile(
-                                  key: Key(model.ssids[index]),
                                   title: Text(
                                     model.ssids[index],
-                                    style: TextStyle(fontSize: 20.0),
+                                    style: TextStyle(fontSize: 17.0),
                                   ),
                                   trailing: IconButton(
                                     icon: Icon(Icons.add),
@@ -97,7 +96,7 @@ class BluetoothView extends StatelessWidget {
                               );
                             },
                           ),
-                        ),
+                        ],
                       )
                     : Container(
                         color: Color.fromRGBO(36, 37, 41, 1),
