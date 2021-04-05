@@ -1,6 +1,5 @@
-import 'package:air_purifier/ui/shared/ui_helpers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:stacked/stacked.dart';
@@ -11,19 +10,16 @@ class BluetoothView extends StatelessWidget {
   const BluetoothView({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     return ViewModelBuilder<BluetoothViewModel>.reactive(
       viewModelBuilder: () => BluetoothViewModel(),
       onModelReady: (model) => model.onModelReady(),
       builder: (context, model, child) {
         return KeyboardDismisser(
           child: Scaffold(
+            backgroundColor: Color.fromRGBO(39, 35, 67, 1),
             appBar: AppBar(
-              backgroundColor: Color.fromRGBO(42, 46, 51, 1),
-              title: Text(model.goingForWifi
-                  ? "Configure Wifi"
-                  : "Configure Bluetooth"),
+              backgroundColor: Color.fromRGBO(39, 35, 67, 1),
+              elevation: 0.0,
               leading: IconButton(
                 icon: Icon(Icons.logout),
                 onPressed: () {
@@ -45,84 +41,409 @@ class BluetoothView extends StatelessWidget {
               ],
             ),
             body: !model.goingForWifi
-                ? SingleChildScrollView(
-                    child: Container(
-                      height: height,
-                      width: width,
-                      color: Color.fromRGBO(36, 37, 41, 1),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: width / 12,
-                            width: width / 12,
-                            child: CircularProgressIndicator(),
-                          ),
-                          verticalSpaceLarge,
-                          Text(
-                            model.displayText,
-                            softWrap: true,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                ? BlueTooth(
+                    text: model.displayText,
                   )
-                : model.ssids.length != 0
-                    ? Column(
-                        children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: model.ssids.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.fromLTRB(3, 5, 3, 5),
-                                child: ListTile(
-                                  title: Text(
-                                    model.ssids[index],
-                                    style: TextStyle(fontSize: 17.0),
-                                  ),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.add),
-                                    onPressed: () {
-                                      model.onPressed(
-                                          model.ssids[index], context);
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      )
-                    : Container(
-                        color: Color.fromRGBO(36, 37, 41, 1),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                model.displayText,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              FadingText(
-                                "....",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                : Wifi(
+                    wifiList: model.ssids,
+                    connect: model.sendPasswordToDevice,
+                  ),
           ),
         );
       },
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class BlueTooth extends StatelessWidget {
+  String text;
+  BlueTooth({
+    this.text,
+  });
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    return Container(
+      height: height,
+      width: width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: height / 15,
+          ),
+          Text(
+            "Bluetooth Configuration",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: height / 36,
+              fontFamily: 'Noah',
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(
+            height: height / 40,
+          ),
+          Text(
+            "Please wait while we establish your",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: height / 45,
+              fontFamily: 'Noah',
+              color: Colors.white70,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                " Bluetooth connection",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: height / 45,
+                  fontFamily: 'Noah',
+                  color: Colors.white70,
+                ),
+              ),
+              FadingText(
+                "...",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: height / 40,
+                  fontFamily: 'Noah',
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: height / 15,
+          ),
+          Container(
+            height: height / 2.5,
+            width: width / 1.5,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/bluetooth.png",
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: height / 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Status: ",
+                style: TextStyle(
+                  fontSize: height / 45,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                text,
+                softWrap: true,
+                style: TextStyle(
+                  fontSize: height / 45,
+                  color: Colors.white70,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class Wifi extends StatelessWidget {
+  List<String> wifiList;
+  Function connect;
+  Wifi({
+    this.wifiList,
+    this.connect,
+  });
+  @override
+  Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
+    void _modalBottomSheetMenu(String ssid) {
+      TextEditingController password = TextEditingController();
+      showModalBottomSheet(
+          backgroundColor: Colors.transparent,
+          isScrollControlled: true,
+          context: context,
+          builder: (builder) {
+            return Container(
+              height: height / 3,
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(width / 10),
+                  topRight: Radius.circular(width / 10),
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: width / 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Enter Password : ",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: height / 30,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Noah",
+                      ),
+                    ),
+                    TextFormField(
+                      controller: password,
+                      cursorColor: Colors.white70,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: height / 40,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: "Password",
+                        labelStyle: TextStyle(
+                          color: Colors.white70,
+                          fontSize: height / 40,
+                        ),
+                        hintStyle: TextStyle(
+                          color: Colors.white70,
+                          fontSize: height / 40,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: height / 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            width: width / 3,
+                            height: height / 15,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(height / 30),
+                              color: Colors.black,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: height / 40,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            connect(ssid, password.text.trim());
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            width: width / 3,
+                            height: height / 15,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(height / 30),
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 1,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Connect",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: height / 40,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
+    }
+
+    // List<String> list = [
+    //   "Ez God",
+    //   "TD",
+    //   "Nachos",
+    //   "Zelzar Bhadwa",
+    //   "DDD",
+    //   "Blazkowicz",
+    //   "Popoye",
+    // ];
+    return Container(
+      height: height,
+      width: width,
+      child: Flex(
+        direction: Axis.vertical,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: height / 50,
+          ),
+          Container(
+            height: height / 5,
+            width: width / 3,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  "assets/wifi.png",
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: height / 15,
+          ),
+          Container(
+            width: width / 1.2,
+            height: height / 12,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Connect your device",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: height / 30,
+                    fontFamily: 'Noah',
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(
+                  height: height / 300,
+                ),
+                Text(
+                  "Select wifi",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: height / 45,
+                    fontFamily: 'Noah',
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: height / 80,
+          ),
+          Container(
+            color: Colors.white70,
+            height: 1,
+            width: width / 1.2,
+          ),
+          SizedBox(
+            height: height / 80,
+          ),
+          wifiList.length != 0
+              ? Container(
+                  width: width / 1.2,
+                  height: height / 2.5,
+                  child: ListView.builder(
+                    itemCount: wifiList.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 2.0),
+                        child: InkWell(
+                          onTap: () {
+                            _modalBottomSheetMenu(wifiList[index]);
+                          },
+                          child: Container(
+                            width: width / 1.2,
+                            height: height / 13,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.wifi,
+                                  color: Colors.white70,
+                                  size: height / 30,
+                                ),
+                                SizedBox(
+                                  width: width / 20,
+                                ),
+                                Text(
+                                  wifiList[index],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: height / 37,
+                                    fontFamily: 'Noah',
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.symmetric(vertical: height / 6),
+                  child: Container(
+                    child: Text(
+                      "No Wifi networks available ",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: height / 35,
+                        fontFamily: 'Noah',
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+          SizedBox(
+            height: height / 80,
+          ),
+          Container(
+            color: Colors.white70,
+            height: 1,
+            width: width / 1.2,
+          ),
+        ],
+      ),
     );
   }
 }

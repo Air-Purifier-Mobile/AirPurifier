@@ -2,7 +2,6 @@ import 'package:air_purifier/ui/views/startup/startUp_viewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
-
 class StartUpView extends StatelessWidget {
   const StartUpView({Key key}) : super(key: key);
 
@@ -17,10 +16,15 @@ class StartUpView extends StatelessWidget {
       builder: (context, model, child) => SafeArea(
         child: Center(
           child: Container(
-            color: Colors.white,
+            color: Color.fromRGBO(39, 35, 67, 1),
             height: height,
             width: width,
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.white70,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+              ),
+            ),
           ),
         ),
       ),

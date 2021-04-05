@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'DirectBill',
       debugShowCheckedModeBanner: false,
-      initialRoute: customRouter.Routes.loginView,
+      initialRoute: customRouter.Routes.StartUpView,
       theme: ThemeData(fontFamily: 'Noah'),
       // ignore: deprecated_member_use
       navigatorKey: locator<NavigationService>().navigatorKey,

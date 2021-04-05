@@ -50,6 +50,7 @@ class PhoneNumberView extends StatelessWidget {
                     ),
                     Text(
                       "Please enter your phone number",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: height / 32,
