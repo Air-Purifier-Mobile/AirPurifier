@@ -82,10 +82,6 @@ class BluetoothService {
           }
           if (macResponse) {
             changeDisplayText("MAC of device Saved in Shared Preferences");
-            _firestoreService.storeUserData(
-              uid: _authenticationService.getUID(),
-              mac: response.trim(),
-            );
             _streamingSharedPreferencesService.changeStringInStreamingSP(
               "MAC",
               response.trim(),
@@ -100,6 +96,11 @@ class BluetoothService {
           }
           if (response == "WIFI CONNECTED") {
             changeDisplayText("Device Connected To $selectedSSID");
+            _firestoreService.storeUserData(
+              uid: _authenticationService.getUID(),
+              mac: _streamingSharedPreferencesService
+                  .readStringFromStreamingSP('MAC'),
+            );
             _navigationService.clearStackAndShow(Routes.homeView);
           }
           if (response == "WIFI FAIL") {
