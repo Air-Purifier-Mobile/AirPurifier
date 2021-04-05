@@ -69,6 +69,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_native_splash: ^1.1.7+1
+flutter_native_splash:
+  color: "#272343"
+  image: assets/aeolus.png
+  android: true
+  ios: true
+
+
   auto_route_generator:
   build_runner:
   injectable_generator:
