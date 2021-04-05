@@ -1,5 +1,6 @@
 import 'package:air_purifier/ui/views/dummyView/dummy_view.dart';
 import 'package:air_purifier/ui/views/home/home_view.dart';
+import 'package:air_purifier/ui/views/phone%20number/phone_number_view.dart';
 import 'package:air_purifier/ui/views/phoneAuth/phone_auth_view.dart';
 import 'package:air_purifier/ui/views/remote%20control/remote_control_view.dart';
 import 'package:air_purifier/ui/views/login/login_view.dart';
@@ -17,6 +18,8 @@ import 'package:air_purifier/ui/views/bluetooth/bluetooth_view.dart';
     MaterialRoute(
         page: RemoteControlView, initial: false, name: "remoteControlView"),
     MaterialRoute(page: PhoneAuthView, initial: false, name: "phoneAuthView"),
+    MaterialRoute(
+        page: PhoneNumberView, initial: false, name: "phoneNumberView"),
   ],
 )
 class $Router {}

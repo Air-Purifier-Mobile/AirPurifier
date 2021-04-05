@@ -6,22 +6,24 @@ import 'package:air_purifier/ui/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:stacked/stacked.dart';
 
 class PhoneAuthView extends StatelessWidget {
-  const PhoneAuthView({Key key}) : super(key: key);
-
+  PhoneAuthView({Key key, this.phoneNo}) : super(key: key);
+  final String phoneNo;
+  String otp = "";
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return ViewModelBuilder<PhoneAuthViewModel>.reactive(
+      onModelReady: (model) => model.onModelReady(phoneNo),
       builder: (context, model, child) => Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromRGBO(39, 35, 67, 1),
           body: KeyboardDismisser(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 50),
-              color: Color.fromRGBO(36, 37, 41, 1),
               height: height,
               width: width,
               child: SingleChildScrollView(
@@ -35,76 +37,117 @@ class PhoneAuthView extends StatelessWidget {
                     SizedBox(
                       height: height / 6,
                     ),
-                    Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: [
-                        Container(
-                          height: 130,
-                          width: 130,
+                    Container(
+                      padding:
+                          EdgeInsets.fromLTRB(0, height / 5, 0, height / 10),
+                      height: height / 8,
+                      width: width / 7,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "assets/otp.png",
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                    verticalSpaceMedium,
+                    SizedBox(
+                      height: height / 18,
+                    ),
                     Text(
-                      "WELCOME",
+                      "Please enter the OTP",
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
-                        fontSize: 22.0,
-                        color: HexColor("#3585FE"),
+                        fontSize: height / 32,
+                        fontFamily: 'Noah',
+                        color: Colors.white,
                       ),
                     ),
-                    verticalSpaceSmall,
+                    SizedBox(
+                      height: height / 70,
+                    ),
                     Text(
-                      "Register to continue your Journey",
+                      "We have sent you an access code via SMS \n on your mobile number.",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 18.0,
-                        color: HexColor("#3585FE"),
+                        fontWeight: FontWeight.w100,
+                        fontSize: height / 50,
+                        fontFamily: 'Noah',
+                        color: Colors.white70,
                       ),
                     ),
-                    verticalSpaceLarge,
-                    verticalSpaceMedium,
-                    InputField(
-                      placeholder: 'Enter Mobile Number',
-                      // prefixText: "+91  ",
-                      prefix: Container(
-                        child: Text("+91 "),
+                    SizedBox(
+                      height: height / 15,
+                    ),
+                    PinCodeTextField(
+                      showCursor: true,
+                      keyboardType: TextInputType.number,
+                      length: 6,
+                      obscureText: false,
+                      cursorColor: Color.fromRGBO(39, 35, 67, 1),
+                      animationType: AnimationType.fade,
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.circle,
+                        activeFillColor: HexColor("ffffff"),
+                        selectedFillColor: HexColor("ffffff"),
+                        inactiveColor: Colors.white,
+                        activeColor: Colors.white,
+                        selectedColor: Colors.white,
+                        inactiveFillColor: Color.fromRGBO(39, 35, 67, 1),
                       ),
-                      textInputType: TextInputType.number,
-                      prefixIcon: Icon(Icons.person),
-                      controller: model.phoneNoController,
+                      animationDuration: Duration(milliseconds: 300),
+                      backgroundColor: Color.fromRGBO(39, 35, 67, 1),
+                      enableActiveFill: true,
+                      onCompleted: (v) {
+                        otp = v.toString();
+                        print("Completed");
+                      },
+                      onChanged: (value) {
+                        print(value);
+                      },
+                      beforeTextPaste: (text) {
+                        print("Allowing to paste $text");
+                        return true;
+                      },
+                      appContext: context,
                     ),
-                    verticalSpaceSmall,
-                    InputField(
-                      placeholder: '               Enter OTP',
-                      textInputType: TextInputType.number,
-                      prefixIcon: Icon(Icons.messenger_outline_outlined),
-                      controller: model.otpController,
+                    SizedBox(
+                      height: height / 8,
                     ),
-                    verticalSpaceMedium,
-                    verticalSpaceLarge,
                     Container(
-                      height: height / 16.5,
+                      height: height / 10,
+                      width: height / 10,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: HexColor("#3585FE"),
+                        borderRadius: BorderRadius.circular(height / 12),
+                        color: Colors.white,
                       ),
-                      child: BusyButton(
-                        textStyle: TextStyle(
-                          fontWeight: FontWeight.w700,
+                      child: IconButton(
+                          icon: Icon(
+                            Icons.arrow_forward_rounded,
+                            color: Color.fromRGBO(39, 35, 67, 1),
+                            size: height / 23,
+                          ),
+                          onPressed: () {
+                            model.verifyOtp(otp);
+                          }),
+                    ),
+                    SizedBox(
+                      height: height / 20,
+                    ),
+                    GestureDetector(
+                      child: Text(
+                        "Resend OTP?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.w100,
+                          fontSize: height / 50,
+                          fontFamily: 'Noah',
                           color: Colors.white,
-                          fontSize: (height / 18) * 0.4,
                         ),
-                        title: model.isOtpSeen ? 'REGISTER' : 'SEND OTP',
-                        busy: model.isBusy,
-                        onPressed: () {
-                          if (!model.isOtpSeen)
-                            model.checkInputParams();
-                          else {
-                            model.verifyOtp();
-                          }
-                        },
                       ),
+                      onTap: () {
+                        model.signIn();
+                      },
                     ),
                   ],
                 ),

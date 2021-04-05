@@ -64,7 +64,7 @@ class LoginView extends StatelessWidget {
                               fontFamily: "Noah",
                               color: Colors.white,
                               fontSize: height / 15,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w700,
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -98,17 +98,17 @@ class LoginView extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: "Noah",
                               color: Color.fromRGBO(39, 35, 67, 1),
-                              fontSize: height / 25,
+                              fontSize: height / 20,
                               fontWeight: FontWeight.w600,
                               decoration: TextDecoration.none,
                             ),
                           ),
                           SizedBox(
-                            height: height / 15,
+                            height: height / 20,
                           ),
                           Container(
                             height: height / 15,
-                            width: width / 1.7,
+                            width: width / 1.5,
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(39, 35, 67, 1),
                               borderRadius: BorderRadius.circular(25.0),
@@ -163,7 +163,7 @@ class LoginView extends StatelessWidget {
                           ),
                           Container(
                             height: height / 15,
-                            width: width / 1.7,
+                            width: width / 1.5,
                             decoration: BoxDecoration(
                               color: Color.fromRGBO(39, 35, 67, 1),
                               borderRadius: BorderRadius.circular(25.0),

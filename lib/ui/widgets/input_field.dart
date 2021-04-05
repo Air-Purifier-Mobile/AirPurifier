@@ -73,11 +73,14 @@ class _InputFieldState extends State<InputField> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          height: widget.smallVersion ? 40 : fieldHeight,
+          width: width / 1.5,
+          height: height / 15,
           alignment: Alignment.centerLeft,
           padding: fieldPadding,
           decoration:

@@ -12,52 +12,47 @@ class PhoneAuthViewModel extends BaseViewModel {
   final otpController = TextEditingController();
   StreamingSharedPreferencesService streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
-
+  String phoneNo = "";
   bool isOtpSeen = false;
 
-  void verifyOtp() async {
-    setBusy(true);
-    await _authenticationService
-        .setOtpAndLogin(
-      otpController.text.trim(),
-    )
-        .then((value) {
-      try {
-        if (_authenticationService.isUserLogged()) {
-          Fluttertoast.showToast(msg: 'Otp Verification Successful');
-          setBusy(false);
-        } else {
-          print("\n-------------------Auto Detected OTP-------------------\n");
-          Fluttertoast.showToast(msg: 'Otp Verification Failed');
+  void onModelReady(String number) {
+    phoneNo = number;
+    Fluttertoast.showToast(msg: 'Please wait for OTP');
+    signIn();
+  }
+
+  void verifyOtp(String otp) async {
+    if (otp.length == 6) {
+      setBusy(true);
+      await _authenticationService.setOtpAndLogin(otp.trim()).then((value) {
+        try {
+          if (_authenticationService.isUserLogged()) {
+            Fluttertoast.showToast(msg: 'Otp Verification Successful');
+            setBusy(false);
+          } else {
+            print(
+                "\n-------------------Auto Detected OTP-------------------\n");
+            Fluttertoast.showToast(msg: 'Otp Verification Failed');
+            isOtpSeen = false;
+            setBusy(false);
+            notifyListeners();
+          }
+        } catch (e) {
+          Fluttertoast.showToast(msg: e.toString());
           isOtpSeen = false;
           setBusy(false);
           notifyListeners();
         }
-      } catch (e) {
-        Fluttertoast.showToast(msg: e.toString());
-        isOtpSeen = false;
-        setBusy(false);
-        notifyListeners();
-      }
-    });
-  }
-
-  checkInputParams() {
-    if (phoneNoController.text.trim().length != 10)
-      Fluttertoast.showToast(msg: 'Please Enter a valid number');
-    else {
-      streamingSharedPreferencesService.changeStringInStreamingSP(
-          'phoneNo', phoneNoController.text.trim());
-      Fluttertoast.showToast(msg: 'Please wait for OTP');
-      signIn();
-    }
+      });
+    } else
+      Fluttertoast.showToast(msg: 'Enter valid OTP');
   }
 
   Future signIn() async {
     setBusy(true);
     await _authenticationService
         .loginWithPhoneNo(
-      phoneNo: phoneNoController.text.trim(),
+      phoneNo: phoneNo,
     )
         .then((value) {
       if (value == 1) {
