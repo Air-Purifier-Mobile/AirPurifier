@@ -39,6 +39,8 @@ class _BusyButtonState extends State<BusyButton> {
         child: !widget.busy
             ? widget.image != null
                 ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       widget.image,
                       horizontalSpaceSmall,

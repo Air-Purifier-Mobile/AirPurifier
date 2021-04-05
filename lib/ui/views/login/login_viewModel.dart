@@ -14,6 +14,6 @@ class LoginViewModel extends BaseViewModel {
   }
 
   void loginWithPhone() {
-    _navigationService.clearStackAndShow(Routes.phoneAuthView);
+    _navigationService.navigateTo(Routes.phoneAuthView);
   }
 }

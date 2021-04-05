@@ -1,5 +1,6 @@
 import 'package:air_purifier/ui/shared/ui_helpers.dart';
 import 'package:air_purifier/ui/widgets/busy_button.dart';
+import 'package:air_purifier/ui/widgets/clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -15,135 +16,182 @@ class LoginView extends StatelessWidget {
     return ViewModelBuilder<LoginViewModel>.reactive(
       viewModelBuilder: () => LoginViewModel(),
       builder: (context, model, child) {
-        return SingleChildScrollView(
-          child: Container(
-            height: height,
-            width: width,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  HexColor('#0CA9EC'),
-                  HexColor('#7ED8FE'),
-                  HexColor('#E0EEF4'),
-                  Colors.white
-                ],
-                stops: [0.3, 0.6, 0.87, 1],
+        return Container(
+          color: Color.fromRGBO(39, 35, 67, 1),
+          child: Stack(
+            alignment: AlignmentDirectional.bottomCenter,
+            children: [
+              ClipPath(
+                child: Container(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.bottomCenter,
+                  color: Color.fromRGBO(186, 232, 232, 0.7),
+                  height: height / 1.6,
+                ),
+                clipper: DownHillClipper(),
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  child: Text(
-                    "AEOLUS",
-                    style: GoogleFonts.comicNeue(
-                      textStyle: TextStyle(
-                        fontSize: 30.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        decoration: TextDecoration.none,
+              ClipPath(
+                child: Container(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.bottomCenter,
+                  color: Color.fromRGBO(227, 246, 245, 0.7),
+                  height: height / 1.5,
+                ),
+                clipper: UphillClipper(),
+              ),
+              Container(
+                height: height,
+                width: width,
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.fromLTRB(
+                        width / 10,
+                        0.0,
+                        0.0,
+                        0.0,
                       ),
-                    ),
-                  ),
-                ),
-                verticalSpaceMedium,
-                Container(
-                  child: Text(
-                    "Air Purifier",
-                    style: GoogleFonts.comicNeue(
-                      textStyle: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: height / 3,
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    0.0,
-                    0.0,
-                    0.0,
-                    height / 15,
-                  ),
-                  child: Container(
-                    width: width / 1.6,
-                    height: 50.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.white,
-                          HexColor('#0CA9EC'),
+                      height: height / 2,
+                      width: width,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Hello",
+                            style: TextStyle(
+                              fontFamily: "Noah",
+                              color: Colors.white,
+                              fontSize: height / 15,
+                              fontWeight: FontWeight.w400,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          Text(
+                            "Welcome to the Aeolus family.",
+                            style: TextStyle(
+                              fontFamily: "Noah",
+                              fontSize: height / 50,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
                         ],
-                        stops: [0.87, 1],
                       ),
                     ),
-                    child: BusyButton(
-                      onPressed: () {
-                        model.login();
-                      },
-                      title: "Continue with Google",
-                      textStyle: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w200,
-                        decoration: TextDecoration.none,
+                    Container(
+                      padding: EdgeInsets.fromLTRB(
+                        0.0,
+                        height / 12,
+                        0.0,
+                        0.0,
                       ),
-                      image: Image.asset(
-                        'assets/google.png',
-                        height: 30.0,
-                        width: width / 20,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    0.0,
-                    0.0,
-                    0.0,
-                    height / 10,
-                  ),
-                  child: Container(
-                    width: width / 1.6,
-                    height: 50.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.white,
-                          HexColor('#0CA9EC'),
+                      height: height / 2,
+                      width: width,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Log In",
+                            style: TextStyle(
+                              fontFamily: "Noah",
+                              color: Color.fromRGBO(39, 35, 67, 1),
+                              fontSize: height / 25,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          SizedBox(
+                            height: height / 15,
+                          ),
+                          Container(
+                            height: height / 15,
+                            width: width / 1.7,
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(39, 35, 67, 1),
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            child: BusyButton(
+                              title: "Enter Phone Number",
+                              busy: model.isBusy,
+                              onPressed: () => model.loginWithPhone(),
+                              textStyle: TextStyle(
+                                fontFamily: "Noah",
+                                color: Colors.white,
+                                fontSize: height / 43,
+                                fontWeight: FontWeight.w300,
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: height / 30,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                color: Color.fromRGBO(39, 35, 67, 1),
+                                height: 1,
+                                width: width / 6,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "or",
+                                style: TextStyle(
+                                  color: Color.fromRGBO(39, 35, 67, 1),
+                                  fontWeight: FontWeight.w100,
+                                  fontSize: 11,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                color: Color.fromRGBO(39, 35, 67, 1),
+                                height: 1,
+                                width: width / 6,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: height / 30,
+                          ),
+                          Container(
+                            height: height / 15,
+                            width: width / 1.7,
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(39, 35, 67, 1),
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            child: BusyButton(
+                              title: "Continue with google",
+                              onPressed: () => model.login(),
+                              busy: model.isBusy,
+                              textStyle: TextStyle(
+                                fontFamily: "Noah",
+                                color: Colors.white,
+                                fontSize: height / 43,
+                                fontWeight: FontWeight.w300,
+                                decoration: TextDecoration.none,
+                              ),
+                              image: Image.asset(
+                                "assets/google.png",
+                                height: height / 40,
+                              ),
+                            ),
+                          ),
                         ],
-                        stops: [0.87, 1],
                       ),
                     ),
-                    child: BusyButton(
-                      onPressed: () {
-                        model.loginWithPhone();
-                      },
-                      title: "Continue with Phone",
-                      textStyle: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w200,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
