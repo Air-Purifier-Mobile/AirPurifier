@@ -41,15 +41,9 @@ class PhoneAuthenticationService {
         'userUID', uid);
     _firestoreStorageService.retrieveUserDocument(uid).then((value) {
       if (!value.exists) {
-        _navigationService.clearStackAndShow(Routes.bluetoothView);
+        _navigationService.clearStackAndShow(Routes.addDeviceView);
       } else {
         print("\n----------------Going to Home Screen-------------------\n");
-        _streamingSharedPreferencesService.changeStringInStreamingSP(
-          "customUser",
-          jsonEncode(
-            value.data(),
-          ),
-        );
         _navigationService.clearStackAndShow(Routes.homeView);
       }
     });

@@ -61,9 +61,6 @@ class BluetoothViewModel extends BaseViewModel {
   }
 
   void onModelReady() {
-    Future.delayed(Duration(seconds: 2), () {
-      changeDisplayTextCallBack("2 seconds have passed");
-    });
     bluetoothService
         .enableBluetooth(changeDisplayTextCallBack, goToWifiScreen,
             updateSSIDList, goToBluetoothScreen)

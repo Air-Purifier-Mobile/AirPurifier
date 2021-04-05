@@ -129,7 +129,7 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void goToBluetoothScreen() {
-    _navigationService.navigateTo(Routes.bluetoothView);
+    _navigationService.navigateTo(Routes.addDeviceView);
   }
 
   Map dummy = {

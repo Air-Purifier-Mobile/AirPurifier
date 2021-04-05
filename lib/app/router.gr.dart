@@ -17,6 +17,7 @@ import '../ui/views/remote%20control/remote_control_view.dart';
 import '../ui/views/startUp/startup_view.dart';
 import '../ui/views/phoneAuth/phone_auth_view.dart';
 import '../ui/views/phone number/phone_number_view.dart';
+import '../ui/views/add device/add_device_view.dart';
 
 class Routes {
   static const String StartUpView = '/start-up-view';
@@ -27,6 +28,7 @@ class Routes {
   static const String remoteControlView = '/remote-control-view';
   static const String phoneAuthView = '/phone-auth-view';
   static const String phoneNumberView = '/phone-number-view';
+  static const String addDeviceView = '/add-device-view';
   static const all = <String>{
     StartUpView,
     dummyView,
@@ -36,6 +38,7 @@ class Routes {
     remoteControlView,
     phoneAuthView,
     phoneNumberView,
+    addDeviceView,
   };
 }
 
@@ -51,6 +54,7 @@ class Router extends RouterBase {
     RouteDef(Routes.remoteControlView, page: RemoteControlView),
     RouteDef(Routes.phoneAuthView, page: PhoneAuthView),
     RouteDef(Routes.phoneNumberView, page: PhoneNumberView),
+    RouteDef(Routes.addDeviceView, page: AddDeviceView),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -102,6 +106,12 @@ class Router extends RouterBase {
     PhoneNumberView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => const PhoneNumberView(),
+        settings: data,
+      );
+    },
+    AddDeviceView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const AddDeviceView(),
         settings: data,
       );
     },

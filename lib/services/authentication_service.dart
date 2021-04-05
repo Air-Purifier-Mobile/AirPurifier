@@ -64,7 +64,7 @@ class AuthenticationService {
               );
               _navigationService.replaceWith(Routes.homeView);
             } else {
-              _navigationService.replaceWith(Routes.bluetoothView);
+              _navigationService.replaceWith(Routes.addDeviceView);
             }
           });
 

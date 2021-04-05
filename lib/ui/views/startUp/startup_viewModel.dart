@@ -23,7 +23,7 @@ class StartUpViewModel extends BaseViewModel {
               .retrieveUserDocument(_authenticationService.getUID())
               .then((temp) {
             if (!temp.exists)
-              _navigationService.replaceWith(Routes.bluetoothView);
+              _navigationService.replaceWith(Routes.addDeviceView);
             else {
               _streamingSharedPreferencesService.changeStringInStreamingSP(
                   'MAC', temp.data()['MAC']);

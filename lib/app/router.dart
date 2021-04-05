@@ -1,3 +1,4 @@
+import 'package:air_purifier/ui/views/add%20device/add_device_view.dart';
 import 'package:air_purifier/ui/views/dummyView/dummy_view.dart';
 import 'package:air_purifier/ui/views/home/home_view.dart';
 import 'package:air_purifier/ui/views/phone%20number/phone_number_view.dart';
@@ -20,6 +21,7 @@ import 'package:air_purifier/ui/views/bluetooth/bluetooth_view.dart';
     MaterialRoute(page: PhoneAuthView, initial: false, name: "phoneAuthView"),
     MaterialRoute(
         page: PhoneNumberView, initial: false, name: "phoneNumberView"),
+    MaterialRoute(page: AddDeviceView, initial: false, name: "addDeviceView"),
   ],
 )
 class $Router {}
