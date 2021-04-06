@@ -17,6 +17,8 @@ class BluetoothViewModel extends BaseViewModel {
   bool goingForWifi = false;
   List<String> ssids = [];
   bool gotList = false;
+  String finalSSID = '';
+  String finalPass = '';
 
   //Callback for changing display text
   void changeDisplayTextCallBack(String event) {
@@ -42,12 +44,21 @@ class BluetoothViewModel extends BaseViewModel {
 
   void sendPasswordToDevice(String ssid, String pass) {
     goingForWifi = false;
-    displayText = "Sending SSID : $ssid to device";
+    finalSSID = ssid;
+    finalPass = pass;
+    displayText = "Sending SSID : $finalSSID to device";
     bluetoothService.selectedSSID = ssid;
-    bluetoothService.sendCommand("+SSID,$ssid\r\n");
-    bluetoothService.sendCommand(
-      "+PSS,pass\r\n",
-    );
+    bluetoothService.password = pass;
+    Future.delayed(Duration(milliseconds: 500), () {
+      bluetoothService.sendCommand("+SSID,$ssid\r\n");
+    });
+    Future.delayed(Duration(milliseconds: 500), () {
+      bluetoothService.sendCommand(
+        "+PSS," + finalPass.trim() + "\r\n",
+      );
+    });
+    finalSSID = '';
+    finalPass = '';
     notifyListeners();
   }
 
@@ -82,7 +93,9 @@ class BluetoothViewModel extends BaseViewModel {
     gotList = false;
     displayText = "Sending command to fetch SSIDs";
     bluetoothService.allWifiDevices = [];
-    bluetoothService.sendCommand("+SCAN?\r\n");
+    Future.delayed(Duration(milliseconds: 500), () {
+      bluetoothService.sendCommand("+SCAN?\r\n");
+    });
     notifyListeners();
   }
 }

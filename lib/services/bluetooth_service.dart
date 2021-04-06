@@ -26,11 +26,10 @@ class BluetoothService {
   Function changeToWifiScreen;
   Function updateSSIDListCallback;
   Function changeToBluetoothScreen;
-  String password;
-  String selectedSSID;
+  String password = '';
+  String selectedSSID = '';
   int failedResponseCount = 0;
   Map<String, dynamic> jsonMap;
-  String _buffer = '';
   bool startReadingJson = false;
   bool macResponse = false;
   int messageOrder = 0;
@@ -53,8 +52,6 @@ class BluetoothService {
             mac: response,
           );
           messageOrder++;
-          // changeDisplayText(response);
-          // Fluttertoast.showToast(msg: "Device Response: " + response);
 
           if (startReadingJson || response.contains('\$' * 40)) {
             if (response.contains('\#' * 40)) {
@@ -71,14 +68,14 @@ class BluetoothService {
               allWifiDevices.add(response);
             else if (response.contains('\$' * 40)) startReadingJson = true;
           }
-
-          if (response == "" || response == " ") {
-            Fluttertoast.showToast(
-                msg: "Received spaces or empty String in message");
+          if (response == selectedSSID) {
+            changeDisplayText("SSID response registered");
           }
           if (password != null && response == password) {
             changeDisplayText("Password Set In device");
-            sendCommand("+CONNECT\r\n");
+            Future.delayed(Duration(milliseconds: 500), () {
+              sendCommand("+CONNECT\r\n");
+            });
           }
           if (macResponse) {
             changeDisplayText("MAC of device Saved in Shared Preferences");
@@ -88,11 +85,15 @@ class BluetoothService {
             );
             changeDisplayText("Sending command to fetch SSIDs");
             macResponse = false;
-            sendCommand("+SCAN?\r\n");
+            Future.delayed(Duration(milliseconds: 500), () {
+              sendCommand("+SCAN?\r\n");
+            });
           }
           if (response == "OK") {
             macResponse = true;
-            sendCommand("+MAC?\r\n");
+            Future.delayed(Duration(milliseconds: 500), () {
+              sendCommand("+MAC?\r\n");
+            });
           }
           if (response == "WIFI CONNECTED") {
             changeDisplayText("Device Connected To $selectedSSID");
@@ -102,16 +103,18 @@ class BluetoothService {
                   .readStringFromStreamingSP('MAC'),
             );
             _navigationService.clearStackAndShow(Routes.homeView);
+            selectedSSID = '';
+            password = '';
           }
           if (response == "WIFI FAIL") {
             changeDisplayText("Device failed to Connect to $selectedSSID");
             failedResponseCount++;
-            if (true) {
-              changeToBluetoothScreen();
-              connection.dispose();
-              changeDisplayText(
-                  "Restarting Device...\nRefresh when device ready to connect.");
-            }
+            selectedSSID = '';
+            password = '';
+            connection.dispose();
+            changeDisplayText(
+                "Device failed to connect to wifi. Restarting configuration");
+            changeToBluetoothScreen();
           }
         }
       });
@@ -142,7 +145,8 @@ class BluetoothService {
       changeDisplayText('Searching for Air Purifier');
       allDevices.add(event);
     }, onError: (error) {
-      changeDisplayText('Error on discovery' + error.toString());
+      changeDisplayText(
+          'Air Purifier refused to connect. Please restart the application.');
     });
     _streamSubscription.onDone(() {
       stopScanningDevices();
@@ -172,14 +176,15 @@ class BluetoothService {
       _connection.isConnected
           ? changeDisplayText("Device Connected SuccessFully")
           : changeDisplayText("Purifier Not Connected");
-      sendMessage();
-      init();
-    }).onError((error, stackTrace) =>
-        changeDisplayText("Device Connection Failed " + error.toString()));
+      Future.delayed(Duration(milliseconds: 500), () {
+        sendMessage();
+        init();
+      });
+    }).onError((error, stackTrace) => changeDisplayText(
+        "Air Purifier refused to connect. Please restart the application."));
   }
 
   void sendMessage() async {
-    print('Sending AT to device');
     changeDisplayText('Sending AT to device. Waiting for response');
     connection.output.add(utf8.encode("AT\r\n"));
     await connection.output.allSent;

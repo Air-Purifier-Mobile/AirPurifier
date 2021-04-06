@@ -307,7 +307,7 @@ class Wifi extends StatelessWidget {
     //   "Ez God",
     //   "TD",
     //   "Nachos",
-    //   "Zelzar Bhadwa",
+    //   "Zelzar ",
     //   "DDD",
     //   "Blazkowicz",
     //   "Popoye",
