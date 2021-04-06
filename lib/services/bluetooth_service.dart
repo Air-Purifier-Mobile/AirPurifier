@@ -52,7 +52,6 @@ class BluetoothService {
             mac: response,
           );
           messageOrder++;
-
           if (startReadingJson || response.contains('\$' * 40)) {
             if (response.contains('\#' * 40)) {
               startReadingJson = false;
@@ -102,9 +101,10 @@ class BluetoothService {
               mac: _streamingSharedPreferencesService
                   .readStringFromStreamingSP('MAC'),
             );
-            _navigationService.clearStackAndShow(Routes.homeView);
             selectedSSID = '';
             password = '';
+            connection.dispose();
+            _navigationService.clearStackAndShow(Routes.homeView);
           }
           if (response == "WIFI FAIL") {
             changeDisplayText("Device failed to Connect to $selectedSSID");
