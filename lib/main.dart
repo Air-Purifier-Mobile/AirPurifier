@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'DirectBill',
       debugShowCheckedModeBanner: false,
       initialRoute: customRouter.Routes.StartUpView,
+      themeMode: ThemeMode.light,
       theme: ThemeData(fontFamily: 'Noah'),
       // ignore: deprecated_member_use
       navigatorKey: locator<NavigationService>().navigatorKey,

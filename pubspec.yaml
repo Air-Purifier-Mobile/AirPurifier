@@ -71,10 +71,12 @@ dev_dependencies:
 
   flutter_native_splash: ^1.1.7+1
 flutter_native_splash:
-  color: "#272343"
   image: assets/aeolus.png
+  color: "#272343"
+  color_dark: "#272343"
+  image_dark: assets/aeolus.png
+  android_gravity: fill
   android: true
-  ios: true
 
 
   auto_route_generator:
