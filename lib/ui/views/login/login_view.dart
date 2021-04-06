@@ -146,6 +146,7 @@ class LoginView extends StatelessWidget {
                                   color: Color.fromRGBO(39, 35, 67, 1),
                                   fontWeight: FontWeight.w100,
                                   fontSize: 11,
+                                  decoration: TextDecoration.none,
                                 ),
                               ),
                               SizedBox(

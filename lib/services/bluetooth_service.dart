@@ -150,7 +150,7 @@ class BluetoothService {
         print("Name----" + r.device.name);
         if (r.device.name == 'Airpurifier') {
           connectDevice(r.device);
-          changeDisplayText('Air Purifier Found ' + r.device.address);
+          changeDisplayText('Air Purifier Found ');
         }
       });
     });

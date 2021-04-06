@@ -138,27 +138,32 @@ class BlueTooth extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: height / 10,
+            height: height / 20,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Status: ",
-                style: TextStyle(
-                  fontSize: height / 45,
-                  color: Colors.white,
+          Container(
+            width: width / 1.5,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Status: ",
+                  style: TextStyle(
+                    fontSize: height / 45,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              Text(
-                text,
-                softWrap: true,
-                style: TextStyle(
-                  fontSize: height / 45,
-                  color: Colors.white70,
+                Flexible(
+                  child: Text(
+                    text,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontSize: height / 45,
+                      color: Colors.white70,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
