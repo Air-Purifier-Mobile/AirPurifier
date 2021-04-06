@@ -140,7 +140,7 @@ class BluetoothService {
 
   void startScanningDevices() async {
     print("Bluetooth scan started----");
-    changeDisplayText('Searching for Air Purifier.Please wait.');
+    changeDisplayText('Searching for Air Purifier. Please wait.');
     _streamSubscription =
         flutterBluetoothSerial.startDiscovery().listen((event) {
       allDevices.add(event);
@@ -154,8 +154,9 @@ class BluetoothService {
         print("Name----" + r.device.name);
         if (r.device.name == 'Airpurifier') {
           connectDevice(r.device);
-          changeDisplayText('Air Purifier Found ');
-        }
+          changeDisplayText('Air Purifier Found.');
+        } else
+          changeDisplayText('No Air Purifier Found. Please refresh.');
       });
     });
   }
