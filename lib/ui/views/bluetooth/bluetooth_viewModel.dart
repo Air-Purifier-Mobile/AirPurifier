@@ -80,6 +80,9 @@ class BluetoothViewModel extends BaseViewModel {
         displayText = "Getting Devices";
         bluetoothService.startScanningDevices();
         notifyListeners();
+      } else {
+        Fluttertoast.showToast(msg: 'Please turn on bluetooth to proceed.');
+        onModelReady();
       }
     });
   }
