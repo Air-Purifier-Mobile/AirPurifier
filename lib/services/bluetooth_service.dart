@@ -140,13 +140,13 @@ class BluetoothService {
 
   void startScanningDevices() async {
     print("Bluetooth scan started----");
+    changeDisplayText('Searching for Air Purifier.Please wait.');
     _streamSubscription =
         flutterBluetoothSerial.startDiscovery().listen((event) {
-      changeDisplayText('Searching for Air Purifier');
       allDevices.add(event);
     }, onError: (error) {
       changeDisplayText(
-          'Air Purifier refused to connect. Please restart the application.');
+          "Fetching bluetooth devices failed.\n Restart application.");
     });
     _streamSubscription.onDone(() {
       stopScanningDevices();

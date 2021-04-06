@@ -77,7 +77,7 @@ class BluetoothViewModel extends BaseViewModel {
             updateSSIDList, goToBluetoothScreen)
         .then((isEnabled) {
       if (isEnabled) {
-        displayText = "Getting Devices";
+        displayText = "Initialising bluetooth connectivity";
         bluetoothService.startScanningDevices();
         notifyListeners();
       } else {
