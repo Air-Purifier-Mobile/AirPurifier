@@ -34,9 +34,11 @@ class BluetoothService {
   bool macResponse = false;
   int messageOrder = 0;
   int counter = 0;
+  int testCommandCounter = 0;
+  bool testCommandSent = false;
   List<String> allWifiDevices = [];
 
-  void init() {
+  void startListeningFromDevice() {
     //Went to Beta
     try {
       connection.input.listen((event) {}).onData((utfData) {
@@ -90,6 +92,7 @@ class BluetoothService {
           }
           if (response == "OK") {
             macResponse = true;
+            testCommandSent = false;
             Future.delayed(Duration(milliseconds: 500), () {
               sendCommand("+MAC?\r\n");
             });
@@ -111,10 +114,13 @@ class BluetoothService {
             failedResponseCount++;
             selectedSSID = '';
             password = '';
-            connection.dispose();
-            changeDisplayText(
-                "Device failed to connect to wifi. Restarting configuration");
-            changeToBluetoothScreen();
+            Future.delayed(Duration(milliseconds: 500), () {
+              changeDisplayText(
+                  "Device failed to connect to wifi. Restarting configuration");
+            });
+            Future.delayed(Duration(milliseconds: 1000), () {
+              changeToWifiScreen();
+            });
           }
         }
       });
@@ -170,25 +176,40 @@ class BluetoothService {
   void connectDevice(
     BluetoothDevice device,
   ) async {
-    connectedDevice = device;
-    changeDisplayText("Connecting to Device : ${device.name}");
     await BluetoothConnection.toAddress(device.address).then((_connection) {
       connection = _connection;
-      _connection.isConnected
-          ? changeDisplayText("Device Connected SuccessFully")
-          : changeDisplayText("Purifier Not Connected");
-      Future.delayed(Duration(milliseconds: 500), () {
-        sendMessage();
-        init();
-      });
+      if (_connection.isConnected) {
+        connectedDevice = device;
+        changeDisplayText("Connected to Device : ${device.name}");
+        Future.delayed(Duration(milliseconds: 500), () {
+          sendTestMessage();
+          startListeningFromDevice();
+        });
+      } else
+        changeDisplayText(
+            "Purifier Not Connected.\nPlease restart application.");
     }).onError((error, stackTrace) => changeDisplayText(
         "Air Purifier refused to connect. Please restart the application."));
   }
 
-  void sendMessage() async {
-    changeDisplayText('Sending AT to device. Waiting for response');
+  void sendTestMessage() async {
+    changeDisplayText("Testing Connection");
     connection.output.add(utf8.encode("AT\r\n"));
     await connection.output.allSent;
+    testCommandSent = true;
+    Future.delayed(Duration(seconds: 2), () {
+      if (testCommandSent) {
+        ///error
+
+        if (testCommandCounter < 5)
+          sendTestMessage();
+        else {
+          testCommandCounter = 0;
+          changeDisplayText("Device Communication Error.\nRefresh Bluetooth");
+        }
+        testCommandCounter++;
+      }
+    });
   }
 
   void sendCommand(String command) async {
