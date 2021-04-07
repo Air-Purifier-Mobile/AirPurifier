@@ -43,7 +43,7 @@ class KnobsView extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: Color.fromRGBO(39, 35, 67, 1),
                 ),
-                height: width / 1.3,
+                height: height / 2.6,
                 width: width / 1.3,
                 child: CircularSlider(
                   initialValue: model.red,
@@ -58,7 +58,7 @@ class KnobsView extends StatelessWidget {
                   color: Color.fromRGBO(39, 35, 67, 1),
                   shape: BoxShape.circle,
                 ),
-                height: width / 1.6,
+                height: height / 3.2,
                 width: width / 1.6,
                 child: CircularSlider(
                   initialValue: model.green,
@@ -73,7 +73,7 @@ class KnobsView extends StatelessWidget {
                   color: Color.fromRGBO(39, 35, 67, 1),
                   shape: BoxShape.circle,
                 ),
-                height: width / 2.1,
+                height: height / 4,
                 width: width / 2.1,
                 child: CircularSlider(
                   initialValue: model.blue,
