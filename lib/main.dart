@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'DirectBill',
+      title: 'Aeolus',
       debugShowCheckedModeBanner: false,
       initialRoute: customRouter.Routes.startUpView,
       themeMode: ThemeMode.light,
