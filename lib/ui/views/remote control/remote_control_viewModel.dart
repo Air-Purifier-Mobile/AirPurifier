@@ -88,7 +88,7 @@ class RemoteControlViewModel extends BaseViewModel {
       initialIndexForSwitch = 0;
       initialIndexForPMode = 0;
       initialIndexForLEDMode = 0;
-      initialIndexForFanSpeed = 0;
+      initialIndexForFanSpeed = 1;
     } else {
       red = map["R color"];
       green = map["G color"];
@@ -107,9 +107,10 @@ class RemoteControlViewModel extends BaseViewModel {
   }
 
   void setQuantity(double value) {
-    quantity = value;
-    print(quantity.ceil().toString());
-    publishMessage(quantity.ceil().toString());
+    initialIndexForFanSpeed = value.ceil();
+    print(
+        initialIndexForFanSpeed.toString() + '------------------------------');
+    publishMessage(initialIndexForFanSpeed.toString().trim());
     notifyListeners();
   }
 }

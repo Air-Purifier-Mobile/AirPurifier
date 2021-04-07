@@ -62,7 +62,7 @@ class KnobsView extends StatelessWidget {
                 width: width / 1.6,
                 child: CircularSlider(
                   initialValue: model.green,
-                  color: HexColor("#3b7ddb"),
+                  color: HexColor("#32db44"),
                   changeColor: model.updateRGBValues,
                   publishChange: model.changeColor,
                   colorCode: 'g',
@@ -77,7 +77,7 @@ class KnobsView extends StatelessWidget {
                 width: width / 2.1,
                 child: CircularSlider(
                   initialValue: model.blue,
-                  color: HexColor("#32db44"),
+                  color: HexColor("#3b7ddb"),
                   changeColor: model.updateRGBValues,
                   publishChange: model.changeColor,
                   colorCode: 'b',
