@@ -1,5 +1,6 @@
 import 'package:air_purifier/ui/widgets/circular_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:stacked/stacked.dart';
 
 import 'knobs_viewModel.dart';
@@ -34,26 +35,19 @@ class KnobsView extends StatelessWidget {
           width: width / 1.05,
           padding: EdgeInsets.all(width / 50),
           color: Colors.transparent,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Stack(
+            alignment: AlignmentDirectional.center,
             children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(height / 12),
-                  color: Color.fromRGBO(36, 37, 41, 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0.0, 6.0),
-                      blurRadius: 6.0,
-                    ),
-                  ],
+                  shape: BoxShape.circle,
+                  color: Color.fromRGBO(39, 35, 67, 1),
                 ),
-                height: width / 3.4,
-                width: width / 3.4,
+                height: width / 1.3,
+                width: width / 1.3,
                 child: CircularSlider(
                   initialValue: model.red,
-                  color: Color.fromARGB(255, 255, 0, 0),
+                  color: HexColor("#dd453a"),
                   changeColor: model.updateRGBValues,
                   publishChange: model.changeColor,
                   colorCode: 'r',
@@ -61,21 +55,14 @@ class KnobsView extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(36, 37, 41, 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0.0, 6.0),
-                      blurRadius: 6.0,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(height / 12),
+                  color: Color.fromRGBO(39, 35, 67, 1),
+                  shape: BoxShape.circle,
                 ),
-                height: width / 3.4,
-                width: width / 3.4,
+                height: width / 1.6,
+                width: width / 1.6,
                 child: CircularSlider(
                   initialValue: model.green,
-                  color: Color.fromARGB(255, 0, 255, 0),
+                  color: HexColor("#3b7ddb"),
                   changeColor: model.updateRGBValues,
                   publishChange: model.changeColor,
                   colorCode: 'g',
@@ -83,21 +70,14 @@ class KnobsView extends StatelessWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(36, 37, 41, 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black,
-                      offset: Offset(0.0, 6.0),
-                      blurRadius: 6.0,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(height / 12),
+                  color: Color.fromRGBO(39, 35, 67, 1),
+                  shape: BoxShape.circle,
                 ),
-                height: width / 3.4,
-                width: width / 3.4,
+                height: width / 2.1,
+                width: width / 2.1,
                 child: CircularSlider(
                   initialValue: model.blue,
-                  color: Color.fromARGB(255, 0, 0, 255),
+                  color: HexColor("#32db44"),
                   changeColor: model.updateRGBValues,
                   publishChange: model.changeColor,
                   colorCode: 'b',

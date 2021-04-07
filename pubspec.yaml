@@ -59,6 +59,8 @@ dependencies:
   pin_code_fields: ^7.0.0
   foldable_sidebar: ^1.0.0
   loading_animations: ^2.2.0
+  simple_animations: ^3.0.0-nullsafety.2
+  numberpicker: ^2.0.1
 
   # Alerts
   fluttertoast:

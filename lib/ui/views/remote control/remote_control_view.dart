@@ -4,6 +4,7 @@ import 'package:air_purifier/ui/views/knobs/knobs_view.dart';
 import 'package:air_purifier/ui/views/remote%20control/remote_control_viewModel.dart';
 import 'package:air_purifier/ui/widgets/busy_button.dart';
 import 'package:air_purifier/ui/widgets/circular_slider.dart';
+import 'package:air_purifier/ui/widgets/inputCounter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -44,280 +45,133 @@ class _RemoteControlViewState extends State<RemoteControlView> {
           child: Scaffold(
             backgroundColor: model.primaryColor,
             body: SafeArea(
-              child: SingleChildScrollView(
-                child: model.isBusy
-                    ? Container(
-                        height: height,
-                        width: width,
-                        color: model.primaryColor,
-                        child: Center(
-                          child: LoadingBouncingGrid.circle(
-                            backgroundColor: Colors.white70,
-                          ),
+              child: model.isBusy
+                  ? Container(
+                      height: height,
+                      width: width,
+                      color: model.primaryColor,
+                      child: Center(
+                        child: LoadingBouncingGrid.circle(
+                          backgroundColor: Colors.white70,
                         ),
-                      )
-                    : SingleChildScrollView(
-                        child: Container(
-                          height: height / 1.05,
-                          width: width,
-                          color: Colors.transparent,
-                          child: Column(
+                      ),
+                    )
+                  : Container(
+                      height: height,
+                      width: width,
+                      color: Colors.transparent,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: height / 20,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10,
-                                  15,
-                                  10,
-                                  0,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: model.primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black,
-                                            offset: Offset(0.0, 5.0),
-                                            blurRadius: 5.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: ToggleSwitch(
-                                        inactiveFgColor: Colors.white,
-                                        labels: [
-                                          "OFF",
-                                          "ON",
-                                        ],
-                                        activeBgColors: [
-                                          Colors.red,
-                                          Colors.green[800]
-                                        ],
-                                        initialLabelIndex:
-                                            model.initialIndexForSwitch,
-                                        onToggle: (index) {
-                                          model.publishMessage(
-                                            index == 0 ? "APOFF" : "APON",
-                                          );
-                                        },
-                                      ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: model.primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      offset: Offset(0.0, 5.0),
+                                      blurRadius: 5.0,
                                     ),
                                   ],
                                 ),
-                              ),
-                              verticalSpaceLarge,
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10,
-                                  15,
-                                  10,
-                                  0,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      height: height / 20,
-                                      width: width / 3,
-                                      decoration: BoxDecoration(
-                                        color: model.primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black,
-                                            offset: Offset(0.0, 5.0),
-                                            blurRadius: 5.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Purifier Mode",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: model.primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black,
-                                            offset: Offset(0.0, 5.0),
-                                            blurRadius: 5.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: ToggleSwitch(
-                                        labels: [
-                                          "Auto",
-                                          "Manual",
-                                          "Sleep",
-                                        ],
-                                        inactiveFgColor: Colors.white,
-                                        activeBgColors: [
-                                          model.primaryColor,
-                                          model.primaryColor,
-                                          model.primaryColor,
-                                        ],
-                                        initialLabelIndex:
-                                            model.initialIndexForPMode,
-                                        onToggle: (index) {
-                                          switch (index) {
-                                            case 0:
-                                              {
-                                                model.publishMessage("APMA");
-                                              }
-                                              break;
-                                            case 1:
-                                              {
-                                                model.publishMessage("APMM");
-                                              }
-                                              break;
-                                            case 2:
-                                              {
-                                                model.publishMessage("APMS");
-                                              }
-                                              break;
-                                            default:
-                                              {
-                                                Fluttertoast.showToast(
-                                                  msg:
-                                                      "What was the input? $index",
-                                                );
-                                              }
-                                          }
-                                        },
-                                      ),
-                                    ),
+                                child: ToggleSwitch(
+                                  inactiveFgColor: Colors.white,
+                                  labels: [
+                                    "OFF",
+                                    "ON",
                                   ],
+                                  activeBgColors: [Colors.white, Colors.white],
+                                  activeFgColor: model.primaryColor,
+                                  inactiveBgColor: model.primaryColor,
+                                  initialLabelIndex:
+                                      model.initialIndexForSwitch,
+                                  onToggle: (index) {
+                                    model.publishMessage(
+                                      index == 0 ? "APOFF" : "APON",
+                                    );
+                                  },
                                 ),
                               ),
-                              verticalSpaceMedium,
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10,
-                                  15,
-                                  10,
-                                  0,
+                            ],
+                          ),
+                          SizedBox(
+                            height: height / 20,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: height / 20,
+                                width: width / 3,
+                                decoration: BoxDecoration(
+                                  color: model.primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      height: height / 20,
-                                      width: width / 3,
-                                      decoration: BoxDecoration(
-                                        color: model.primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black,
-                                            offset: Offset(0.0, 5.0),
-                                            blurRadius: 5.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "LED Mode",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
+                                child: Center(
+                                  child: Text(
+                                    "Fan Speed",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: model.primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black,
-                                            offset: Offset(0.0, 5.0),
-                                            blurRadius: 5.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: ToggleSwitch(
-                                        initialLabelIndex:
-                                            model.initialIndexForLEDMode,
-                                        inactiveFgColor: Colors.white,
-                                        activeBgColors: [
-                                          model.primaryColor,
-                                          model.primaryColor,
-                                          model.primaryColor,
-                                        ],
-                                        labels: [
-                                          "Auto",
-                                          "Manual",
-                                        ],
-                                        onToggle: (index) {
-                                          model.publishMessage(
-                                              index == 0 ? "APLA" : "APLM");
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                              verticalSpaceMedium,
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10,
-                                  15,
-                                  10,
-                                  0,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      height: height / 20,
-                                      width: width / 3,
-                                      decoration: BoxDecoration(
-                                        color: model.primaryColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black,
-                                            offset: Offset(0.0, 5.0),
-                                            blurRadius: 5.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Fan Speed",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    /// Add Fan Icon
-                                  ],
+                              Container(
+                                height: height / 20,
+                                width: width / 2,
+                                child: InputCounter(
+                                  width: width / 3.5,
+                                  value: double.parse(
+                                      model.initialIndexForFanSpeed.toString()),
+                                  setValue: model.setQuantity,
                                 ),
                               ),
-                              verticalSpaceMedium,
+                            ],
+                          ),
+                          SizedBox(
+                            height: height / 30,
+                          ),
+                          Container(
+                            height: height / 2.6,
+                            width: width,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  alignment: Alignment.center,
+                                  child: KnobsView(
+                                    initialBlue: model.blue,
+                                    initialGreen: model.green,
+                                    initialRed: model.red,
+                                    publishColorCallBack: model.publishMessage,
+                                  ),
+                                ),
+                                Container(
+                                  height: height / 6,
+                                  width: height / 6,
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: ChameleonContainerView(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
                               Container(
                                 decoration: BoxDecoration(
                                   color: model.primaryColor,
@@ -332,41 +186,107 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                 ),
                                 child: ToggleSwitch(
                                   initialLabelIndex:
-                                      model.initialIndexForFanSpeed,
+                                      model.initialIndexForLEDMode,
+                                  inactiveFgColor: Colors.white,
+                                  activeBgColors: [
+                                    Colors.white,
+                                    Colors.white,
+                                    Colors.white,
+                                  ],
+                                  activeFgColor: model.primaryColor,
+                                  inactiveBgColor: model.primaryColor,
                                   labels: [
-                                    "1",
-                                    "2",
-                                    "3",
-                                    "4",
+                                    "Auto",
+                                    "Manual",
+                                  ],
+                                  onToggle: (index) {
+                                    model.publishMessage(
+                                        index == 0 ? "APLA" : "APLM");
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                height: height / 85,
+                              ),
+                              Container(
+                                height: height / 25,
+                                width: width / 3,
+                                decoration: BoxDecoration(
+                                  color: model.primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "LED Mode",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: height / 50,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: height / 30,
+                          ),
+                          Container(
+                            width: width / 1.5,
+                            child: Divider(
+                              thickness: 0.5,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            height: height / 18,
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: model.primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      offset: Offset(0.0, 5.0),
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                ),
+                                child: ToggleSwitch(
+                                  labels: [
+                                    "Auto",
+                                    "Manual",
+                                    "Sleep",
                                   ],
                                   inactiveFgColor: Colors.white,
                                   activeBgColors: [
-                                    model.primaryColor,
-                                    model.primaryColor,
-                                    model.primaryColor,
-                                    model.primaryColor,
+                                    Colors.white,
+                                    Colors.white,
+                                    Colors.white,
                                   ],
-                                  minWidth: width / 3,
+                                  activeFgColor: model.primaryColor,
+                                  inactiveBgColor: model.primaryColor,
+                                  initialLabelIndex: model.initialIndexForPMode,
                                   onToggle: (index) {
                                     switch (index) {
                                       case 0:
                                         {
-                                          model.publishMessage("1");
+                                          model.publishMessage("APMA");
                                         }
                                         break;
                                       case 1:
                                         {
-                                          model.publishMessage("2");
+                                          model.publishMessage("APMM");
                                         }
                                         break;
                                       case 2:
                                         {
-                                          model.publishMessage("3");
-                                        }
-                                        break;
-                                      case 3:
-                                        {
-                                          model.publishMessage("4");
+                                          model.publishMessage("APMS");
                                         }
                                         break;
                                       default:
@@ -379,32 +299,32 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                   },
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(0, height / 20, 0, 5),
-                                child: Container(
-                                  height: height / 3,
-                                  width: width / 1.05,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      ChameleonContainerView(),
-                                      KnobsView(
-                                        initialBlue: model.blue,
-                                        initialGreen: model.green,
-                                        initialRed: model.red,
-                                        publishColorCallBack:
-                                            model.publishMessage,
-                                      ),
-                                    ],
+                              SizedBox(
+                                height: height / 85,
+                              ),
+                              Container(
+                                height: height / 25,
+                                width: width / 3,
+                                decoration: BoxDecoration(
+                                  color: model.primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Purifier Mode",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: height / 50,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
+                        ],
                       ),
-              ),
+                    ),
             ),
           ),
         );

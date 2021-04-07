@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_animations/simple_animations.dart';
 import 'package:stacked/stacked.dart';
 
 import 'chameleon_container_viewModel.dart';
@@ -13,28 +14,28 @@ class ChameleonContainerView extends StatelessWidget {
       viewModelBuilder: () => ChameleonContainerViewModel(),
       builder: (context, model, child) {
         return GestureDetector(
-          child: Container(
-            height: height / 2.5,
-            width: width / 1.05,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(
-                model.red,
-                model.green,
-                model.blue,
-                1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  offset: Offset(0.0, 6.0),
-                  blurRadius: 6.0,
-                ),
-              ],
-              borderRadius: BorderRadius.circular(25),
+          child: PlasmaRenderer(
+            type: PlasmaType.circle,
+            particles: 5,
+            color: Color.fromRGBO(
+              model.red,
+              model.green,
+              model.blue,
+              1,
             ),
-            padding: EdgeInsets.all(width / 50),
+            blur: 0.51,
+            size: 2.37,
+            speed: 10,
+            offset: 0,
+            blendMode: BlendMode.plus,
+            particleType: ParticleType.atlas,
+            variation1: 0,
+            variation2: 0,
+            variation3: 0,
+            rotation: 0,
           ),
           onTap: () {
+            print("chameleon tapped---------");
             model.notifyListeners();
           },
         );

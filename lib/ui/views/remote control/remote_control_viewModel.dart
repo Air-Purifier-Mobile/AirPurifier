@@ -19,6 +19,7 @@ class RemoteControlViewModel extends BaseViewModel {
   int initialIndexForLEDMode;
   int initialIndexForFanSpeed;
   Color primaryColor = Color.fromRGBO(39, 35, 67, 1);
+  double quantity = 1.0;
 
   String mac;
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
@@ -94,7 +95,7 @@ class RemoteControlViewModel extends BaseViewModel {
       blue = map["B color"];
       initialIndexForSwitch = map["AP motor"] == "OFF" ? 0 : 1;
       initialIndexForLEDMode = map["LED mode"] == "AUTO" ? 0 : 1;
-      initialIndexForFanSpeed = map["AP speed"] - 1;
+      initialIndexForFanSpeed = map["AP speed"];
       if (map["AP mode"] == "AUTO")
         initialIndexForPMode = 0;
       else if (map["AP mode"] == "MANUAL")
@@ -102,6 +103,13 @@ class RemoteControlViewModel extends BaseViewModel {
       else
         initialIndexForPMode = 2;
     }
+    notifyListeners();
+  }
+
+  void setQuantity(double value) {
+    quantity = value;
+    print(quantity.ceil().toString());
+    publishMessage(quantity.ceil().toString());
     notifyListeners();
   }
 }

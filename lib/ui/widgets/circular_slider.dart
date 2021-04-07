@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_animations/simple_animations.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class CircularSlider extends StatefulWidget {
@@ -31,10 +32,19 @@ class _CircularSliderState extends State<CircularSlider> {
         print(value);
       },
       appearance: CircularSliderAppearance(
+        startAngle: 165,
+        angleRange: 210,
+        customWidths: CustomSliderWidths(
+          trackWidth: 2,
+          progressBarWidth: 2,
+          handlerSize: 10,
+        ),
         customColors: CustomSliderColors(
-          dotColor: Colors.white,
-          progressBarColor: widget.color,
-          trackColor: Colors.black,
+          dynamicGradient: true,
+          dotColor: widget.color,
+          progressBarColor: Colors.white,
+          trackColor: Colors.white,
+          hideShadow: true,
         ),
         infoProperties: InfoProperties(
           modifier: (value) {
@@ -43,7 +53,7 @@ class _CircularSliderState extends State<CircularSlider> {
           },
           mainLabelStyle: TextStyle(
             fontSize: 20,
-            color: widget.color,
+            color: Colors.transparent,
           ),
         ),
       ),
