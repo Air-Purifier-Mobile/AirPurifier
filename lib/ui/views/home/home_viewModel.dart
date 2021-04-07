@@ -5,6 +5,7 @@ import 'package:air_purifier/services/streaming_shared_preferences_service.dart'
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
+import 'package:foldable_sidebar/foldable_sidebar.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
@@ -32,9 +33,71 @@ class HomeViewModel extends BaseViewModel {
   String pm10;
   String mac;
   String rootTopic = "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/";
-  MaterialColor color = Colors.lightBlue;
+  FSBStatus drawerCurrentState = FSBStatus.FSB_CLOSE;
+  Color primaryColor = Color.fromRGBO(39, 35, 67, 1);
+  DateTime today = DateTime.now();
+
   void logout() {
     _authenticationService.signOut();
+  }
+
+  void menuToggle() {
+    drawerCurrentState = drawerCurrentState == FSBStatus.FSB_OPEN
+        ? FSBStatus.FSB_CLOSE
+        : FSBStatus.FSB_OPEN;
+    notifyListeners();
+  }
+
+  String getDay(int day) {
+    switch (day) {
+      case 1:
+        return "Monday";
+      case 2:
+        return "Tuesday";
+      case 3:
+        return "Wednesday";
+      case 4:
+        return "Thursday";
+      case 5:
+        return "Friday";
+      case 6:
+        return "Saturday";
+      case 7:
+        return "Sunday";
+      default:
+        return "";
+    }
+  }
+
+  String getMonth(int month) {
+    switch (month) {
+      case 1:
+        return "January";
+      case 2:
+        return "February";
+      case 3:
+        return "March";
+      case 4:
+        return "April";
+      case 5:
+        return "May";
+      case 6:
+        return "June";
+      case 7:
+        return "July";
+      case 8:
+        return "August";
+      case 9:
+        return "September";
+      case 10:
+        return "October";
+      case 11:
+        return "November";
+      case 12:
+        return "December";
+      default:
+        return "";
+    }
   }
 
   void refresh() {
@@ -112,7 +175,6 @@ class HomeViewModel extends BaseViewModel {
     _mqttService.subscribeToTopic(rootTopic + mac + "PM 1.0");
     _mqttService.subscribeToTopic(rootTopic + mac + "PM 2.5");
     _mqttService.subscribeToTopic(rootTopic + mac + "PM 10");
-    notifyListeners();
   }
 
   void changeDisplayText(String display) {}

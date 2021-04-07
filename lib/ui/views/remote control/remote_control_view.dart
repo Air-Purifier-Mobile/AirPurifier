@@ -7,6 +7,7 @@ import 'package:air_purifier/ui/widgets/circular_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:stacked/stacked.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -41,16 +42,18 @@ class _RemoteControlViewState extends State<RemoteControlView> {
             return _onBackPressed();
           },
           child: Scaffold(
-            backgroundColor: Color.fromRGBO(36, 37, 41, 1),
+            backgroundColor: model.primaryColor,
             body: SafeArea(
               child: SingleChildScrollView(
                 child: model.isBusy
                     ? Container(
                         height: height,
                         width: width,
-                        color: Color.fromRGBO(36, 37, 41, 1),
+                        color: model.primaryColor,
                         child: Center(
-                          child: CircularProgressIndicator(),
+                          child: LoadingBouncingGrid.circle(
+                            backgroundColor: Colors.white70,
+                          ),
                         ),
                       )
                     : SingleChildScrollView(
@@ -73,7 +76,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Color.fromRGBO(42, 46, 51, 1),
+                                        color: model.primaryColor,
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: [
                                           BoxShadow(
@@ -122,7 +125,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                       height: height / 20,
                                       width: width / 3,
                                       decoration: BoxDecoration(
-                                        color: Color.fromRGBO(42, 46, 51, 1),
+                                        color: model.primaryColor,
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: [
                                           BoxShadow(
@@ -145,7 +148,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     ),
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Color.fromRGBO(42, 46, 51, 1),
+                                        color: model.primaryColor,
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: [
                                           BoxShadow(
@@ -163,9 +166,9 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                         ],
                                         inactiveFgColor: Colors.white,
                                         activeBgColors: [
-                                          Color.fromRGBO(239, 173, 75, 1),
-                                          Color.fromRGBO(239, 173, 75, 1),
-                                          Color.fromRGBO(239, 173, 75, 1),
+                                          model.primaryColor,
+                                          model.primaryColor,
+                                          model.primaryColor,
                                         ],
                                         initialLabelIndex:
                                             model.initialIndexForPMode,
@@ -217,7 +220,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                       height: height / 20,
                                       width: width / 3,
                                       decoration: BoxDecoration(
-                                        color: Color.fromRGBO(42, 46, 51, 1),
+                                        color: model.primaryColor,
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: [
                                           BoxShadow(
@@ -240,7 +243,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     ),
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Color.fromRGBO(42, 46, 51, 1),
+                                        color: model.primaryColor,
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: [
                                           BoxShadow(
@@ -255,9 +258,9 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                             model.initialIndexForLEDMode,
                                         inactiveFgColor: Colors.white,
                                         activeBgColors: [
-                                          Color.fromRGBO(239, 173, 75, 1),
-                                          Color.fromRGBO(239, 173, 75, 1),
-                                          Color.fromRGBO(239, 173, 75, 1),
+                                          model.primaryColor,
+                                          model.primaryColor,
+                                          model.primaryColor,
                                         ],
                                         labels: [
                                           "Auto",
@@ -288,7 +291,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                       height: height / 20,
                                       width: width / 3,
                                       decoration: BoxDecoration(
-                                        color: Color.fromRGBO(42, 46, 51, 1),
+                                        color: model.primaryColor,
                                         borderRadius: BorderRadius.circular(10),
                                         boxShadow: [
                                           BoxShadow(
@@ -317,7 +320,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                               verticalSpaceMedium,
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Color.fromRGBO(42, 46, 51, 1),
+                                  color: model.primaryColor,
                                   borderRadius: BorderRadius.circular(10),
                                   boxShadow: [
                                     BoxShadow(
@@ -338,10 +341,10 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                   ],
                                   inactiveFgColor: Colors.white,
                                   activeBgColors: [
-                                    Color.fromRGBO(239, 173, 75, 1),
-                                    Color.fromRGBO(239, 173, 75, 1),
-                                    Color.fromRGBO(239, 173, 75, 1),
-                                    Color.fromRGBO(239, 173, 75, 1),
+                                    model.primaryColor,
+                                    model.primaryColor,
+                                    model.primaryColor,
+                                    model.primaryColor,
                                   ],
                                   minWidth: width / 3,
                                   onToggle: (index) {

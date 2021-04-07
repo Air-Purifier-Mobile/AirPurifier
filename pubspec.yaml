@@ -57,6 +57,8 @@ dependencies:
   progress_indicators:
   toggle_switch: ^0.1.9
   pin_code_fields: ^7.0.0
+  foldable_sidebar: ^1.0.0
+  loading_animations: ^2.2.0
 
   # Alerts
   fluttertoast:

@@ -20,7 +20,7 @@ import '../ui/views/phone number/phone_number_view.dart';
 import '../ui/views/add device/add_device_view.dart';
 
 class Routes {
-  static const String StartUpView = '/start-up-view';
+  static const String startUpView = '/start-up-view';
   static const String dummyView = '/dummy-view';
   static const String loginView = '/login-view';
   static const String homeView = '/home-view';
@@ -30,7 +30,7 @@ class Routes {
   static const String phoneNumberView = '/phone-number-view';
   static const String addDeviceView = '/add-device-view';
   static const all = <String>{
-    StartUpView,
+    startUpView,
     dummyView,
     loginView,
     homeView,
@@ -46,7 +46,7 @@ class Router extends RouterBase {
   @override
   List<RouteDef> get routes => _routes;
   final _routes = <RouteDef>[
-    RouteDef(Routes.StartUpView, page: StartUpView),
+    RouteDef(Routes.startUpView, page: StartUpView),
     RouteDef(Routes.dummyView, page: DummyView),
     RouteDef(Routes.loginView, page: LoginView),
     RouteDef(Routes.homeView, page: HomeView),

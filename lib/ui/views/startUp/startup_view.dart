@@ -1,5 +1,6 @@
 import 'package:air_purifier/ui/views/startup/startUp_viewModel.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:stacked/stacked.dart';
 
 class StartUpView extends StatelessWidget {
@@ -20,9 +21,10 @@ class StartUpView extends StatelessWidget {
             height: height,
             width: width,
             child: Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.white70,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+              child: Center(
+                child: LoadingBouncingGrid.circle(
+                  backgroundColor: Colors.white70,
+                ),
               ),
             ),
           ),

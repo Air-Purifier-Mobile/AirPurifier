@@ -3,6 +3,7 @@ import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
+import 'package:flutter/material.dart';
 
 class RemoteControlViewModel extends BaseViewModel {
   bool isConnected = false;
@@ -17,6 +18,7 @@ class RemoteControlViewModel extends BaseViewModel {
   int initialIndexForPMode;
   int initialIndexForLEDMode;
   int initialIndexForFanSpeed;
+  Color primaryColor = Color.fromRGBO(39, 35, 67, 1);
 
   String mac;
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
