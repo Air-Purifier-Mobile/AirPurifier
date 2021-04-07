@@ -187,7 +187,7 @@ class Wifi extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    void _modalBottomSheetMenu(String ssid) {
+    void _modalBottomSheetMenu() {
       TextEditingController password = TextEditingController();
       showModalBottomSheet(
           backgroundColor: Colors.transparent,
@@ -395,7 +395,7 @@ class Wifi extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             connectSSID(wifiList[index].trim());
-                            _modalBottomSheetMenu(wifiList[index]);
+                            _modalBottomSheetMenu();
                           },
                           child: Container(
                             width: width / 1.2,
@@ -412,7 +412,7 @@ class Wifi extends StatelessWidget {
                                   width: width / 20,
                                 ),
                                 Text(
-                                  wifiList[index],
+                                  wifiList[index].trim(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: height / 37,

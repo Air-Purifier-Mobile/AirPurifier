@@ -20,7 +20,7 @@ class BluetoothViewModel extends BaseViewModel {
   String finalSSID = '';
   String finalPass = '';
 
-  //Callback for changing display text
+  ///Callback for changing display text
   void changeDisplayTextCallBack(String event) {
     displayText = event;
     notifyListeners();
@@ -32,7 +32,7 @@ class BluetoothViewModel extends BaseViewModel {
     _navigationService.clearStackAndShow(Routes.loginView);
   }
 
-  //Callback for changing to wifi
+  ///Callback for changing to wifi
   void goToWifiScreen() {
     try {
       goingForWifi = true;
@@ -48,7 +48,6 @@ class BluetoothViewModel extends BaseViewModel {
     displayText = "Sending SSID : $finalSSID to device";
     bluetoothService.password = pass;
     Future.delayed(Duration(milliseconds: 500), () {
-      Fluttertoast.showToast(msg: 'pass sent-$finalPass');
       bluetoothService.sendCommand(
         "+PSS," + finalPass.trim() + "\r\n",
       );
@@ -57,13 +56,10 @@ class BluetoothViewModel extends BaseViewModel {
   }
 
   void sendSSIDToDevice(String ssid) {
-    goingForWifi = false;
-    finalSSID = bluetoothService.selectedSSID;
+    finalSSID = ssid;
+    bluetoothService.selectedSSID = ssid;
     displayText = "Sending SSID : $finalSSID to device";
-    Future.delayed(Duration(milliseconds: 500), () {
-      Fluttertoast.showToast(msg: 'Ssid sent-$finalSSID');
-      bluetoothService.sendCommand("+SSID,$finalSSID\r\n");
-    });
+    bluetoothService.sendCommand("+SSID,$finalSSID\r\n");
     notifyListeners();
   }
 

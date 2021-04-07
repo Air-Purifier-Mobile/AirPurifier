@@ -162,7 +162,7 @@ class HomeView extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        '${model.description ?? ""}',
+                                        '${(model.description[0].toUpperCase() + model.description.substring(1)).toString() ?? ""}',
                                         style: TextStyle(
                                           fontSize: height / 40,
                                           color: model.today.hour > 6 &&
@@ -210,19 +210,24 @@ class HomeView extends StatelessWidget {
                                 ),
 
                                 ///Date
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    height / 15,
+                                Text(
+                                  "${model.getDay(model.today.weekday)} | ${model.getMonth(model.today.month)} ${model.today.day}",
+                                  style: TextStyle(
+                                    fontSize: height / 45,
+                                    color: model.primaryColor,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  child: Text(
-                                    "${model.getDay(model.today.weekday)} | ${model.getMonth(model.today.month)} ${model.today.day}",
-                                    style: TextStyle(
-                                      fontSize: height / 45,
+                                ),
+
+                                ///15
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: height / 30),
+                                  child: Container(
+                                    width: width / 1.5,
+                                    child: Divider(
+                                      thickness: 0.5,
                                       color: model.primaryColor,
-                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),

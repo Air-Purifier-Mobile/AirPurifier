@@ -66,7 +66,7 @@ class BluetoothService {
               changeToWifiScreen();
             }
             if (startReadingJson)
-              allWifiDevices.add(response);
+              allWifiDevices.add(response.trim());
             else if (response.contains('\$' * 40)) startReadingJson = true;
           }
           if (response == selectedSSID) {
@@ -156,14 +156,14 @@ class BluetoothService {
     });
     _streamSubscription.onDone(() {
       stopScanningDevices();
-      allDevices.forEach((r) {
-        print("Name----" + r.device.name);
-        if (r.device.name == 'Airpurifier') {
-          connectDevice(r.device);
+      for (int i = 0; i < allDevices.length; i++) {
+        print("Name----" + allDevices[i].device.name);
+        if (allDevices[i].device.name == 'Airpurifier') {
+          connectDevice(allDevices[i].device);
           changeDisplayText('Air Purifier Found.');
-        } else
+        } else if (i == allDevices.length - 1)
           changeDisplayText('No Air Purifier Found. Please refresh.');
-      });
+      }
     });
   }
 
@@ -200,7 +200,6 @@ class BluetoothService {
     Future.delayed(Duration(seconds: 2), () {
       if (testCommandSent) {
         ///error
-
         if (testCommandCounter < 5)
           sendTestMessage();
         else {
