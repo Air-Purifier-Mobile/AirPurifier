@@ -42,23 +42,28 @@ class BluetoothViewModel extends BaseViewModel {
     }
   }
 
-  void sendPasswordToDevice(String ssid, String pass) {
+  void sendPasswordToDevice(String pass) {
     goingForWifi = false;
-    finalSSID = ssid;
     finalPass = pass;
     displayText = "Sending SSID : $finalSSID to device";
-    bluetoothService.selectedSSID = ssid;
     bluetoothService.password = pass;
     Future.delayed(Duration(milliseconds: 500), () {
-      bluetoothService.sendCommand("+SSID,$ssid\r\n");
-    });
-    Future.delayed(Duration(milliseconds: 500), () {
+      Fluttertoast.showToast(msg: 'pass sent-$finalPass');
       bluetoothService.sendCommand(
         "+PSS," + finalPass.trim() + "\r\n",
       );
     });
-    finalSSID = '';
-    finalPass = '';
+    notifyListeners();
+  }
+
+  void sendSSIDToDevice(String ssid) {
+    goingForWifi = false;
+    finalSSID = bluetoothService.selectedSSID;
+    displayText = "Sending SSID : $finalSSID to device";
+    Future.delayed(Duration(milliseconds: 500), () {
+      Fluttertoast.showToast(msg: 'Ssid sent-$finalSSID');
+      bluetoothService.sendCommand("+SSID,$finalSSID\r\n");
+    });
     notifyListeners();
   }
 

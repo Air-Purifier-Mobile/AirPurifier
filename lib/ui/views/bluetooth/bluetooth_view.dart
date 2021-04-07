@@ -47,6 +47,7 @@ class BluetoothView extends StatelessWidget {
                 : Wifi(
                     wifiList: model.ssids,
                     connect: model.sendPasswordToDevice,
+                    connectSSID: model.sendSSIDToDevice,
                   ),
           ),
         );
@@ -175,9 +176,11 @@ class BlueTooth extends StatelessWidget {
 class Wifi extends StatelessWidget {
   List<String> wifiList;
   Function connect;
+  Function connectSSID;
   Wifi({
     this.wifiList,
     this.connect,
+    this.connectSSID,
   });
   @override
   Widget build(BuildContext context) {
@@ -269,7 +272,7 @@ class Wifi extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            connect(ssid, password.text.trim());
+                            connect(password.text.trim());
                             Navigator.of(context).pop();
                           },
                           child: Container(
@@ -391,6 +394,7 @@ class Wifi extends StatelessWidget {
                             horizontal: 5.0, vertical: 2.0),
                         child: InkWell(
                           onTap: () {
+                            connectSSID(wifiList[index].trim());
                             _modalBottomSheetMenu(wifiList[index]);
                           },
                           child: Container(
