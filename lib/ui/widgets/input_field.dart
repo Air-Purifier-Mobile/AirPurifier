@@ -89,6 +89,8 @@ class _InputFieldState extends State<InputField> {
             children: <Widget>[
               Expanded(
                 child: TextFormField(
+                  cursorColor: Color.fromRGBO(39, 35, 67, 1),
+                  cursorWidth: 1,
                   textAlign: widget.textAlign == null
                       ? TextAlign.left
                       : widget.textAlign,
@@ -113,6 +115,11 @@ class _InputFieldState extends State<InputField> {
                   obscureText: isPassword,
                   readOnly: widget.isReadOnly,
                   decoration: InputDecoration(
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
                     hintText: widget.placeholder,
                     hintStyle: TextStyle(
                         fontSize: widget.hintTextSize != null

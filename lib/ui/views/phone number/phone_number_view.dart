@@ -53,7 +53,7 @@ class PhoneNumberView extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
-                        fontSize: height / 32,
+                        fontSize: width / 20,
                         fontFamily: 'Noah',
                         color: Colors.white,
                       ),
@@ -70,15 +70,18 @@ class PhoneNumberView extends StatelessWidget {
                       ),
                       textInputType: TextInputType.number,
                       controller: model.phoneNoController,
+                      enterPressed: () {
+                        model.goToOtpScreen();
+                      },
                     ),
                     SizedBox(
                       height: height / 6,
                     ),
                     Container(
-                      height: height / 10,
-                      width: height / 10,
+                      height: width / 6,
+                      width: width / 6,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(height / 12),
+                        shape: BoxShape.circle,
                         color: Colors.white,
                       ),
                       child: IconButton(

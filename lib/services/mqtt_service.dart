@@ -109,36 +109,35 @@ class MqttService {
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      print(
+          'Received message:$payload own Message:$ownMessage fromTopic:${c[0].topic}');
 
       if (payload != ownMessage) {
-        print('Received message:$payload from topic: ${c[0].topic}');
-        changeDisplayText('Received message:$payload');
-      }
-      if (c[0].topic ==
-          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/IN") {
-        if (payload != ownMessage) {
-          print('Received message:$payload from topic: ${c[0].topic}>');
+        // if (c[0].topic ==
+        //     "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/IN") {
+        //   refreshCallBack();
+        // }
+        if (c[0].topic ==
+            "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
+          setInitialValues(jsonDecode(payload));
+        }
+        if (c[0].topic ==
+                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/BUTTON" &&
+            payload != ownMessage) {
           refreshCallBack();
         }
-      }
-      if (c[0].topic ==
-          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
-        setInitialValues(jsonDecode(payload));
-      }
-      if (c[0].topic ==
-          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/BUTTON") {
-        refreshCallBack();
-      }
-      if (c[0].topic ==
-          "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/SPEED") {
-        refreshCallBack();
-      }
-      if (c[0].topic == "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 1.0" ||
-          c[0].topic ==
-              "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
-          c[0].topic ==
-              "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 10") {
-        setInitialValues(payload, c[0].topic);
+        if (c[0].topic ==
+                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/SPEED" &&
+            payload != ownMessage) {
+          refreshCallBack();
+        }
+        if (c[0].topic == "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 1.0" ||
+            c[0].topic ==
+                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
+            c[0].topic ==
+                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 10") {
+          setInitialValues(payload, c[0].topic);
+        }
       }
     });
   }

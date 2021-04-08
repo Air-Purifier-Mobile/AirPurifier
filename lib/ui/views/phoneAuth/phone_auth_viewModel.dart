@@ -17,7 +17,6 @@ class PhoneAuthViewModel extends BaseViewModel {
 
   void onModelReady(String number) {
     phoneNo = number;
-    Fluttertoast.showToast(msg: 'Please wait for OTP');
     signIn();
   }
 
@@ -49,6 +48,7 @@ class PhoneAuthViewModel extends BaseViewModel {
   }
 
   Future signIn() async {
+    Fluttertoast.showToast(msg: 'Please wait for OTP');
     setBusy(true);
     await _authenticationService
         .loginWithPhoneNo(

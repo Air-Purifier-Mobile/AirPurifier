@@ -60,7 +60,7 @@ class RemoteControlViewModel extends BaseViewModel {
     _mqttService.subscribeToTopic(rootTopic + mac + "SPEED");
     _mqttService.subscribeToTopic(rootTopic + mac + "BUTTON");
     _mqttService.subscribeToTopic(rootTopic + mac + "RESPONSE");
-    _mqttService.subscribeToTopic(rootTopic + mac + "IN");
+    //_mqttService.subscribeToTopic(rootTopic + mac + "IN");
     _mqttService.publishPayload("GET", rootTopic + mac + "DEVICE");
     notifyListeners();
   }

@@ -156,13 +156,18 @@ class BluetoothService {
     });
     _streamSubscription.onDone(() {
       stopScanningDevices();
+      bool deviceFound = false;
       for (int i = 0; i < allDevices.length; i++) {
         print("Name----" + allDevices[i].device.name);
         if (allDevices[i].device.name == 'Airpurifier') {
           connectDevice(allDevices[i].device);
+          deviceFound = true;
           changeDisplayText('Air Purifier Found.');
-        } else if (i == allDevices.length - 1)
-          changeDisplayText('No Air Purifier Found. Please refresh.');
+        }
+      }
+      if (!deviceFound) {
+        deviceFound = false;
+        changeDisplayText('No Air Purifier Found. Please refresh.');
       }
     });
   }

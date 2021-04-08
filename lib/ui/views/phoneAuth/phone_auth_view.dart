@@ -114,10 +114,10 @@ class PhoneAuthView extends StatelessWidget {
                       height: height / 8,
                     ),
                     Container(
-                      height: height / 10,
-                      width: height / 10,
+                      height: width / 6,
+                      width: width / 6,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(height / 12),
+                        shape: BoxShape.circle,
                         color: Colors.white,
                       ),
                       child: IconButton(
