@@ -189,6 +189,20 @@ class BluetoothService {
   ) async {
     if (device.isBonded) {
       Fluttertoast.showToast(msg: "Device already paired");
+      BluetoothConnection.toAddress(device.address).then((_connection) {
+        connection = _connection;
+        if (_connection.isConnected) {
+          connectedDevice = device;
+          changeDisplayText("Connected to Device : ${device.name}");
+          Future.delayed(Duration(milliseconds: 500), () {
+            sendTestMessage();
+            startListeningFromDevice();
+          });
+        } else
+          changeDisplayText(
+              "Purifier Not Connected.\nPlease restart application.");
+      }).onError((error, stackTrace) => changeDisplayText(
+          "Air Purifier refused to connect. Please restart the application."));
     } else {
       FlutterBluetoothSerial.instance
           .bondDeviceAtAddress(device.address)
