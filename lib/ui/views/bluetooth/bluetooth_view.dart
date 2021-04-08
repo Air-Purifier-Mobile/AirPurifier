@@ -89,40 +89,20 @@ class BlueTooth extends StatelessWidget {
           SizedBox(
             height: height / 40,
           ),
-          Text(
-            "Please wait while we establish your",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: height / 45,
-              fontFamily: 'Noah',
-              color: Colors.white70,
+          Container(
+            width: width / 1.5,
+            alignment: Alignment.center,
+            child: Text(
+              "Please wait while we establish your bluetooth connection. This process may take up to 3-4 minutes.",
+              softWrap: true,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: height / 45,
+                fontFamily: 'Noah',
+                color: Colors.white70,
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                " Bluetooth connection",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: height / 45,
-                  fontFamily: 'Noah',
-                  color: Colors.white70,
-                ),
-              ),
-              FadingText(
-                "...",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: height / 40,
-                  fontFamily: 'Noah',
-                  color: Colors.white,
-                ),
-              ),
-            ],
           ),
           SizedBox(
             height: height / 15,

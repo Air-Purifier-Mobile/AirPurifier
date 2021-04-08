@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:air_purifier/app/router.gr.dart';
+import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class HomeViewModel extends BaseViewModel {
   final MqttService _mqttService = locator<MqttService>();
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
+  final FirestoreService _firestoreService = locator<FirestoreService>();
   Position position;
   String cityName;
   String description;
@@ -117,56 +119,66 @@ class HomeViewModel extends BaseViewModel {
   }
 
   void getPermissions() async {
-    Future.delayed(
-      Duration(seconds: 0),
-      () async {
-        Position _position;
-        _position = await _authenticationService.getLocation();
-        if (_position != null) {
-          position = _position;
-          double lat = _position.latitude;
-          double lon = _position.longitude;
-          http.Client client = http.Client();
-          final requestUrl =
-              '$endPointUrl/weather?lat=$lat&lon=$lon&APPID=$apiKey';
-          Uri url = Uri.parse(requestUrl);
-          client.get(url).then((result) {
-            print(result.body);
-            Map weatherMap = jsonDecode(result.body);
-            if (weatherMap["cod"] == 200) {
-              cityName = weatherMap["name"];
-              description = weatherMap["weather"][0]["description"];
-              temperature =
-                  (weatherMap["main"]["temp"] - 273.15).floor().toString();
-              feelsLike = (weatherMap["main"]["feels_like"] - 273.15)
-                  .floor()
-                  .toString();
-              humidity = weatherMap["main"]["humidity"].toString();
-              minTemp =
-                  (weatherMap["main"]["temp_min"] - 273.15).floor().toString();
-              maxTemp =
-                  (weatherMap["main"]["temp_max"] - 273.15).floor().toString();
-              notifyListeners();
+    _firestoreService
+        .retrieveUserDocument(_authenticationService.getUID())
+        .then((temp) {
+      if (temp.exists) {
+        _streamingSharedPreferencesService.changeStringInStreamingSP(
+            'MAC', temp.data()['MAC']);
+        Future.delayed(
+          Duration(seconds: 0),
+          () async {
+            Position _position;
+            _position = await _authenticationService.getLocation();
+            if (_position != null) {
+              position = _position;
+              double lat = _position.latitude;
+              double lon = _position.longitude;
+              http.Client client = http.Client();
+              final requestUrl =
+                  '$endPointUrl/weather?lat=$lat&lon=$lon&APPID=$apiKey';
+              Uri url = Uri.parse(requestUrl);
+              client.get(url).then((result) {
+                print(result.body);
+                Map weatherMap = jsonDecode(result.body);
+                if (weatherMap["cod"] == 200) {
+                  cityName = weatherMap["name"];
+                  description = weatherMap["weather"][0]["description"];
+                  temperature =
+                      (weatherMap["main"]["temp"] - 273.15).floor().toString();
+                  feelsLike = (weatherMap["main"]["feels_like"] - 273.15)
+                      .floor()
+                      .toString();
+                  humidity = weatherMap["main"]["humidity"].toString();
+                  minTemp = (weatherMap["main"]["temp_min"] - 273.15)
+                      .floor()
+                      .toString();
+                  maxTemp = (weatherMap["main"]["temp_max"] - 273.15)
+                      .floor()
+                      .toString();
+                  notifyListeners();
+                }
+              });
             }
-          });
-        }
-        print(" =============================MAC :" +
-            _streamingSharedPreferencesService
-                .readStringFromStreamingSP("MAC"));
-        setBusy(true);
-        _mqttService.setupConnection(
-          connectionSuccessful,
-          changeDisplayText,
-          setInitialValues,
-          getPermissions,
+            print(" =============================MAC :" +
+                _streamingSharedPreferencesService
+                    .readStringFromStreamingSP("MAC"));
+            setBusy(true);
+            _mqttService.setupConnection(
+              connectionSuccessful,
+              changeDisplayText,
+              setInitialValues,
+              getPermissions,
+            );
+          },
         );
-      },
-    );
+      }
+    });
   }
 
   void gotoRemoteScreen() {
     _mqttService.disconnectBroker();
-    _navigationService.navigateTo(Routes.remoteControlView);
+    _navigationService.navigateTo(Routes.remoteControlView, arguments: refresh);
   }
 
   void connectionSuccessful() {
@@ -180,6 +192,7 @@ class HomeViewModel extends BaseViewModel {
   void changeDisplayText(String display) {}
 
   void setInitialValues(String value, String topic) {
+    // print("\n----------------\n$value + $topic\n---------------------");
     if (topic == rootTopic + mac + "PM 1.0") {
       pm1 = value;
     } else if (topic == rootTopic + mac + "PM 2.5") {

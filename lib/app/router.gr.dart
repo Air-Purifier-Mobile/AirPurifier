@@ -91,7 +91,9 @@ class Router extends RouterBase {
     },
     RemoteControlView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const RemoteControlView(),
+        builder: (context) => RemoteControlView(
+          refreshCallBack: data.arguments,
+        ),
         settings: data,
       );
     },

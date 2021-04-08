@@ -1,13 +1,16 @@
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
+import 'package:air_purifier/services/rgbColor_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
 import 'package:flutter/material.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class RemoteControlViewModel extends BaseViewModel {
   bool isConnected = false;
   String displayText = '';
+  RGBService _rgbService = locator<RGBService>();
   int i = 0;
   MqttService _mqttService = locator<MqttService>();
   String rootTopic = "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/";
@@ -91,8 +94,11 @@ class RemoteControlViewModel extends BaseViewModel {
       initialIndexForFanSpeed = 1;
     } else {
       red = map["R color"];
+      _rgbService.changeColor("r", red);
       green = map["G color"];
+      _rgbService.changeColor("g", green);
       blue = map["B color"];
+      _rgbService.changeColor("b", blue);
       initialIndexForSwitch = map["AP motor"] == "OFF" ? 0 : 1;
       initialIndexForLEDMode = map["LED mode"] == "AUTO" ? 0 : 1;
       initialIndexForFanSpeed = map["AP speed"];

@@ -133,7 +133,7 @@ class MqttService {
         }
         if (c[0].topic == "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 1.0" ||
             c[0].topic ==
-                "//patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
+                "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
             c[0].topic ==
                 "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 10") {
           setInitialValues(payload, c[0].topic);

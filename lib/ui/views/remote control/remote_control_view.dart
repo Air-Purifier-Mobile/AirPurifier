@@ -9,12 +9,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animations/loading_animations.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:stacked/stacked.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class RemoteControlView extends StatefulWidget {
-  const RemoteControlView({Key key}) : super(key: key);
+  final Function refreshCallBack;
+  RemoteControlView({this.refreshCallBack, Key key}) : super(key: key);
 
   @override
   _RemoteControlViewState createState() => _RemoteControlViewState();
@@ -33,7 +33,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
         Future<bool> _onBackPressed() {
           return Future.delayed(Duration(seconds: 0), () {
             model.unsubscribeToTopic();
-
+            widget.refreshCallBack();
             return true;
           });
         }

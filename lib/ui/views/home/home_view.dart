@@ -3,6 +3,7 @@ import 'package:air_purifier/ui/widgets/busy_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foldable_sidebar/foldable_sidebar.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:stacked/stacked.dart';
@@ -25,7 +26,11 @@ class HomeView extends StatelessWidget {
                 ? Colors.white
                 : model.primaryColor,
             onPressed: () {
-              model.gotoRemoteScreen();
+              if (model.pm1 == null) {
+                Fluttertoast.showToast(
+                    msg: "Please turn on power supply to device");
+              } else
+                model.gotoRemoteScreen();
             },
             child: Container(
               height: width / 12,
@@ -42,6 +47,11 @@ class HomeView extends StatelessWidget {
             ),
           ),
           body: GestureDetector(
+            onVerticalDragEnd: (e) {
+              if (e.primaryVelocity > 0) {
+                model.refresh();
+              }
+            },
             onHorizontalDragEnd: (e) {
               if (e.primaryVelocity > 0) {
                 model.drawerCurrentState = FSBStatus.FSB_OPEN;
@@ -222,7 +232,8 @@ class HomeView extends StatelessWidget {
                                 ///15
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: height / 30),
+                                    vertical: height / 30,
+                                  ),
                                   child: Container(
                                     width: width / 1.5,
                                     child: Divider(
@@ -233,73 +244,76 @@ class HomeView extends StatelessWidget {
                                 ),
 
                                 ///Humidity and Temperature
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    ///Humidity
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Humidity',
-                                          style: TextStyle(
-                                            fontSize: height / 45,
-                                            color: model.primaryColor,
-                                            fontWeight: FontWeight.w400,
+                                Container(
+                                  height: height / 12,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      ///Humidity
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Humidity',
+                                            style: TextStyle(
+                                              fontSize: height / 45,
+                                              color: model.primaryColor,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
-                                        ),
 
-                                        Text(
-                                          '${model.humidity ?? ""} %',
-                                          style: TextStyle(
-                                            fontSize: height / 24,
-                                            color: model.primaryColor,
-                                            fontWeight: FontWeight.w500,
+                                          Text(
+                                            '${model.humidity ?? ""} %',
+                                            style: TextStyle(
+                                              fontSize: height / 24,
+                                              color: model.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
-                                        ),
-                                        // Container(
-                                        //   height: height / 13,
-                                        //   child:
-                                        // ),
-                                      ],
-                                    ),
+                                          // Container(
+                                          //   height: height / 13,
+                                          //   child:
+                                          // ),
+                                        ],
+                                      ),
 
-                                    SizedBox(
-                                      width: width / 6,
-                                    ),
+                                      SizedBox(
+                                        width: width / 6,
+                                      ),
 
-                                    ///Temperature
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'Temperature',
-                                          style: TextStyle(
-                                            fontSize: height / 45,
-                                            color: model.primaryColor,
-                                            fontWeight: FontWeight.w400,
+                                      ///Temperature
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Temperature',
+                                            style: TextStyle(
+                                              fontSize: height / 45,
+                                              color: model.primaryColor,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          '${model.temperature ?? ""}°',
-                                          style: TextStyle(
-                                            fontSize: height / 24,
-                                            color: model.primaryColor,
-                                            fontWeight: FontWeight.w500,
+                                          Text(
+                                            '${model.temperature ?? ""}°',
+                                            style: TextStyle(
+                                              fontSize: height / 24,
+                                              color: model.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
-                                        ),
-                                        // Container(
-                                        //   height: height / 13,
-                                        //   child:
-                                        // ),
-                                      ],
-                                    ),
-                                  ],
+                                          // Container(
+                                          //   height: height / 13,
+                                          //   child:
+                                          // ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
 
                                 SizedBox(
@@ -307,126 +321,129 @@ class HomeView extends StatelessWidget {
                                 ),
 
                                 ///PM values
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    ///PM 1.0
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'PM 1.0',
-                                          style: TextStyle(
-                                            fontSize: height / 45,
-                                            color: model.primaryColor,
-                                            fontWeight: FontWeight.w400,
+                                Container(
+                                  height: height / 12,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      ///PM 1.0
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'PM 1.0',
+                                            style: TextStyle(
+                                              fontSize: height / 45,
+                                              color: model.primaryColor,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
-                                        ),
-                                        model.pm1 != null
-                                            ? Text(
-                                                '${model.pm1}',
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.primaryColor,
-                                                  fontWeight: FontWeight.w500,
+                                          model.pm1 != null
+                                              ? Text(
+                                                  '${model.pm1}',
+                                                  style: TextStyle(
+                                                    fontSize: height / 30,
+                                                    color: model.primaryColor,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : FadingText(
+                                                  "..",
+                                                  style: TextStyle(
+                                                    fontSize: height / 30,
+                                                    color: model.primaryColor,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                              )
-                                            : FadingText(
-                                                "..",
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.primaryColor,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                        // Container(
-                                        //   height: height / 13,
-                                        //   child:
-                                        // ),
-                                      ],
-                                    ),
+                                          // Container(
+                                          //   height: height / 13,
+                                          //   child:
+                                          // ),
+                                        ],
+                                      ),
 
-                                    SizedBox(
-                                      width: width / 12,
-                                    ),
+                                      SizedBox(
+                                        width: width / 12,
+                                      ),
 
-                                    ///PM 2.5
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'PM 2.5',
-                                          style: TextStyle(
-                                            fontSize: height / 45,
-                                            color: model.primaryColor,
-                                            fontWeight: FontWeight.w400,
+                                      ///PM 2.5
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'PM 2.5',
+                                            style: TextStyle(
+                                              fontSize: height / 45,
+                                              color: model.primaryColor,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
-                                        ),
-                                        model.pm2 != null
-                                            ? Text(
-                                                '${model.pm2}',
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.primaryColor,
-                                                  fontWeight: FontWeight.w500,
+                                          model.pm2 != null
+                                              ? Text(
+                                                  '${model.pm2}',
+                                                  style: TextStyle(
+                                                    fontSize: height / 30,
+                                                    color: model.primaryColor,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : FadingText(
+                                                  "..",
+                                                  style: TextStyle(
+                                                    fontSize: height / 30,
+                                                    color: model.primaryColor,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                              )
-                                            : FadingText(
-                                                "..",
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.primaryColor,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                        // Container(
-                                        //   height: height / 13,
-                                        //   child:
-                                        // ),
-                                      ],
-                                    ),
+                                          // Container(
+                                          //   height: height / 13,
+                                          //   child:
+                                          // ),
+                                        ],
+                                      ),
 
-                                    SizedBox(
-                                      width: width / 12,
-                                    ),
+                                      SizedBox(
+                                        width: width / 12,
+                                      ),
 
-                                    ///PM 10
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'PM 10',
-                                          style: TextStyle(
-                                            fontSize: height / 45,
-                                            color: model.primaryColor,
-                                            fontWeight: FontWeight.w400,
+                                      ///PM 10
+                                      Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'PM 10',
+                                            style: TextStyle(
+                                              fontSize: height / 45,
+                                              color: model.primaryColor,
+                                              fontWeight: FontWeight.w400,
+                                            ),
                                           ),
-                                        ),
-                                        model.pm10 != null
-                                            ? Text(
-                                                '${model.pm10}',
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.primaryColor,
-                                                  fontWeight: FontWeight.w500,
+                                          model.pm10 != null
+                                              ? Text(
+                                                  '${model.pm10}',
+                                                  style: TextStyle(
+                                                    fontSize: height / 30,
+                                                    color: model.primaryColor,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : FadingText(
+                                                  "..",
+                                                  style: TextStyle(
+                                                    fontSize: height / 30,
+                                                    color: model.primaryColor,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                              )
-                                            : FadingText(
-                                                "..",
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.primaryColor,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                        // Container(
-                                        //   height: height / 13,
-                                        //   child:
-                                        // ),
-                                      ],
-                                    ),
-                                  ],
+                                          // Container(
+                                          //   height: height / 13,
+                                          //   child:
+                                          // ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
 
                                 // ///Re-Configure Button

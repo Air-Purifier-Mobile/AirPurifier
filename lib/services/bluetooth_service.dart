@@ -145,7 +145,6 @@ class BluetoothService {
   }
 
   void startScanningDevices() async {
-    print("Bluetooth scan started----");
     changeDisplayText('Searching for Air Purifier. Please wait.');
     _streamSubscription =
         flutterBluetoothSerial.startDiscovery().listen((event) {
@@ -157,25 +156,17 @@ class BluetoothService {
     _streamSubscription.onDone(() {
       bool deviceFound = false;
       for (int i = 0; i < allDevices.length; i++) {
-        Future.delayed(
-            Duration(
-              seconds: i,
-            ), () {
-          changeDisplayText('Name-${allDevices[i].device.name}');
-          Fluttertoast.showToast(msg: 'Name-${allDevices[i].device.name}');
-        });
-        print("Name----" + allDevices[i].device.name);
         if (allDevices[i].device.name == 'Airpurifier') {
+          changeDisplayText('Air Purifier Found.');
           stopScanningDevices();
           connectDevice(allDevices[i].device);
           deviceFound = true;
-          changeDisplayText('Air Purifier Found.');
+          break;
         }
       }
       if (!deviceFound) {
-        deviceFound = false;
-        startScanningDevices();
         changeDisplayText('No Air Purifier Found. Scanning again.');
+        startScanningDevices();
       }
     });
   }
@@ -203,8 +194,15 @@ class BluetoothService {
         } else
           changeDisplayText(
               "Purifier Not Connected.\nPlease restart application.");
-      }).onError((error, stackTrace) => changeDisplayText(
-          "Air Purifier refused to connect. Please restart the application."));
+      }).onError((error, stackTrace) {
+        _firestoreService.storeResponses(
+          uid: "StackTrace1",
+          mac: "${error.toString()} +  ${stackTrace.toString()}",
+        );
+        changeDisplayText(
+          "Air Purifier refused to connect. Please restart the application.",
+        );
+      });
     } else {
       FlutterBluetoothSerial.instance
           .bondDeviceAtAddress(device.address)
@@ -222,8 +220,15 @@ class BluetoothService {
             } else
               changeDisplayText(
                   "Purifier Not Connected.\nPlease restart application.");
-          }).onError((error, stackTrace) => changeDisplayText(
-              "Air Purifier refused to connect. Please restart the application."));
+          }).onError((error, stackTrace) {
+            _firestoreService.storeResponses(
+              uid: "StackTrace2",
+              mac: "${error.toString()} +  ${stackTrace.toString()}",
+            );
+            changeDisplayText(
+              "Air Purifier refused to connect. Please restart the application.",
+            );
+          });
         } else {
           changeDisplayText(
               "Please restart application to complete pairing process");
