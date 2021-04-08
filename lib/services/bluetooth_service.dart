@@ -155,17 +155,18 @@ class BluetoothService {
           "Fetching bluetooth devices failed.\n Restart application.");
     });
     _streamSubscription.onDone(() {
-      stopScanningDevices();
       bool deviceFound = false;
       for (int i = 0; i < allDevices.length; i++) {
         Future.delayed(
             Duration(
-              seconds: 2,
+              seconds: i,
             ), () {
+          changeDisplayText('Name-${allDevices[i].device.name}');
           Fluttertoast.showToast(msg: 'Name-${allDevices[i].device.name}');
         });
         print("Name----" + allDevices[i].device.name);
         if (allDevices[i].device.name == 'Airpurifier') {
+          stopScanningDevices();
           connectDevice(allDevices[i].device);
           deviceFound = true;
           changeDisplayText('Air Purifier Found.');
@@ -173,7 +174,8 @@ class BluetoothService {
       }
       if (!deviceFound) {
         deviceFound = false;
-        changeDisplayText('No Air Purifier Found. Please refresh.');
+        startScanningDevices();
+        changeDisplayText('No Air Purifier Found. Scanning again.');
       }
     });
   }
