@@ -158,6 +158,12 @@ class BluetoothService {
       stopScanningDevices();
       bool deviceFound = false;
       for (int i = 0; i < allDevices.length; i++) {
+        Future.delayed(
+            Duration(
+              seconds: 2,
+            ), () {
+          Fluttertoast.showToast(msg: 'Name-${allDevices[i].device.name}');
+        });
         print("Name----" + allDevices[i].device.name);
         if (allDevices[i].device.name == 'Airpurifier') {
           connectDevice(allDevices[i].device);

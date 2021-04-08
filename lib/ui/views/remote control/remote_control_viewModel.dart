@@ -10,7 +10,7 @@ class RemoteControlViewModel extends BaseViewModel {
   String displayText = '';
   int i = 0;
   MqttService _mqttService = locator<MqttService>();
-  String rootTopic = "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/";
+  String rootTopic = "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/";
   int red;
   int green;
   int blue;
@@ -79,7 +79,7 @@ class RemoteControlViewModel extends BaseViewModel {
   }
 
   void setInitialValues(Map map) {
-    print(map.toString());
+    print(map.toString() + '-------------------------');
     setBusy(false);
     if (map.isEmpty) {
       red = 0;

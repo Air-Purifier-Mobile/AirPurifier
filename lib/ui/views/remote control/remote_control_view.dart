@@ -93,6 +93,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                   initialLabelIndex:
                                       model.initialIndexForSwitch,
                                   onToggle: (index) {
+                                    model.initialIndexForSwitch = index;
                                     model.publishMessage(
                                       index == 0 ? "APOFF" : "APON",
                                     );
@@ -200,6 +201,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     "Manual",
                                   ],
                                   onToggle: (index) {
+                                    model.initialIndexForLEDMode = index;
                                     model.publishMessage(
                                         index == 0 ? "APLA" : "APLM");
                                   },
@@ -273,6 +275,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                   inactiveBgColor: model.primaryColor,
                                   initialLabelIndex: model.initialIndexForPMode,
                                   onToggle: (index) {
+                                    model.initialIndexForPMode = index;
                                     switch (index) {
                                       case 0:
                                         {

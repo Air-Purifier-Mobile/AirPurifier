@@ -32,7 +32,7 @@ class HomeViewModel extends BaseViewModel {
   String pm2;
   String pm10;
   String mac;
-  String rootTopic = "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/";
+  String rootTopic = "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/";
   FSBStatus drawerCurrentState = FSBStatus.FSB_CLOSE;
   Color primaryColor = Color.fromRGBO(39, 35, 67, 1);
   DateTime today = DateTime.now();

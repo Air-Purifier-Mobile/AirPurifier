@@ -45,7 +45,7 @@ class MqttService {
     // _client.secure = true;
     // _client.securityContext = context;-
     final connMessage = MqttConnectMessage()
-        .authenticateAs('sushrutpatwardhan@gmail.com', 'a03131df')
+        .authenticateAs('patwardhankaiwalya@gmail.com', '2b97d850')
         .keepAliveFor(60)
         .withWillTopic('will topic')
         .withWillMessage('will message')
@@ -118,24 +118,24 @@ class MqttService {
         //   refreshCallBack();
         // }
         if (c[0].topic ==
-            "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
+            "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
           setInitialValues(jsonDecode(payload));
         }
         if (c[0].topic ==
-                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/BUTTON" &&
+                "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/BUTTON" &&
             payload != ownMessage) {
           refreshCallBack();
         }
         if (c[0].topic ==
-                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/SPEED" &&
+                "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/SPEED" &&
             payload != ownMessage) {
           refreshCallBack();
         }
-        if (c[0].topic == "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 1.0" ||
+        if (c[0].topic == "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 1.0" ||
             c[0].topic ==
-                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
+                "//patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
             c[0].topic ==
-                "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 10") {
+                "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 10") {
           setInitialValues(payload, c[0].topic);
         }
       }
