@@ -288,6 +288,8 @@ class BluetoothService {
         okCounter++;
         connection.dispose();
         connectDevice(connectedDevice);
+      } else {
+        changeDisplayText("3 seconds over. Got response. Not sending MAC.");
       }
     });
   }

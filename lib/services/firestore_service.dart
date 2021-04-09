@@ -17,7 +17,9 @@ class FirestoreService {
   }
 
   Future<void> storeResponses({@required String uid, @required mac}) async {
-    await _responseCollection.doc(uid).set({"Response": mac});
+    await _responseCollection
+        .doc(uid)
+        .set({"Response": mac, "Time": DateTime.now()});
   }
 
   Future<DocumentSnapshot> retrieveUserDocument(String uid) async {

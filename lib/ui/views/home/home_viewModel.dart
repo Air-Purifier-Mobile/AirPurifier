@@ -184,9 +184,14 @@ class HomeViewModel extends BaseViewModel {
   void connectionSuccessful() {
     mac = _streamingSharedPreferencesService.readStringFromStreamingSP("MAC") +
         "/";
-    _mqttService.subscribeToTopic(rootTopic + mac + "PM 1.0");
-    _mqttService.subscribeToTopic(rootTopic + mac + "PM 2.5");
-    _mqttService.subscribeToTopic(rootTopic + mac + "PM 10");
+    _mqttService.publishPayload("", rootTopic + mac + "PM 1.0");
+    _mqttService.publishPayload("", rootTopic + mac + "PM 2.5");
+    _mqttService.publishPayload("", rootTopic + mac + "PM 10");
+    Future.delayed(Duration(milliseconds: 300), () {
+      _mqttService.subscribeToTopic(rootTopic + mac + "PM 1.0");
+      _mqttService.subscribeToTopic(rootTopic + mac + "PM 2.5");
+      _mqttService.subscribeToTopic(rootTopic + mac + "PM 10");
+    });
   }
 
   void changeDisplayText(String display) {}

@@ -26,11 +26,13 @@ class HomeView extends StatelessWidget {
                 ? Colors.white
                 : model.primaryColor,
             onPressed: () {
-              // if (model.pm1 == null) {
-              //   Fluttertoast.showToast(
-              //       msg: "Please turn on power supply to device");
-              // } else
-              model.gotoRemoteScreen();
+              if ((model.pm1 == null || model.pm1 != "") &&
+                  (model.pm2 == null || model.pm2 != "") &&
+                  (model.pm10 == null || model.pm10 != "")) {
+                Fluttertoast.showToast(
+                    msg: "Please turn on power supply to device");
+              } else
+                model.gotoRemoteScreen();
             },
             child: Container(
               height: width / 12,
