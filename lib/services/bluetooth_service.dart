@@ -280,7 +280,6 @@ class BluetoothService {
     connection.output.add(utf8.encode("AT\r\n"));
     await connection.output.allSent;
     testCommandSent = true;
-    sendTestMessage();
     Future.delayed(Duration(seconds: 3), () {
       if (testCommandSent) {
         // error
