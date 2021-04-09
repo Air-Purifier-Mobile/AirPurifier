@@ -69,7 +69,7 @@ class BluetoothService {
               allWifiDevices.add(response.trim());
             else if (response.contains('\$' * 40)) startReadingJson = true;
           }
-          if (response == selectedSSID) {
+          if (response.trim() == selectedSSID) {
             changeDisplayText("SSID response registered");
           }
           if (password != null && response == password) {
@@ -90,14 +90,15 @@ class BluetoothService {
               sendCommand("+SCAN?\r\n");
             });
           }
-          if (response == "OK") {
+          if (response.trim() == "OK") {
             macResponse = true;
             testCommandSent = false;
             Future.delayed(Duration(milliseconds: 500), () {
+              changeDisplayText("Received test response. Retrieving mac.");
               sendCommand("+MAC?\r\n");
             });
           }
-          if (response == "WIFI CONNECTED") {
+          if (response.trim() == "WIFI CONNECTED") {
             changeDisplayText("Device Connected To $selectedSSID");
             _firestoreService.storeUserData(
               uid: _authenticationService.getUID(),
@@ -109,7 +110,7 @@ class BluetoothService {
             connection.dispose();
             _navigationService.clearStackAndShow(Routes.homeView);
           }
-          if (response == "WIFI FAIL") {
+          if (response.trim() == "WIFI FAIL") {
             failedResponseCount++;
             selectedSSID = '';
             password = '';
@@ -292,7 +293,13 @@ class BluetoothService {
   }
 
   void sendCommand(String command) async {
-    connection.output.add(utf8.encode(command));
-    await connection.output.allSent;
+    if (connection.isConnected) {
+      connection.output.add(utf8.encode(command));
+      await connection.output.allSent;
+    } else {
+      connection.dispose();
+      changeDisplayText("Device disconnected arbitrarily. Please Wait.");
+      connectDevice(connectedDevice);
+    }
   }
 }

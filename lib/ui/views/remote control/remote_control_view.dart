@@ -106,7 +106,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                             height: height / 20,
                           ),
                           Row(
-                            mainAxisSize: MainAxisSize.max,
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
@@ -128,13 +128,66 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                 ),
                               ),
                               Container(
-                                height: height / 20,
-                                width: width / 2,
-                                child: InputCounter(
-                                  width: width / 3.5,
-                                  value: double.parse(
-                                      model.initialIndexForFanSpeed.toString()),
-                                  setValue: model.setQuantity,
+                                decoration: BoxDecoration(
+                                  color: model.primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      offset: Offset(0.0, 5.0),
+                                      blurRadius: 5.0,
+                                    ),
+                                  ],
+                                ),
+                                child: ToggleSwitch(
+                                  initialLabelIndex:
+                                      model.initialIndexForFanSpeed,
+                                  labels: [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                  ],
+                                  activeFgColor: model.primaryColor,
+                                  inactiveBgColor: model.primaryColor,
+                                  inactiveFgColor: Colors.white,
+                                  activeBgColors: [
+                                    Colors.white,
+                                    Colors.white,
+                                    Colors.white,
+                                    Colors.white,
+                                  ],
+                                  minWidth: width / 7,
+                                  onToggle: (index) {
+                                    switch (index) {
+                                      case 0:
+                                        {
+                                          model.publishMessage("1");
+                                        }
+                                        break;
+                                      case 1:
+                                        {
+                                          model.publishMessage("2");
+                                        }
+                                        break;
+                                      case 2:
+                                        {
+                                          model.publishMessage("3");
+                                        }
+                                        break;
+                                      case 3:
+                                        {
+                                          model.publishMessage("4");
+                                        }
+                                        break;
+                                      default:
+                                        {
+                                          Fluttertoast.showToast(
+                                            msg: "What was the input? $index",
+                                          );
+                                        }
+                                    }
+                                  },
                                 ),
                               ),
                             ],

@@ -91,7 +91,7 @@ class RemoteControlViewModel extends BaseViewModel {
       initialIndexForSwitch = 0;
       initialIndexForPMode = 0;
       initialIndexForLEDMode = 0;
-      initialIndexForFanSpeed = 1;
+      initialIndexForFanSpeed = 0;
     } else {
       red = map["R color"];
       _rgbService.changeColor("r", red);
@@ -101,7 +101,7 @@ class RemoteControlViewModel extends BaseViewModel {
       _rgbService.changeColor("b", blue);
       initialIndexForSwitch = map["AP motor"] == "OFF" ? 0 : 1;
       initialIndexForLEDMode = map["LED mode"] == "AUTO" ? 0 : 1;
-      initialIndexForFanSpeed = map["AP speed"];
+      initialIndexForFanSpeed = map["AP speed"] - 1;
       if (map["AP mode"] == "AUTO")
         initialIndexForPMode = 0;
       else if (map["AP mode"] == "MANUAL")
