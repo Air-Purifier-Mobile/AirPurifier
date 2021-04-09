@@ -5,6 +5,8 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -76,9 +78,10 @@ class BluetoothService {
           if (password != null && response.trim() == password.trim()) {
             if (!checkConnectionToBluetooth()) {
               changeDisplayText(
-                  "Password received. If you want to change wifi then press refresh.");
+                "Password received. If you want to change wifi then press refresh.",
+              );
               Future.delayed(Duration(milliseconds: 500), () {
-                Timer.periodic(Duration(seconds: 3), (timer) {
+                Timer.periodic(Duration(seconds: 5), (timer) {
                   if (connectedToWifiResponse) {
                     timer.cancel();
                     connectedToWifiResponse = false;
@@ -88,6 +91,7 @@ class BluetoothService {
                       uid: "Responses $messageOrder",
                       mac: 'CONNECT fired',
                     );
+                    messageOrder++;
                   }
                 });
               });
@@ -124,12 +128,18 @@ class BluetoothService {
                   uid: "Responses $messageOrder",
                   mac: 'MAC fired',
                 );
+                messageOrder++;
               });
             }
           }
           if (response.trim() == "WIFI CONNECTED") {
             connectedToWifiResponse = true;
             changeDisplayText("Device Connected To $selectedSSID");
+            firestoreService.storeResponses(
+              uid: "Responses $messageOrder",
+              mac: 'Wifi Connected',
+            );
+            messageOrder++;
             firestoreService.storeUserData(
               uid: _authenticationService.getUID(),
               mac: _streamingSharedPreferencesService
@@ -137,7 +147,6 @@ class BluetoothService {
             );
             selectedSSID = '';
             password = '';
-            connection.dispose();
             _navigationService.clearStackAndShow(Routes.homeView);
           }
           if (response.trim() == "WIFI FAIL") {
@@ -208,82 +217,120 @@ class BluetoothService {
   void connectDevice(
     BluetoothDevice device,
   ) async {
-    if (device.isBonded) {
-      // Un-pair the device
-      FlutterBluetoothSerial.instance
-          .removeDeviceBondWithAddress(device.address)
-          .then((result) {
-        if (result) {
-          // Re-pair  the device
-          FlutterBluetoothSerial.instance
-              .bondDeviceAtAddress(device.address)
-              .then((pairResult) {
-            if (pairResult) {
-              BluetoothConnection.toAddress(device.address).then((_connection) {
-                connection = _connection;
-                if (_connection.isConnected) {
-                  connectedDevice = device;
-                  changeDisplayText("Connected to Device : ${device.name}");
-                  Future.delayed(Duration(milliseconds: 500), () {
-                    sendTestMessage();
-                    startListeningFromDevice();
-                  });
-                } else
-                  changeDisplayText(
-                      "Purifier Not Connected.\nPlease restart application.");
-              }).onError((error, stackTrace) {
-                firestoreService.storeResponses(
-                  uid: "StackTrace2",
-                  mac: "${error.toString()} +  ${stackTrace.toString()}",
-                );
-                changeDisplayText(
-                  "Air Purifier refused to connect. Please restart the application.",
-                );
-              });
-            } else {
-              changeDisplayText(
-                  "Please restart application to complete pairing process");
-            }
-          });
-        } else {
-          changeDisplayText(
-              "Please un-pair the device manually from phone bluetooth settings and refresh");
-          connectDevice(device);
-        }
-      });
-    } else {
-      FlutterBluetoothSerial.instance
-          .bondDeviceAtAddress(device.address)
-          .then((pairResult) {
-        if (pairResult) {
-          BluetoothConnection.toAddress(device.address).then((_connection) {
-            connection = _connection;
-            if (_connection.isConnected) {
-              connectedDevice = device;
-              changeDisplayText("Connected to Device : ${device.name}");
-              Future.delayed(Duration(milliseconds: 500), () {
-                sendTestMessage();
-                startListeningFromDevice();
-              });
-            } else
-              changeDisplayText(
-                  "Purifier Not Connected.\nPlease refresh application.");
-          }).onError((error, stackTrace) {
-            firestoreService.storeResponses(
-              uid: "StackTrace2",
-              mac: "${error.toString()} +  ${stackTrace.toString()}",
-            );
+    changeDisplayText("Entered device is un paired");
+    FlutterBluetoothSerial.instance
+        .bondDeviceAtAddress(device.address)
+        .then((pairResult) {
+      if (pairResult) {
+        BluetoothConnection.toAddress(device.address).then((_connection) {
+          connection = _connection;
+          if (_connection.isConnected) {
+            connectedDevice = device;
+            changeDisplayText("Connected to Device : ${device.name}");
+            Future.delayed(Duration(milliseconds: 500), () {
+              sendTestMessage();
+              startListeningFromDevice();
+            });
+          } else
             changeDisplayText(
-              "Air Purifier refused to connect. Please refresh the application.",
-            );
-          });
-        } else {
+                "Purifier Not Connected.\nPlease refresh application.");
+        }).onError((error, stackTrace) {
+          checkConnectionToBluetooth();
+          firestoreService.storeResponses(
+            uid: "StackTrace2",
+            mac: "${error.toString()} +  ${stackTrace.toString()}",
+          );
           changeDisplayText(
-              "Please refresh application to complete pairing process");
-          connectDevice(device);
-        }
+            "Air Purifier refused to connect. Please refresh the application.",
+          );
+        });
+      } else {
+        FlutterBluetoothSerial.instance
+            .removeDeviceBondWithAddress(device.address);
+        changeDisplayText(
+            "Please refresh application to complete pairing process");
+        connectDevice(device);
+      }
+    }).onError((error, stackTrace) {
+      changeDisplayText(
+        "Connecting to already paired device",
+      );
+      firestoreService.storeResponses(
+        uid: "StackTrace",
+        mac: "${error.toString()} +  ${stackTrace.toString()}",
+      );
+      BluetoothConnection.toAddress(device.address).then((_connection) {
+        connection = _connection;
+        if (_connection.isConnected) {
+          connectedDevice = device;
+          changeDisplayText("Connected to Device : ${device.name}");
+          Future.delayed(Duration(milliseconds: 500), () {
+            sendTestMessage();
+            startListeningFromDevice();
+          });
+        } else
+          changeDisplayText(
+              "Purifier Not Connected.\nPlease refresh application.");
+      }).onError((error, stackTrace) {
+        checkConnectionToBluetooth();
+        firestoreService.storeResponses(
+          uid: "StackTrace2",
+          mac: "${error.toString()} +  ${stackTrace.toString()}",
+        );
+        changeDisplayText(
+          "Air Purifier refused to connect. Please refresh the application.",
+        );
       });
-    }
+    });
+    // if (device.bondState.isBonded) {
+    //   // Un-pair the device
+    //   changeDisplayText("Entered Device is bonded");
+    //   FlutterBluetoothSerial.instance
+    //       .removeDeviceBondWithAddress(device.address)
+    //       .then((result) {
+    //     if (result) {
+    //       changeDisplayText("Unpaired device");
+    //       // Re-pair  the device
+    //       FlutterBluetoothSerial.instance
+    //           .bondDeviceAtAddress(device.address)
+    //           .then((pairResult) {
+    //         if (pairResult) {
+    //           changeDisplayText("Entered pairing again");
+    //           BluetoothConnection.toAddress(device.address).then((_connection) {
+    //             connection = _connection;
+    //             if (_connection.isConnected) {
+    //               connectedDevice = device;
+    //               changeDisplayText("Connected to Device : ${device.name}");
+    //               Future.delayed(Duration(milliseconds: 500), () {
+    //                 sendTestMessage();
+    //                 startListeningFromDevice();
+    //               });
+    //             } else
+    //               changeDisplayText(
+    //                   "Purifier Not Connected.\nPlease restart application.");
+    //           }).onError((error, stackTrace) {
+    //             firestoreService.storeResponses(
+    //               uid: "StackTrace2",
+    //               mac: "${error.toString()} +  ${stackTrace.toString()}",
+    //             );
+    //             changeDisplayText(
+    //               "Air Purifier refused to connect. Please restart the application.",
+    //             );
+    //           });
+    //         } else {
+    //           changeDisplayText(
+    //               "Please restart application to complete pairing process");
+    //         }
+    //       });
+    //     } else {
+    //       changeDisplayText(
+    //           "Please un-pair the device manually from phone bluetooth settings and refresh");
+    //       connectDevice(device);
+    //     }
+    //   });
+    // } else {
+    //
+    // }
   }
 
   int okCounter = 0;
@@ -294,9 +341,10 @@ class BluetoothService {
       uid: "Responses $messageOrder",
       mac: 'AT fired',
     );
+    messageOrder++;
     await connection.output.allSent;
     testCommandSent = true;
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 5), () {
       if (testCommandSent) {
         // error
         okCounter++;
