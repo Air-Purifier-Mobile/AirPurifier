@@ -33,10 +33,13 @@ class BluetoothViewModel extends BaseViewModel {
   }
 
   ///Callback for changing to wifi
-  void goToWifiScreen() {
+  void goToWifiScreen(var refresh) {
     try {
       goingForWifi = true;
       notifyListeners();
+      if (refresh is bool && refresh) {
+        wifiRefresh();
+      }
     } catch (error) {
       Fluttertoast.showToast(msg: "Error in goToWifiScreen" + error.toString());
     }
@@ -45,7 +48,7 @@ class BluetoothViewModel extends BaseViewModel {
   void sendPasswordToDevice(String pass) {
     goingForWifi = false;
     finalPass = pass;
-    displayText = "Sending SSID : $finalSSID to device";
+    displayText = "Sending password to device";
     bluetoothService.password = pass;
     Future.delayed(Duration(milliseconds: 500), () {
       bluetoothService.sendCommand(

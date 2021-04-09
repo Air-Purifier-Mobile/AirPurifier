@@ -412,7 +412,7 @@ class Wifi extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: height / 6),
                   child: Container(
                     child: Text(
-                      "No Wifi networks available ",
+                      "Searching for Wifi networks available ",
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontWeight: FontWeight.w500,

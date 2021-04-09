@@ -31,7 +31,7 @@ class MqttService {
     changeDisplayText = _changeDisplayText;
     setInitialValues = setInit;
     refreshCallBack = refresh;
-    _client = MqttServerClient.withPort('mqtt.dioty.co', clientID, 1883);
+    _client = MqttServerClient.withPort('mqtt.flespi.io', clientID, 8883);
     _client.logging(on: true);
     _client.onConnected = onConnected;
     _client.onDisconnected = onDisconnected;
@@ -42,17 +42,20 @@ class MqttService {
     // SecurityContext context = new SecurityContext()
     //   ..setClientAuthorities('package:air_purifier/constants/dioty_ca.crt',
     //       password: '7b35b817');
-    // _client.secure = true;
+    _client.secure = true;
     // _client.securityContext = context;-
+
     final connMessage = MqttConnectMessage()
-        .authenticateAs('patwardhankaiwalya@gmail.com', '2b97d850')
+        .authenticateAs(
+          'rAh45RKnnT94r2uCk3cqKu44oaWUMrZ1R7TKMtYXbVRsL9ST0Sazd4rp4d7EuVt9',
+          null,
+        )
         .keepAliveFor(60)
         .withWillTopic('will topic')
         .withWillMessage('will message')
         .startClean()
         .withWillQos(MqttQos.atLeastOnce)
         .withClientIdentifier(clientID);
-
     _client.connectionMessage = connMessage;
     try {
       await _client.connect();
@@ -110,7 +113,8 @@ class MqttService {
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
       print(
-          'Received message:$payload own Message:$ownMessage fromTopic:${c[0].topic}');
+        'Received message:$payload own Message:$ownMessage fromTopic:${c[0].topic}',
+      );
 
       if (payload != ownMessage) {
         // if (c[0].topic ==
