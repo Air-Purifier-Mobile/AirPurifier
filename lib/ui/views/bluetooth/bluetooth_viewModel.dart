@@ -46,24 +46,38 @@ class BluetoothViewModel extends BaseViewModel {
   }
 
   void sendPasswordToDevice(String pass) {
-    goingForWifi = false;
-    finalPass = pass;
-    displayText = "Sending password to device";
-    bluetoothService.password = pass;
-    Future.delayed(Duration(milliseconds: 500), () {
-      bluetoothService.sendCommand(
-        "+PSS," + finalPass.trim() + "\r\n",
-      );
-    });
-    notifyListeners();
+    if (!bluetoothService.checkConnectionToBluetooth()) {
+      goingForWifi = false;
+      finalPass = pass;
+      displayText = "Sending password to device";
+      bluetoothService.password = pass;
+      Future.delayed(Duration(milliseconds: 500), () {
+        bluetoothService.sendCommand(
+          "+PSS," + finalPass.trim() + "\r\n",
+        );
+        bluetoothService.firestoreService.storeResponses(
+          uid: "Responses",
+          mac: 'PASS fired',
+        );
+      });
+      notifyListeners();
+    }
   }
 
   void sendSSIDToDevice(String ssid) {
-    finalSSID = ssid;
-    bluetoothService.selectedSSID = ssid;
-    displayText = "Sending SSID : $finalSSID to device";
-    bluetoothService.sendCommand("+SSID,$finalSSID\r\n");
-    notifyListeners();
+    if (!bluetoothService.checkConnectionToBluetooth()) {
+      finalSSID = ssid;
+      bluetoothService.selectedSSID = ssid;
+      displayText = "Sending SSID : $finalSSID to device";
+      Future.delayed(Duration(milliseconds: 500), () {
+        bluetoothService.sendCommand("+SSID,$finalSSID\r\n");
+        bluetoothService.firestoreService.storeResponses(
+          uid: "Responses",
+          mac: 'SSID fired',
+        );
+      });
+      notifyListeners();
+    }
   }
 
   void goToBluetoothScreen() {

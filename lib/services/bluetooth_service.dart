@@ -21,7 +21,7 @@ class BluetoothService {
       locator<StreamingSharedPreferencesService>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
-  FirestoreService _firestoreService = locator<FirestoreService>();
+  FirestoreService firestoreService = locator<FirestoreService>();
   Function changeDisplayText;
   Function changeToWifiScreen;
   Function updateSSIDListCallback;
@@ -37,6 +37,7 @@ class BluetoothService {
   int testCommandCounter = 0;
   bool testCommandSent = false;
   List<String> allWifiDevices = [];
+  bool connectedToWifiResponse = false;
 
   void startListeningFromDevice() {
     //Went to Beta
@@ -49,7 +50,7 @@ class BluetoothService {
             response != "\r" &&
             response != " " &&
             response != " \r\n") {
-          _firestoreService.storeResponses(
+          firestoreService.storeResponses(
             uid: "Responses $messageOrder",
             mac: response,
           );
@@ -58,12 +59,12 @@ class BluetoothService {
             if (response.contains('\#' * 40)) {
               startReadingJson = false;
               changeDisplayText(allWifiDevices.toString());
-              _firestoreService.storeResponses(
+              firestoreService.storeResponses(
                 uid: "Responses Final list",
                 mac: allWifiDevices.toString(),
               );
               updateSSIDListCallback(allWifiDevices);
-              changeToWifiScreen();
+              changeToWifiScreen(null);
             }
             if (startReadingJson)
               allWifiDevices.add(response.trim());
@@ -72,35 +73,64 @@ class BluetoothService {
           if (response.trim() == selectedSSID) {
             changeDisplayText("SSID response registered");
           }
-          if (password != null && response == password) {
-            changeDisplayText("Password Set In device");
-            Future.delayed(Duration(milliseconds: 500), () {
-              sendCommand("+CONNECT\r\n");
-            });
+          if (password != null && response.trim() == password.trim()) {
+            if (!checkConnectionToBluetooth()) {
+              changeDisplayText(
+                  "Password received. If you want to change wifi then press refresh.");
+              Future.delayed(Duration(milliseconds: 500), () {
+                Timer.periodic(Duration(seconds: 3), (timer) {
+                  if (connectedToWifiResponse) {
+                    timer.cancel();
+                    connectedToWifiResponse = false;
+                  } else {
+                    sendCommand("+CONNECT\r\n");
+                    firestoreService.storeResponses(
+                      uid: "Responses $messageOrder",
+                      mac: 'CONNECT fired',
+                    );
+                  }
+                });
+              });
+            }
           }
           if (macResponse) {
-            changeDisplayText("MAC of device Saved in Shared Preferences");
-            _streamingSharedPreferencesService.changeStringInStreamingSP(
-              "MAC",
-              response.trim(),
-            );
-            changeDisplayText("Sending command to fetch SSIDs");
-            macResponse = false;
-            Future.delayed(Duration(milliseconds: 500), () {
-              sendCommand("+SCAN?\r\n");
-            });
+            if (!checkConnectionToBluetooth()) {
+              changeDisplayText("MAC of device Saved in Shared Preferences");
+              _streamingSharedPreferencesService.changeStringInStreamingSP(
+                "MAC",
+                response.trim(),
+              );
+              changeDisplayText("Sending command to fetch SSIDs");
+              macResponse = false;
+              Future.delayed(Duration(milliseconds: 500), () {
+                sendCommand("+SCAN?\r\n");
+                firestoreService.storeResponses(
+                  uid: "Responses $messageOrder",
+                  mac: 'SCAN fired',
+                );
+              });
+            }
           }
           if (response.trim() == "OK") {
-            macResponse = true;
-            testCommandSent = false;
-            Future.delayed(Duration(milliseconds: 500), () {
-              changeDisplayText("Received test response. Retrieving mac.");
-              sendCommand("+MAC?\r\n");
-            });
+            if (checkConnectionToBluetooth()) {
+              //restart connection process
+            } else {
+              macResponse = true;
+              testCommandSent = false;
+              Future.delayed(Duration(milliseconds: 500), () {
+                changeDisplayText("Received test response. Retrieving mac.");
+                sendCommand("+MAC?\r\n");
+                firestoreService.storeResponses(
+                  uid: "Responses $messageOrder",
+                  mac: 'MAC fired',
+                );
+              });
+            }
           }
           if (response.trim() == "WIFI CONNECTED") {
+            connectedToWifiResponse = true;
             changeDisplayText("Device Connected To $selectedSSID");
-            _firestoreService.storeUserData(
+            firestoreService.storeUserData(
               uid: _authenticationService.getUID(),
               mac: _streamingSharedPreferencesService
                   .readStringFromStreamingSP('MAC'),
@@ -111,6 +141,7 @@ class BluetoothService {
             _navigationService.clearStackAndShow(Routes.homeView);
           }
           if (response.trim() == "WIFI FAIL") {
+            connectedToWifiResponse = true;
             failedResponseCount++;
             selectedSSID = '';
             password = '';
@@ -201,7 +232,7 @@ class BluetoothService {
                   changeDisplayText(
                       "Purifier Not Connected.\nPlease restart application.");
               }).onError((error, stackTrace) {
-                _firestoreService.storeResponses(
+                firestoreService.storeResponses(
                   uid: "StackTrace2",
                   mac: "${error.toString()} +  ${stackTrace.toString()}",
                 );
@@ -217,31 +248,9 @@ class BluetoothService {
         } else {
           changeDisplayText(
               "Please un-pair the device manually from phone bluetooth settings and refresh");
-          // connectDevice(device);
+          connectDevice(device);
         }
       });
-      // Fluttertoast.showToast(msg: "Device already paired");
-      // BluetoothConnection.toAddress(device.address).then((_connection) {
-      //   connection = _connection;
-      //   if (_connection.isConnected) {
-      //     connectedDevice = device;
-      //     changeDisplayText("Connected to Device : ${device.name}");
-      //     Future.delayed(Duration(milliseconds: 500), () {
-      //       sendTestMessage();
-      //       startListeningFromDevice();
-      //     });
-      //   } else
-      //     changeDisplayText(
-      //         "Purifier Not Connected.\nPlease restart application.");
-      // }).onError((error, stackTrace) {
-      //   _firestoreService.storeResponses(
-      //     uid: "StackTrace1",
-      //     mac: "${error.toString()} +  ${stackTrace.toString()}",
-      //   );
-      //   changeDisplayText(
-      //     "Air Purifier refused to connect. Please restart the application.",
-      //   );
-      // });
     } else {
       FlutterBluetoothSerial.instance
           .bondDeviceAtAddress(device.address)
@@ -260,7 +269,7 @@ class BluetoothService {
               changeDisplayText(
                   "Purifier Not Connected.\nPlease refresh application.");
           }).onError((error, stackTrace) {
-            _firestoreService.storeResponses(
+            firestoreService.storeResponses(
               uid: "StackTrace2",
               mac: "${error.toString()} +  ${stackTrace.toString()}",
             );
@@ -271,6 +280,7 @@ class BluetoothService {
         } else {
           changeDisplayText(
               "Please refresh application to complete pairing process");
+          connectDevice(device);
         }
       });
     }
@@ -280,6 +290,10 @@ class BluetoothService {
   void sendTestMessage() async {
     changeDisplayText("Testing Connection $okCounter");
     connection.output.add(utf8.encode("AT\r\n"));
+    firestoreService.storeResponses(
+      uid: "Responses $messageOrder",
+      mac: 'AT fired',
+    );
     await connection.output.allSent;
     testCommandSent = true;
     Future.delayed(Duration(seconds: 3), () {
@@ -303,5 +317,15 @@ class BluetoothService {
       changeDisplayText("Device disconnected arbitrarily. Please Wait.");
       connectDevice(connectedDevice);
     }
+  }
+
+  bool checkConnectionToBluetooth() {
+    if (!connection.isConnected) {
+      connection.dispose();
+      changeDisplayText("Device disconnected arbitrarily. Please Wait.");
+      connectDevice(connectedDevice);
+      return true;
+    } else
+      return false;
   }
 }
