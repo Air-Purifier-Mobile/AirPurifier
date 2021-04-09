@@ -275,14 +275,16 @@ class BluetoothService {
     }
   }
 
+  int okCounter = 0;
   void sendTestMessage() async {
-    changeDisplayText("Testing Connection");
+    changeDisplayText("Testing Connection $okCounter");
     connection.output.add(utf8.encode("AT\r\n"));
     await connection.output.allSent;
     testCommandSent = true;
     Future.delayed(Duration(seconds: 3), () {
       if (testCommandSent) {
         // error
+        okCounter++;
         connection.dispose();
         connectDevice(connectedDevice);
       }
