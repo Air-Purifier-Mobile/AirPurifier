@@ -47,7 +47,7 @@ class MqttService {
 
     final connMessage = MqttConnectMessage()
         .authenticateAs(
-          'rAh45RKnnT94r2uCk3cqKu44oaWUMrZ1R7TKMtYXbVRsL9ST0Sazd4rp4d7EuVt9',
+          'EeCRXC1jLNcmgXvydXxltgvCfVhAzRw3TZJGrAP0bQciBvGEi2Oz6919U6zkLVbu',
           null,
         )
         .keepAliveFor(60)
