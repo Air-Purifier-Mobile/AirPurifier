@@ -13,8 +13,13 @@ import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
 
 class HomeViewModel extends BaseViewModel {
+  /// weather api url
   static const endPointUrl = 'https://api.openweathermap.org/data/2.5';
+
+  /// weather api key
   static String apiKey = "877d03d951c069bd37eaec4c9ee02abc";
+
+  /// Instances of services used
   final AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   final NavigationService _navigationService = locator<NavigationService>();
@@ -22,6 +27,8 @@ class HomeViewModel extends BaseViewModel {
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
   final FirestoreService _firestoreService = locator<FirestoreService>();
+
+  /// Variables initialisation.
   Position position;
   String cityName;
   String description;
@@ -39,10 +46,12 @@ class HomeViewModel extends BaseViewModel {
   Color primaryColor = Color.fromRGBO(39, 35, 67, 1);
   DateTime today = DateTime.now();
 
+  /// User Logs out
   void logout() {
     _authenticationService.signOut();
   }
 
+  /// toggles drawer
   void menuToggle() {
     drawerCurrentState = drawerCurrentState == FSBStatus.FSB_OPEN
         ? FSBStatus.FSB_CLOSE
@@ -50,6 +59,7 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  ///Used to get WeekDay
   String getDay(int day) {
     switch (day) {
       case 1:
@@ -71,6 +81,7 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
+  /// Used to get Month
   String getMonth(int month) {
     switch (month) {
       case 1:
@@ -102,6 +113,7 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
+  /// Refreshes Home View
   void refresh() {
     position = null;
     cityName = null;
@@ -115,19 +127,23 @@ class HomeViewModel extends BaseViewModel {
     pm2 = null;
     pm10 = null;
     notifyListeners();
-    getPermissions();
+    getLocation();
   }
 
-  void getPermissions() async {
+  /// Gets data
+  void getLocation() async {
+    /// Gets the mac ID stored in firebase.
     _firestoreService
         .retrieveUserDocument(_authenticationService.getUID())
         .then((temp) {
       if (temp.exists) {
+        /// MacId is overwritten in the shared preferences
         _streamingSharedPreferencesService.changeStringInStreamingSP(
             'MAC', temp.data()['MAC']);
         Future.delayed(
           Duration(seconds: 0),
           () async {
+            /// Get's users' location
             Position _position;
             _position = await _authenticationService.getLocation();
             if (_position != null) {
@@ -135,10 +151,13 @@ class HomeViewModel extends BaseViewModel {
               double lat = _position.latitude;
               double lon = _position.longitude;
               http.Client client = http.Client();
+
+              /// Passes the location to weather API
               final requestUrl =
                   '$endPointUrl/weather?lat=$lat&lon=$lon&APPID=$apiKey';
               Uri url = Uri.parse(requestUrl);
               client.get(url).then((result) {
+                /// On Response sets the weather data on home screen
                 print(result.body);
                 Map weatherMap = jsonDecode(result.body);
                 if (weatherMap["cod"] == 200) {
@@ -164,11 +183,13 @@ class HomeViewModel extends BaseViewModel {
                 _streamingSharedPreferencesService
                     .readStringFromStreamingSP("MAC"));
             setBusy(true);
+
+            /// Initiates a connection to MQTT broker
             _mqttService.setupConnection(
               connectionSuccessful,
-              changeDisplayText,
+              (String display) {},
               setInitialValues,
-              getPermissions,
+              getLocation,
             );
           },
         );
@@ -176,12 +197,17 @@ class HomeViewModel extends BaseViewModel {
     });
   }
 
+  ///Disconnects broker and navigates to remote screen
   void gotoRemoteScreen() {
     _mqttService.disconnectBroker();
     _navigationService.navigateTo(Routes.remoteControlView, arguments: refresh);
   }
 
+  /// MQTT connection successful callback
   void connectionSuccessful() {
+    /// When MQTT service establishes successful with broker, 2 things are done:
+    /// 1) Topics for pm values are set to null by publishing null value on those.
+    /// 2) Corresponding topics are subscribed to listen live data from device.
     mac = _streamingSharedPreferencesService.readStringFromStreamingSP("MAC") +
         "/";
     _mqttService.publishPayload("", rootTopic + mac + "PM 1.0");
@@ -194,9 +220,9 @@ class HomeViewModel extends BaseViewModel {
     });
   }
 
-  void changeDisplayText(String display) {}
-
+  /// initial value setter.
   void setInitialValues(String value, String topic) {
+    /// Sets pm1, pm2, pm10 values corresponding to topic.
     // print("\n----------------\n$value + $topic\n---------------------");
     if (topic == rootTopic + mac + "PM 1.0") {
       pm1 = value;
@@ -212,44 +238,45 @@ class HomeViewModel extends BaseViewModel {
     _navigationService.navigateTo(Routes.addDeviceView);
   }
 
-  Map dummy = {
-    "coord": {"lon": 80.3319, "lat": 26.4499},
-    "weather": [
-      {
-        "id": 721,
-        "main": "Haze",
-        "description": "haze",
-        "icon": "50n",
-      }
-    ],
-    "base": "stations",
-    "main": {
-      "temp": 302.15,
-      "feels_like": 303.36,
-      "temp_min": 302.15,
-      "temp_max": 302.15,
-      "pressure": 1006,
-      "humidity": 45
-    },
-    "visibility": 4000,
-    "wind": {
-      "speed": 1.03,
-      "deg": 0,
-    },
-    "clouds": {
-      "all": 0,
-    },
-    "dt": 1616947408,
-    "sys": {
-      "type": 1,
-      "id": 9176,
-      "country": "IN",
-      "sunrise": 1616891640,
-      "sunset": 1616935999,
-    },
-    "timezone": 19800,
-    "id": 1267995,
-    "name": "Kanpur",
-    "cod": 200,
-  };
+  /// The Json retrieved from weather api is of following structure :
+  // Map dummy = {
+  //   "coord": {"lon": 80.3319, "lat": 26.4499},
+  //   "weather": [
+  //     {
+  //       "id": 721,
+  //       "main": "Haze",
+  //       "description": "haze",
+  //       "icon": "50n",
+  //     }
+  //   ],
+  //   "base": "stations",
+  //   "main": {
+  //     "temp": 302.15,
+  //     "feels_like": 303.36,
+  //     "temp_min": 302.15,
+  //     "temp_max": 302.15,
+  //     "pressure": 1006,
+  //     "humidity": 45
+  //   },
+  //   "visibility": 4000,
+  //   "wind": {
+  //     "speed": 1.03,
+  //     "deg": 0,
+  //   },
+  //   "clouds": {
+  //     "all": 0,
+  //   },
+  //   "dt": 1616947408,
+  //   "sys": {
+  //     "type": 1,
+  //     "id": 9176,
+  //     "country": "IN",
+  //     "sunrise": 1616891640,
+  //     "sunset": 1616935999,
+  //   },
+  //   "timezone": 19800,
+  //   "id": 1267995,
+  //   "name": "Kanpur",
+  //   "cod": 200,
+  // };
 }

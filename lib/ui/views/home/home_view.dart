@@ -18,7 +18,7 @@ class HomeView extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     return ViewModelBuilder<HomeViewModel>.reactive(
       viewModelBuilder: () => HomeViewModel(),
-      onModelReady: (model) => model.getPermissions(),
+      onModelReady: (model) => model.getLocation(),
       builder: (context, model, child) {
         return Scaffold(
           floatingActionButton: FloatingActionButton(
