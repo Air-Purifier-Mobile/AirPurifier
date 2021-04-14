@@ -234,6 +234,7 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  /// Navigates to configure bluetooth screen screen
   void goToBluetoothScreen() {
     _navigationService.navigateTo(Routes.addDeviceView);
   }

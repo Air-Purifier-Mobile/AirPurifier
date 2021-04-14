@@ -26,14 +26,14 @@ class HomeView extends StatelessWidget {
                 ? Colors.white
                 : model.primaryColor,
             onPressed: () {
-              print(model.pm1 + ' ' + model.pm2 + ' ' + model.pm10);
-              if ((model.pm1 == null && model.pm1 != "") &&
-                  (model.pm2 == null && model.pm2 != "") &&
-                  (model.pm10 == null && model.pm10 != "")) {
-                Fluttertoast.showToast(
-                    msg: "Please turn on power supply to device");
-              } else
-                model.gotoRemoteScreen();
+              // if ((model.pm1 == null || model.pm1 != "") &&
+              //     (model.pm2 == null || model.pm2 != "") &&
+              //     (model.pm10 == null || model.pm10 != "")) {
+              //   Fluttertoast.showToast(
+              //     msg: "Please turn on power supply to device",
+              //   );
+              // } else
+              model.gotoRemoteScreen();
             },
             child: Container(
               height: width / 12,
@@ -164,7 +164,7 @@ class HomeView extends StatelessWidget {
                                             model.today.hour < 19
                                         ? width / 1.6
                                         : 0.0,
-                                    height / 20,
+                                    height * 0.05,
                                     model.today.hour > 6 &&
                                             model.today.hour < 19
                                         ? 0.0
@@ -208,7 +208,7 @@ class HomeView extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.fromLTRB(
                                     0.0,
-                                    height / 2.6,
+                                    height * 0.37,
                                     0.0,
                                     0.0,
                                   ),
@@ -235,7 +235,7 @@ class HomeView extends StatelessWidget {
                                 ///15
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    vertical: height / 30,
+                                    vertical: height * 0.0333,
                                   ),
                                   child: Container(
                                     width: width / 1.5,
@@ -248,7 +248,7 @@ class HomeView extends StatelessWidget {
 
                                 ///Humidity and Temperature
                                 Container(
-                                  height: height / 12,
+                                  height: height * 0.08333,
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -262,7 +262,7 @@ class HomeView extends StatelessWidget {
                                           Text(
                                             'Humidity',
                                             style: TextStyle(
-                                              fontSize: height / 45,
+                                              fontSize: height * 0.0222,
                                               color: model.primaryColor,
                                               fontWeight: FontWeight.w400,
                                             ),
@@ -320,12 +320,12 @@ class HomeView extends StatelessWidget {
                                 ),
 
                                 SizedBox(
-                                  height: height / 40,
+                                  height: height * 0.025,
                                 ),
 
                                 ///PM values
                                 Container(
-                                  height: height / 12,
+                                  height: height * 0.0833,
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -448,66 +448,6 @@ class HomeView extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-
-                                // ///Re-Configure Button
-                                // Container(
-                                //   height: 50.0,
-                                //   width: width / 2.5,
-                                //   decoration: BoxDecoration(
-                                //     color: Colors.white,
-                                //     borderRadius:
-                                //         BorderRadius.all(Radius.circular(10.0)),
-                                //   ),
-                                //   child: MaterialButton(
-                                //     splashColor: model.color[600],
-                                //     onPressed: () {
-                                //       model.goToBluetoothScreen();
-                                //     },
-                                //     child: Text(
-                                //       "Reconfigure",
-                                //       style: TextStyle(
-                                //         fontSize: 21,
-                                //         color: Colors.black,
-                                //         fontWeight: FontWeight.w300,
-                                //       ),
-                                //     ),
-                                //   ),
-                                //   // child: BusyButton(
-                                //   //   title: "Reconfigure",
-                                //
-                                //   //   onPressed: () {},
-                                //   // ),
-                                // ),
-                                //
-                                // ///Got to Remote Button
-                                // Container(
-                                //   height: 50.0,
-                                //   width: width / 2.5,
-                                //   decoration: BoxDecoration(
-                                //     borderRadius:
-                                //         BorderRadius.all(Radius.circular(10.0)),
-                                //     color: Colors.white,
-                                //   ),
-                                //   child: MaterialButton(
-                                //     splashColor: model.color[600],
-                                //     onPressed: () {
-                                //       model.gotoRemoteScreen();
-                                //     },
-                                //     child: Text(
-                                //       "Goto Remote",
-                                //       style: TextStyle(
-                                //         fontSize: 21,
-                                //         color: Colors.black,
-                                //         fontWeight: FontWeight.w300,
-                                //       ),
-                                //     ),
-                                //   ),
-                                //   // child: BusyButton(
-                                //   //   title: "Reconfigure",
-                                //
-                                //   //   onPressed: () {},
-                                //   // ),
-                                // ),
                               ],
                             ),
                           )
@@ -526,12 +466,12 @@ class HomeView extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         model.today.hour > 6 && model.today.hour < 19
-                            ? 10.0
+                            ? width / 40
                             : width / 1.1,
                         10.0,
                         model.today.hour > 6 && model.today.hour < 19
                             ? width / 1.1
-                            : 10,
+                            : width / 40,
                         0.0,
                       ),
                       child: InkWell(

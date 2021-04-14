@@ -21,7 +21,7 @@ class AuthenticationService {
   }
 
   String getUID() {
-    return _auth.currentUser.uid;
+    return _auth.currentUser?.uid;
   }
 
   Future<Position> getLocation() async {
