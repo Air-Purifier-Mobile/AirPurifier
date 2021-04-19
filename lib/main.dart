@@ -1,5 +1,7 @@
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:air_purifier/app/router.gr.dart' as customRouter;
@@ -20,10 +22,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Aeolus',
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics())
+      ],
       debugShowCheckedModeBanner: false,
       initialRoute: customRouter.Routes.startUpView,
       themeMode: ThemeMode.light,
-      theme: ThemeData(fontFamily: 'Noah'),
       // ignore: deprecated_member_use
       navigatorKey: locator<NavigationService>().navigatorKey,
       onGenerateRoute: customRouter.Router().onGenerateRoute,

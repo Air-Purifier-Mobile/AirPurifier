@@ -1,5 +1,6 @@
 import 'package:air_purifier/ui/shared/ui_helpers.dart';
 import 'package:air_purifier/ui/widgets/busy_button.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -50,6 +51,12 @@ class HomeView extends StatelessWidget {
             ),
           ),
           body: GestureDetector(
+            onTap: () {
+              FirebaseAnalytics().logEvent(
+                name: "Touched_home_Screen",
+                parameters: {"Key1": "Value 1"},
+              );
+            },
             onVerticalDragEnd: (e) {
               if (e.primaryVelocity > 0) {
                 model.refresh();
