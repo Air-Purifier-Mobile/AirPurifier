@@ -1,23 +1,25 @@
+import 'package:air_purifier/app/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:progress_indicators/progress_indicators.dart';
 import 'package:stacked/stacked.dart';
 
 import 'bluetooth_viewModel.dart';
 
 class BluetoothView extends StatelessWidget {
-  const BluetoothView({Key key}) : super(key: key);
+  final BluetoothDevice device;
+  BluetoothView({Key key, this.device}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<BluetoothViewModel>.reactive(
       viewModelBuilder: () => BluetoothViewModel(),
-      onModelReady: (model) => model.onModelReady(),
+      onModelReady: (model) => model.onModelReady(device),
       builder: (context, model, child) {
         return KeyboardDismisser(
           child: Scaffold(
-            backgroundColor: Color.fromRGBO(39, 35, 67, 1),
+            backgroundColor: primaryColor,
             appBar: AppBar(
-              backgroundColor: Color.fromRGBO(39, 35, 67, 1),
+              backgroundColor: primaryColor,
               elevation: 0.0,
               leading: IconButton(
                 icon: Icon(Icons.logout),
@@ -34,7 +36,7 @@ class BluetoothView extends StatelessWidget {
                     if (model.goingForWifi)
                       model.wifiRefresh();
                     else
-                      model.onModelReady();
+                      model.onModelReady(device);
                   },
                 ),
               ],

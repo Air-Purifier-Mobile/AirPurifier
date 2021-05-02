@@ -3,11 +3,13 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:air_purifier/services/bluetooth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class BluetoothViewModel extends BaseViewModel {
+  BluetoothDevice selectedDevice;
   final BluetoothService bluetoothService = locator<BluetoothService>();
   final TextEditingController passController = TextEditingController();
   final NavigationService _navigationService = locator<NavigationService>();
@@ -25,6 +27,8 @@ class BluetoothViewModel extends BaseViewModel {
     displayText = event;
     notifyListeners();
   }
+
+  /// Refresh Connection
 
   ///goto login screen
   void goToLoginScreen() {
@@ -89,18 +93,18 @@ class BluetoothViewModel extends BaseViewModel {
     }
   }
 
-  void onModelReady() {
+  void onModelReady(BluetoothDevice device) {
+    selectedDevice = device;
     bluetoothService
         .enableBluetooth(changeDisplayTextCallBack, goToWifiScreen,
             updateSSIDList, goToBluetoothScreen)
         .then((isEnabled) {
       if (isEnabled) {
         displayText = "Initialising bluetooth connectivity";
-        bluetoothService.startScanningDevices();
+        bluetoothService.connectDevice(selectedDevice);
         notifyListeners();
       } else {
         Fluttertoast.showToast(msg: 'Please turn on bluetooth to proceed.');
-        onModelReady();
       }
     });
   }

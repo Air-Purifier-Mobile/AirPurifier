@@ -808,16 +808,19 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     case 0:
                                       {
                                         model.publishMessage("APMA");
+                                        model.purifierState = false;
                                       }
                                       break;
                                     case 1:
                                       {
                                         model.publishMessage("APMM");
+                                        model.purifierState = true;
                                       }
                                       break;
                                     case 2:
                                       {
                                         model.publishMessage("APMS");
+                                        model.purifierState = false;
                                       }
                                       break;
                                     default:
@@ -845,6 +848,9 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                               ),
                             ),
                           ),
+                          SizedBox(
+                            height: height * 0.02,
+                          ),
                           Padding(
                             padding: EdgeInsets.symmetric(
                               vertical: height / 60,
@@ -861,8 +867,8 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                   width: width * 0.01,
                                 ),
                                 Container(
-                                  height: height / 25,
-                                  width: height / 25,
+                                  height: height / 35,
+                                  width: height / 35,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),

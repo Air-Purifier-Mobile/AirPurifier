@@ -5,8 +5,6 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked_services/stacked_services.dart';

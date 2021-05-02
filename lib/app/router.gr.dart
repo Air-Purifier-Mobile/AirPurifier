@@ -6,6 +6,7 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'package:air_purifier/ui/views/bluetoothDiscovery/bluetooth_discovery_view.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
@@ -29,6 +30,7 @@ class Routes {
   static const String phoneAuthView = '/phone-auth-view';
   static const String phoneNumberView = '/phone-number-view';
   static const String addDeviceView = '/add-device-view';
+  static const String bluetoothDiscoveryView = "/bluetooth-discovery-view";
   static const all = <String>{
     startUpView,
     dummyView,
@@ -39,6 +41,7 @@ class Routes {
     phoneAuthView,
     phoneNumberView,
     addDeviceView,
+    bluetoothDiscoveryView,
   };
 }
 
@@ -55,6 +58,7 @@ class Router extends RouterBase {
     RouteDef(Routes.phoneAuthView, page: PhoneAuthView),
     RouteDef(Routes.phoneNumberView, page: PhoneNumberView),
     RouteDef(Routes.addDeviceView, page: AddDeviceView),
+    RouteDef(Routes.bluetoothDiscoveryView, page: BluetoothDiscoveryView),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -85,7 +89,15 @@ class Router extends RouterBase {
     },
     BluetoothView: (data) {
       return MaterialPageRoute<dynamic>(
-        builder: (context) => const BluetoothView(),
+        builder: (context) => BluetoothView(
+          device: data.arguments,
+        ),
+        settings: data,
+      );
+    },
+    BluetoothDiscoveryView: (data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => const BluetoothDiscoveryView(),
         settings: data,
       );
     },

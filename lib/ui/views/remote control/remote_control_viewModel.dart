@@ -220,12 +220,16 @@ class RemoteControlViewModel extends BaseViewModel {
       _rgbService.changeColor('b', map["B color"]);
 
       /// Set Purifier Mode
-      if (map["AP mode"] == "AUTO")
+      if (map["AP mode"] == "AUTO") {
         purifierMode = 0;
-      else if (map["AP mode"] == "MANUAL")
+        purifierState = false;
+      } else if (map["AP mode"] == "MANUAL") {
         purifierMode = 1;
-      else
+        purifierState = true;
+      } else {
         purifierMode = 2;
+        purifierState = false;
+      }
     }
     notifyListeners();
   }

@@ -21,10 +21,8 @@ class StartUpView extends StatelessWidget {
             height: height,
             width: width,
             child: Center(
-              child: Center(
-                child: LoadingBouncingGrid.circle(
-                  backgroundColor: Colors.white70,
-                ),
+              child: LoadingBouncingGrid.circle(
+                backgroundColor: Colors.white70,
               ),
             ),
           ),

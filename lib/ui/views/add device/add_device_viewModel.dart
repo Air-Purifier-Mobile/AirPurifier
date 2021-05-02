@@ -9,7 +9,7 @@ class AddDeviceViewModel extends BaseViewModel {
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
   void goToBluetoothScreen() {
-    _navigationService.navigateTo(Routes.bluetoothView);
+    _navigationService.navigateTo(Routes.bluetoothDiscoveryView);
   }
 
   void goToLoginScreen() {
