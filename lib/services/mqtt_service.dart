@@ -66,7 +66,10 @@ class MqttService {
   // connection succeeded
   void onConnected() {
     listener();
-    mac = _streamingSharedPreferencesService.readStringFromStreamingSP("MAC");
+    int lastDevice =
+        _streamingSharedPreferencesService.readIntFromStreamingSP("lastDevice");
+    mac = _streamingSharedPreferencesService
+        .readStringListFromStreamingSP("MAC")[lastDevice];
     connectionSuccessful();
     print('Connected');
   }

@@ -128,8 +128,6 @@ class RemoteControlViewModel extends BaseViewModel {
 
   /// Called once on init
   void onModelReady() {
-    print(" =============================MAC :" +
-        _streamingSharedPreferencesService.readStringFromStreamingSP("MAC"));
     // Used when MQTT is disconnected
     // setInitialValues({});
     setBusy(true);
@@ -152,8 +150,11 @@ class RemoteControlViewModel extends BaseViewModel {
   /// Subscribes to some topics
   void connectionSuccessful() {
     isConnected = true;
-    mac = _streamingSharedPreferencesService.readStringFromStreamingSP("MAC") +
-        "/";
+    mac =
+        _streamingSharedPreferencesService.readStringListFromStreamingSP("MAC")[
+                _streamingSharedPreferencesService
+                    .readIntFromStreamingSP("lastDevice")] +
+            "/";
     _mqttService.subscribeToTopic(rootTopic + mac + "SPEED");
     _mqttService.subscribeToTopic(rootTopic + mac + "BUTTON");
     _mqttService.subscribeToTopic(rootTopic + mac + "RESPONSE");

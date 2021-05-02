@@ -22,13 +22,21 @@ class StartUpViewModel extends BaseViewModel {
           _firestoreService
               .retrieveUserDocument(_authenticationService.getUID())
               .then((temp) {
-            if (!temp.exists)
+            if (!temp.exists || temp.data()['MAC'].isEmpty)
               _navigationService.replaceWith(Routes.addDeviceView);
             else {
+              List<String> mac =
+                  temp.data()['MAC'].map<String>((s) => s as String).toList();
+              List<String> name =
+                  temp.data()["name"].map<String>((s) => s as String).toList();
               _streamingSharedPreferencesService.changeStringListInStreamingSP(
-                  "MAC", temp.data()['MAC']);
+                "MAC",
+                mac,
+              );
               _streamingSharedPreferencesService.changeStringListInStreamingSP(
-                  "name", temp.data()['name']);
+                "name",
+                name,
+              );
               _navigationService.replaceWith(Routes.homeView);
             }
           });

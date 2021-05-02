@@ -58,9 +58,17 @@ class AuthenticationService {
               .then((snap) {
             if (snap.exists) {
               Map map = snap.data();
-              _sharedPreferencesService.changeStringInStreamingSP(
+              List<String> mac =
+                  map["MAC"].map<String>((s) => s as String).toList();
+              List<String> name =
+                  map["name"].map<String>((s) => s as String).toList();
+              _sharedPreferencesService.changeStringListInStreamingSP(
                 "MAC",
-                map["MAC"],
+                mac,
+              );
+              _sharedPreferencesService.changeStringListInStreamingSP(
+                "name",
+                name,
               );
               _navigationService.replaceWith(Routes.homeView);
             } else {
