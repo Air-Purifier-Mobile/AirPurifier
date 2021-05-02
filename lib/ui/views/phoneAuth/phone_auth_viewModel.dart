@@ -1,9 +1,9 @@
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/phone_auth_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
+import 'package:flutter/material.dart';
 
 class PhoneAuthViewModel extends BaseViewModel {
   final PhoneAuthenticationService _authenticationService =

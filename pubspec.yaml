@@ -62,6 +62,9 @@ dependencies:
   loading_animations: ^2.2.0
   simple_animations: ^3.0.0-nullsafety.2
   numberpicker: ^2.0.1
+  hsv_color_pickers: ^0.1.0
+  flutter_switch: ^0.3.1
+  flutter_toggle_tab: ^1.1.0
 
   # Alerts
   fluttertoast:
@@ -73,7 +76,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_native_splash: ^1.1.7+1
 flutter_native_splash:
   image: assets/aeolus.png

@@ -1,6 +1,6 @@
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/app/router.gr.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

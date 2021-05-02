@@ -13,32 +13,40 @@ class ChameleonContainerView extends StatelessWidget {
     return ViewModelBuilder<ChameleonContainerViewModel>.reactive(
       viewModelBuilder: () => ChameleonContainerViewModel(),
       builder: (context, model, child) {
-        return GestureDetector(
-          child: PlasmaRenderer(
-            type: PlasmaType.circle,
-            particles: 5,
-            color: Color.fromRGBO(
-              model.red,
-              model.green,
-              model.blue,
-              1,
-            ),
-            blur: 0.51,
-            size: 2.37,
-            speed: 10,
-            offset: 0,
-            blendMode: BlendMode.plus,
-            particleType: ParticleType.atlas,
-            variation1: 0,
-            variation2: 0,
-            variation3: 0,
-            rotation: 0,
+        return Container(
+          color: Color.fromRGBO(
+            model.red,
+            model.green,
+            model.blue,
+            1,
           ),
-          onTap: () {
-            print("chameleon tapped---------");
-            model.notifyListeners();
-          },
         );
+        // return GestureDetector(
+        //   // child: PlasmaRenderer(
+        //   //   type: PlasmaType.circle,
+        //   //   particles: 5,
+        //   //   color: Color.fromRGBO(
+        //   //     model.red,
+        //   //     model.green,
+        //   //     model.blue,
+        //   //     1,
+        //   //   ),
+        //   //   blur: 0.51,
+        //   //   size: 2.37,
+        //   //   speed: 10,
+        //   //   offset: 0,
+        //   //   blendMode: BlendMode.plus,
+        //   //   particleType: ParticleType.atlas,
+        //   //   variation1: 0,
+        //   //   variation2: 0,
+        //   //   variation3: 0,
+        //   //   rotation: 0,
+        //   // ),
+        //   // onTap: () {
+        //   //   print("chameleon tapped---------");
+        //   //   model.notifyListeners();
+        //   // },
+        // );
       },
     );
   }

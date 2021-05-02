@@ -1,7 +1,4 @@
-import 'package:air_purifier/ui/shared/ui_helpers.dart';
-import 'package:air_purifier/ui/widgets/busy_button.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -27,14 +24,14 @@ class HomeView extends StatelessWidget {
                 ? Colors.white
                 : model.primaryColor,
             onPressed: () {
-              // if ((model.pm1 == null || model.pm1 != "") &&
-              //     (model.pm2 == null || model.pm2 != "") &&
-              //     (model.pm10 == null || model.pm10 != "")) {
-              //   Fluttertoast.showToast(
-              //     msg: "Please turn on power supply to device",
-              //   );
-              // } else
-              model.gotoRemoteScreen();
+              if ((model.pm1 == null || model.pm1 != "") &&
+                  (model.pm2 == null || model.pm2 != "") &&
+                  (model.pm10 == null || model.pm10 != "")) {
+                Fluttertoast.showToast(
+                  msg: "Please turn on power supply to device",
+                );
+              } else
+                model.gotoRemoteScreen();
             },
             child: Container(
               height: width / 12,
@@ -93,6 +90,25 @@ class HomeView extends StatelessWidget {
                             ),
                             fit: BoxFit.contain,
                           ),
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        // Go to Bluetooth
+                        model.goToBluetoothScreen();
+                      },
+                      horizontalTitleGap: 0.0,
+                      leading: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        "Add Device",
+                        style: TextStyle(
+                          fontSize: height / 45,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),

@@ -209,11 +209,25 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.7+1"
+  flutter_switch:
+    dependency: "direct main"
+    description:
+      name: flutter_switch
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_toggle_tab:
+    dependency: "direct main"
+    description:
+      name: flutter_toggle_tab
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -303,6 +317,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
+  hsv_color_pickers:
+    dependency: "direct main"
+    description:
+      name: hsv_color_pickers
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   http:
     dependency: "direct main"
     description:
