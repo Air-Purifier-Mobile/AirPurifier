@@ -13,6 +13,7 @@ class BluetoothService {
   FlutterBluetoothSerial flutterBluetoothSerial =
       FlutterBluetoothSerial.instance;
   BluetoothDevice connectedDevice;
+  String macAddress;
   List<BluetoothDiscoveryResult> allDevices = [];
   StreamSubscription _streamSubscription;
   BluetoothConnection connection;
@@ -98,10 +99,7 @@ class BluetoothService {
           if (macResponse) {
             if (!checkConnectionToBluetooth()) {
               changeDisplayText("MAC of device Saved in Shared Preferences");
-              _streamingSharedPreferencesService.changeStringInStreamingSP(
-                "MAC",
-                response.trim(),
-              );
+              macAddress = response.trim();
               changeDisplayText("Sending command to fetch SSIDs");
               macResponse = false;
               Future.delayed(Duration(milliseconds: 500), () {
@@ -138,11 +136,30 @@ class BluetoothService {
               mac: 'Wifi Connected',
             );
             messageOrder++;
-            firestoreService.storeUserData(
-              uid: _authenticationService.getUID(),
-              mac: _streamingSharedPreferencesService
-                  .readStringFromStreamingSP('MAC'),
-            );
+            int totalDevices = _streamingSharedPreferencesService
+                .readIntFromStreamingSP("totalDevices");
+            List<String> mac = _streamingSharedPreferencesService
+                .readStringListFromStreamingSP("MAC");
+            List<String> name = _streamingSharedPreferencesService
+                .readStringListFromStreamingSP("name");
+            if (mac.contains(macAddress)) {
+            } else {
+              mac.add(macAddress);
+              name.add("Device-${mac.length + 1}");
+              _streamingSharedPreferencesService.changeStringListInStreamingSP(
+                "MAC",
+                mac,
+              );
+              _streamingSharedPreferencesService.changeStringListInStreamingSP(
+                "name",
+                name,
+              );
+              firestoreService.userData(
+                _authenticationService.getUID(),
+                mac,
+                name,
+              );
+            }
             selectedSSID = '';
             password = '';
             _navigationService.clearStackAndShow(Routes.homeView);

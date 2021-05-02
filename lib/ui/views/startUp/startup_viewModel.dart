@@ -25,8 +25,10 @@ class StartUpViewModel extends BaseViewModel {
             if (!temp.exists)
               _navigationService.replaceWith(Routes.addDeviceView);
             else {
-              _streamingSharedPreferencesService.changeStringInStreamingSP(
-                  'MAC', temp.data()['MAC']);
+              _streamingSharedPreferencesService.changeStringListInStreamingSP(
+                  "MAC", temp.data()['MAC']);
+              _streamingSharedPreferencesService.changeStringListInStreamingSP(
+                  "name", temp.data()['name']);
               _navigationService.replaceWith(Routes.homeView);
             }
           });

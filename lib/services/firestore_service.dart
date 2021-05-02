@@ -12,10 +12,6 @@ class FirestoreService {
       .collection(
           'Responses ${FirebaseAuth.instance.currentUser?.uid ?? 'test'}');
 
-  Future<void> storeUserData({@required String uid, @required mac}) async {
-    await _userCollection.doc(uid).set({"MAC": mac});
-  }
-
   Future<void> storeResponses({@required String uid, @required mac}) async {
     await _responseCollection
         .doc(uid)
@@ -24,5 +20,13 @@ class FirestoreService {
 
   Future<DocumentSnapshot> retrieveUserDocument(String uid) async {
     return await _userCollection.doc(uid).get();
+  }
+
+  Future<void> userData(
+      String uid, List<String> macId, List<String> deviceName) async {
+    await _userCollection.doc(uid).update({
+      "MAC": macId,
+      "name": deviceName,
+    });
   }
 }
