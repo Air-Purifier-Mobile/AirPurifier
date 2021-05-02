@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:flutter/material.dart';
 
+import 'authentication_service.dart';
 import 'firestore_service.dart';
 
 class PhoneAuthenticationService {
@@ -23,6 +24,9 @@ class PhoneAuthenticationService {
   UserCredential userCred;
   String verId;
   int _resendToken;
+  final AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
+  FirestoreService _firestoreService = locator<FirestoreService>();
   StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
   final NavigationService _navigationService = locator<NavigationService>();
@@ -39,12 +43,25 @@ class PhoneAuthenticationService {
   void userPersistenceCheck(String uid) {
     _streamingSharedPreferencesService.changeStringInStreamingSP(
         'userUID', uid);
-    _firestoreStorageService.retrieveUserDocument(uid).then((value) {
-      if (!value.exists) {
-        _navigationService.clearStackAndShow(Routes.addDeviceView);
-      } else {
-        print("\n----------------Going to Home Screen-------------------\n");
-        _navigationService.clearStackAndShow(Routes.homeView);
+    _firestoreService
+        .retrieveUserDocument(_authenticationService.getUID())
+        .then((temp) {
+      if (!temp.exists || temp.data()['MAC'].isEmpty)
+        _navigationService.replaceWith(Routes.addDeviceView);
+      else {
+        List<String> mac =
+            temp.data()['MAC'].map<String>((s) => s as String).toList();
+        List<String> name =
+            temp.data()["name"].map<String>((s) => s as String).toList();
+        _streamingSharedPreferencesService.changeStringListInStreamingSP(
+          "MAC",
+          mac,
+        );
+        _streamingSharedPreferencesService.changeStringListInStreamingSP(
+          "name",
+          name,
+        );
+        _navigationService.replaceWith(Routes.homeView);
       }
     });
   }

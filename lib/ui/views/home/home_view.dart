@@ -313,69 +313,85 @@ class HomeView extends StatelessWidget {
                                     ),
 
                                     ///Device Name
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                        0.0,
-                                        height * 0.02,
-                                        0.0,
-                                        0.0,
-                                      ),
-                                      child: GestureDetector(
-                                        onLongPress: () {
-                                          print("hello mujhe dabaya gaya hai");
-                                          model.editingStatus = true;
-                                          model.notifyListeners();
-                                        },
-                                        child: !model.editingStatus
-                                            ? Text(
-                                                "${model.currentName[model.lastDevice] ?? ""}",
-                                                style: TextStyle(
-                                                  fontSize: height / 45,
-                                                  color: model.primaryColor,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              )
-                                            : Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                  0.0,
-                                                  0.0,
-                                                  0.0,
-                                                  height * 0.0333,
-                                                ),
-                                                child: Container(
-                                                  height: height / 20,
-                                                  width: width * 0.5,
-                                                  child: TextFormField(
-                                                    decoration: InputDecoration(
-                                                      enabledBorder:
-                                                          UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                          color: primaryColor,
+                                    InkWell(
+                                      onTap: () {
+                                        print("hello mujhe dabaya gaya hai");
+                                        model.editingStatus = true;
+                                        model.notifyListeners();
+                                      },
+                                      child: Container(
+                                        width: width * 0.8,
+                                        alignment: Alignment.center,
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                            0.0,
+                                            height * 0.02,
+                                            0.0,
+                                            0.0,
+                                          ),
+                                          child: !model.editingStatus
+                                              ? Text(
+                                                  "${model.currentName[model.lastDevice] ?? ""}",
+                                                  style: TextStyle(
+                                                    fontSize: height / 45,
+                                                    color: model.primaryColor,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )
+                                              : Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                    0.0,
+                                                    0.0,
+                                                    0.0,
+                                                    height * 0.0333,
+                                                  ),
+                                                  child: Container(
+                                                    height: height / 20,
+                                                    width: width * 0.5,
+                                                    child: TextFormField(
+                                                      showCursor: true,
+                                                      autofocus: true,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        enabledBorder:
+                                                            UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: primaryColor,
+                                                          ),
+                                                        ),
+                                                        focusedBorder:
+                                                            UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: primaryColor,
+                                                          ),
+                                                        ),
+                                                        border:
+                                                            UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: primaryColor,
+                                                          ),
                                                         ),
                                                       ),
-                                                      focusedBorder:
-                                                          UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                          color: primaryColor,
-                                                        ),
-                                                      ),
-                                                      border:
-                                                          UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                          color: primaryColor,
-                                                        ),
-                                                      ),
+                                                      cursorColor: primaryColor,
+                                                      controller:
+                                                          model.nameEditor,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      onFieldSubmitted: (text) {
+                                                        model.editingStatus =
+                                                            false;
+                                                        model.updateName(text);
+                                                      },
+                                                      onSaved: (text) {
+                                                        model.updateName(text);
+                                                      },
                                                     ),
-                                                    cursorColor: primaryColor,
-                                                    controller:
-                                                        model.nameEditor,
-                                                    textAlign: TextAlign.center,
-                                                    onFieldSubmitted: (text) {
-                                                      model.updateName(text);
-                                                    },
                                                   ),
                                                 ),
-                                              ),
+                                        ),
                                       ),
                                     ),
 

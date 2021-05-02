@@ -93,6 +93,7 @@ class HomeViewModel extends BaseViewModel {
 
   /// updateName
   void updateName(String name) {
+    nameEditor.text = name;
     currentName[lastDevice] = name;
     editingStatus = false;
     _streamingSharedPreferencesService.changeStringListInStreamingSP(
@@ -188,6 +189,7 @@ class HomeViewModel extends BaseViewModel {
 
   /// Change last Device
   void changeDevice(String name) {
+    nameEditor.text = name;
     lastDevice = currentName.indexOf(name);
     drawerCurrentState = FSBStatus.FSB_CLOSE;
     _streamingSharedPreferencesService.changeIntInStreamingSP(
@@ -205,6 +207,13 @@ class HomeViewModel extends BaseViewModel {
         _streamingSharedPreferencesService.readStringListFromStreamingSP("MAC");
     currentName = _streamingSharedPreferencesService
         .readStringListFromStreamingSP("name");
+
+    print(lastDevice.toString() +
+        " " +
+        currentMac.toString() +
+        " " +
+        currentName.toString() +
+        "------------------------------------------------------------------------");
 
     /// Gets the mac ID stored in firebase.
     Future.delayed(
