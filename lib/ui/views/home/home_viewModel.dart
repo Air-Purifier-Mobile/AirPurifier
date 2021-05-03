@@ -207,7 +207,7 @@ class HomeViewModel extends BaseViewModel {
         _streamingSharedPreferencesService.readStringListFromStreamingSP("MAC");
     currentName = _streamingSharedPreferencesService
         .readStringListFromStreamingSP("name");
-
+    nameEditor.text = currentName[lastDevice];
     print(lastDevice.toString() +
         " " +
         currentMac.toString() +
