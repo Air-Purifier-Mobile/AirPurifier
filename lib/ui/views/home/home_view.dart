@@ -1,5 +1,6 @@
 import 'package:air_purifier/app/constants.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -74,10 +75,14 @@ class HomeView extends StatelessWidget {
             child: FoldableSidebarBuilder(
               drawerBackgroundColor: Colors.white,
               drawer: SingleChildScrollView(
+                reverse: true,
+                dragStartBehavior: DragStartBehavior.start,
                 physics: BouncingScrollPhysics(),
                 child: Container(
                   width: width * 0.65,
-                  height: height,
+                  height: height -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom,
                   clipBehavior: Clip.hardEdge,
                   decoration: BoxDecoration(
                     color: model.primaryColor,
@@ -106,8 +111,9 @@ class HomeView extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: model.currentName.map<Widget>((name) {
                             return ListTile(
+                              key: Key(name),
                               onTap: () {
-                                // Go to Bluetooth
+                                /// Select Device
                                 model.changeDevice(name);
                               },
                               horizontalTitleGap: 0.0,
@@ -633,13 +639,17 @@ class HomeView extends StatelessWidget {
                                   ],
                                 ),
                               )
-                            : Center(
-                                child: FadingText(
-                                  "....",
-                                  style: TextStyle(
-                                    fontSize: height / 20,
-                                    color: model.primaryColor,
-                                    fontWeight: FontWeight.w300,
+                            : Container(
+                                height: height,
+                                width: width,
+                                child: Center(
+                                  child: FadingText(
+                                    "....",
+                                    style: TextStyle(
+                                      fontSize: height / 20,
+                                      color: model.primaryColor,
+                                      fontWeight: FontWeight.w300,
+                                    ),
                                   ),
                                 ),
                               ),
