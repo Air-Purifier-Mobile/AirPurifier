@@ -25,7 +25,7 @@ class _CircularSliderState extends State<CircularSlider> {
   Widget build(BuildContext context) {
     return SleekCircularSlider(
       min: 0,
-      max: 255,
+      max: 800,
       initialValue: widget.initialValue.toDouble() ?? 20.0,
       onChangeEnd: (value) {
         widget.publishChange();

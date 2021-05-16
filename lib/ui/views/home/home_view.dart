@@ -1,4 +1,5 @@
 import 'package:air_purifier/app/constants.dart';
+import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -28,7 +29,7 @@ class HomeView extends StatelessWidget {
                 return Container(
                   height: height / 3,
                   decoration: BoxDecoration(
-                    color: primaryColor,
+                    color: Color(0xFF05051C),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(width / 10),
                       topRight: Radius.circular(width / 10),
@@ -97,7 +98,7 @@ class HomeView extends StatelessWidget {
                                   child: Text(
                                     "Cancel",
                                     style: TextStyle(
-                                      color: primaryColor,
+                                      color: Color(0xFF05051C),
                                       fontSize: height / 40,
                                     ),
                                   ),
@@ -126,7 +127,7 @@ class HomeView extends StatelessWidget {
                                   child: Text(
                                     "Save",
                                     style: TextStyle(
-                                      color: primaryColor,
+                                      color: Color(0xFF05051C),
                                       fontSize: height / 40,
                                     ),
                                   ),
@@ -141,6 +142,7 @@ class HomeView extends StatelessWidget {
                 );
               });
         }
+
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -177,31 +179,42 @@ class HomeView extends StatelessWidget {
                     ),
                     child: IntrinsicHeight(
                       child: Container(
-                        color: primaryColor,
+                        color: Color(0xFF05051C),
                         child: Column(
                           children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: height / 20,
-                              ),
+                            DrawerHeader(
                               child: Container(
                                 width: width * 0.3,
                                 height: width * 0.3,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: AssetImage(
-                                      "assets/splash.png",
+                                      "assets/drawerAeolus.png",
                                     ),
                                     fit: BoxFit.contain,
                                   ),
                                 ),
                               ),
                             ),
+
+                            /// Divider
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(vertical: height * 0.01),
+                              child: Container(
+                                width: width * 0.5,
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+
+                            /// Device List
                             Container(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                children:
-                                model.currentName.map<Widget>((name) {
+                                children: model.currentName.map<Widget>((name) {
                                   return ListTile(
                                     key: Key(name),
                                     onTap: () {
@@ -210,22 +223,37 @@ class HomeView extends StatelessWidget {
                                       Navigator.of(context).pop();
                                     },
                                     horizontalTitleGap: 0.0,
-                                    leading: Icon(
-                                      Icons.device_hub,
-                                      color: Colors.white,
+                                    leading: Container(
+                                      width: width * 0.09,
+                                      height: height * 0.05,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage("assets/room.png"),
+                                        ),
+                                      ),
                                     ),
-                                    title: Text(
-                                      name,
-                                      style: TextStyle(
-                                        fontSize: height / 45,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
+                                    title: Padding(
+                                      padding: EdgeInsets.fromLTRB(
+                                        10.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                      ),
+                                      child: Text(
+                                        name,
+                                        style: TextStyle(
+                                          fontSize: height / 45,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
                                   );
                                 }).toList(),
                               ),
                             ),
+
+                            /// Add a Device
                             ListTile(
                               onTap: () {
                                 // Go to Bluetooth
@@ -233,18 +261,42 @@ class HomeView extends StatelessWidget {
                               },
                               horizontalTitleGap: 0.0,
                               leading: Icon(
-                                Icons.add,
+                                Icons.add_circle,
                                 color: Colors.white,
+                                size: height * 0.047,
                               ),
-                              title: Text(
-                                "Add Device",
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                              title: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  10.0,
+                                  0.0,
+                                  0.0,
+                                  0.0,
+                                ),
+                                child: Text(
+                                  "Add Device",
+                                  style: TextStyle(
+                                    fontSize: height / 45,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
+
+                            /// Divider
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(vertical: height * 0.01),
+                              child: Container(
+                                width: width * 0.5,
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+
+                            /// Re configure Device
                             ListTile(
                               onTap: () {
                                 // Go to Bluetooth
@@ -255,15 +307,25 @@ class HomeView extends StatelessWidget {
                                 Icons.settings,
                                 color: Colors.white,
                               ),
-                              title: Text(
-                                "Reconfigure Device",
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                              title: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  10.0,
+                                  0.0,
+                                  0.0,
+                                  0.0,
+                                ),
+                                child: Text(
+                                  "Reconfigure Device",
+                                  style: TextStyle(
+                                    fontSize: height / 45,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
+
+                            /// Remove Current Device
                             ListTile(
                               onTap: () {
                                 // Go to Bluetooth
@@ -274,15 +336,25 @@ class HomeView extends StatelessWidget {
                                 Icons.delete,
                                 color: Colors.white,
                               ),
-                              title: Text(
-                                "Remove Current Device",
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                              title: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  10.0,
+                                  0.0,
+                                  0.0,
+                                  0.0,
+                                ),
+                                child: Text(
+                                  "Remove Current Device",
+                                  style: TextStyle(
+                                    fontSize: height / 45,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
+
+                            /// Log Out
                             ListTile(
                               onTap: () {
                                 model.logout();
@@ -292,12 +364,20 @@ class HomeView extends StatelessWidget {
                                 Icons.exit_to_app,
                                 color: Colors.white,
                               ),
-                              title: Text(
-                                "Log Out",
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
+                              title: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  10.0,
+                                  0.0,
+                                  0.0,
+                                  0.0,
+                                ),
+                                child: Text(
+                                  "Log Out",
+                                  style: TextStyle(
+                                    fontSize: height / 45,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
@@ -329,7 +409,7 @@ class HomeView extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                     "assets/remote_day.png",
+                    "assets/remote_day.png",
                   ),
                   fit: BoxFit.fitHeight,
                 ),
@@ -354,392 +434,438 @@ class HomeView extends StatelessWidget {
                 model.scaffoldKey.currentState.openDrawer();
                 model.notifyListeners();
               } else {
-                model.scaffoldKey.currentState.isEndDrawerOpen?
-                Navigator.of(context).pop():null;
+                model.scaffoldKey.currentState.isEndDrawerOpen
+                    ? Navigator.of(context).pop()
+                    : null;
                 model.notifyListeners();
               }
             },
             child: KeyboardDismisser(
               child: model.temperature != null
                   ? Container(
-                height: height,
-                width: width,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-
-                    ///City
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        0.0,
-                        height * 0.1,
-                        0.0,
-                        height*0.02,
-                      ),
-                      child: Text(
-                        '${model.cityName ?? ""}',
-                        style: TextStyle(
-                          fontSize: height / 35,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ),
-
-                    ///Humidity and Temperature
-                    Container(
-                      height: height * 0.08333,
-                      child: Row(
+                      height: height,
+                      width: width,
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment:
-                        MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          ///Temperature
-                          Row(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                height: height/35,
-                                width: width*0.08,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/temperature.png'
-                                      ),
-                                    )
-                                ),
-                              ),
-                              Text(
-                                '${model.temperature ?? ""}°',
-                                style: TextStyle(
-                                  fontSize: height / 24,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                              // Container(
-                              //   height: height / 13,
-                              //   child:
-                              // ),
-                            ],
-                          ),
-                          SizedBox(
-                            width: width / 10,
-                          ),
-                          ///Humidity
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            children: [
-
-                              Container(
-                                height: height/35,
-                                width: width*0.08,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/humidity.png'
-                                      ),
-                                    )
-                                ),
-                              ),
-
-                              Text(
-                                '${model.humidity ?? ""} %',
-                                style: TextStyle(
-                                  fontSize: height / 24,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                              // Container(
-                              //   height: height / 13,
-                              //   child:
-                              // ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    ///Fan Image and Slider
-                    Container(
-                      color: Colors.red,
-                      height: height/2.5,
-                      width: width*0.9,
-                    ),
-
-                    SizedBox(
-                      height: height/20,
-                    ),
-                    Icon(
-                      Icons.wifi_outlined,
-                      color: Colors.white70,
-                      size: height/25,
-                    ),
-
-                    ///Device Name
-                    InkWell(
-                      onTap: () {
-                        print("hello mujhe dabaya gaya hai");
-                        _modalBottomSheetMenu();
-                      },
-                      child: Container(
-                        width: width * 0.8,
-                        alignment: Alignment.center,
-                        child: Padding(
+                          ///City
+                          Padding(
                             padding: EdgeInsets.fromLTRB(
                               0.0,
+                              height * 0.1,
+                              0.0,
                               height * 0.02,
-                              0.0,
-                              0.0,
                             ),
                             child: Text(
-                              "${model.currentName[model.lastDevice] ?? ""}",
+                              '${model.cityName ?? ""}',
                               style: TextStyle(
-                                fontSize: height / 45,
+                                fontSize: height / 35,
                                 color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w300,
                               ),
-                            )
-                          // child: !model.editingStatus
-                          //     ? Text(
-                          //         "${model.currentName[model.lastDevice] ?? ""}",
-                          //         style: TextStyle(
-                          //           fontSize: height / 45,
-                          //           color: model.primaryColor,
-                          //           fontWeight: FontWeight.w500,
-                          //         ),
-                          //       )
-                          //     : Padding(
-                          //         padding: EdgeInsets.fromLTRB(
-                          //           0.0,
-                          //           0.0,
-                          //           0.0,
-                          //           height * 0.0333,
-                          //         ),
-                          //         child: Container(
-                          //           height: height / 20,
-                          //           width: width * 0.5,
-                          //           child: TextFormField(
-                          //             showCursor: true,
-                          //             autofocus: true,
-                          //             decoration:
-                          //                 InputDecoration(
-                          //               enabledBorder:
-                          //                   UnderlineInputBorder(
-                          //                 borderSide:
-                          //                     BorderSide(
-                          //                   color: primaryColor,
-                          //                 ),
-                          //               ),
-                          //               focusedBorder:
-                          //                   UnderlineInputBorder(
-                          //                 borderSide:
-                          //                     BorderSide(
-                          //                   color: primaryColor,
-                          //                 ),
-                          //               ),
-                          //               border:
-                          //                   UnderlineInputBorder(
-                          //                 borderSide:
-                          //                     BorderSide(
-                          //                   color: primaryColor,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //             cursorColor: primaryColor,
-                          //             controller:
-                          //                 model.nameEditor,
-                          //             textAlign:
-                          //                 TextAlign.center,
-                          //             onFieldSubmitted: (text) {
-                          //               model.editingStatus =
-                          //                   false;
-                          //               model.updateName(text);
-                          //             },
-                          //             onEditingComplete: () {
-                          //               print("Complelte");
-                          //             },
-                          //           ),
-                          //         ),
-                          //       ),
-                        ),
-                      ),
-                    ),
+                            ),
+                          ),
 
-                    /// Divider
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        0.0,
-                        height * 0.01,
-                        0.0,
-                        height * 0.0333,
-                      ),
-                      child: Container(
-                        width: width / 5,
-                        child: Divider(
-                          thickness: 1,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-
-
-
-                    ///PM values
-                    Container(
-                      height: height * 0.0833,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment:
-                        MainAxisAlignment.start,
-                        children: [
-                          ///PM 1.0
-                          // Column(
-                          //   mainAxisSize: MainAxisSize.min,
-                          //   children: [
-                          //     Text(
-                          //       'PM 1.0',
-                          //       style: TextStyle(
-                          //         fontSize: height / 45,
-                          //         color: Colors.white,
-                          //         fontWeight: FontWeight.w400,
-                          //       ),
-                          //     ),
-                          //     model.pm1 != null
-                          //         ? Text(
-                          //       '${model.pm1}',
-                          //       style: TextStyle(
-                          //         fontSize: height / 30,
-                          //         color: Colors.white,
-                          //         fontWeight:
-                          //         FontWeight.w500,
-                          //       ),
-                          //     )
-                          //         : FadingText(
-                          //       "..",
-                          //       style: TextStyle(
-                          //         fontSize: height / 30,
-                          //         color: Colors.white,
-                          //         fontWeight:
-                          //         FontWeight.w500,
-                          //       ),
-                          //     ),
-                          //     // Container(
-                          //     //   height: height / 13,
-                          //     //   child:
-                          //     // ),
-                          //   ],
-                          // ),
-
-                          // SizedBox(
-                          //   width: width / 12,
-                          // ),
-
-                          ///PM 2.5
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'PM 2.5',
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
+                          ///Humidity and Temperature
+                          Container(
+                            height: height * 0.08333,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ///Temperature
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      height: height / 35,
+                                      width: width * 0.08,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/temperature.png'),
+                                      )),
+                                    ),
+                                    Text(
+                                      '${model.temperature ?? ""}°',
+                                      style: TextStyle(
+                                        fontSize: height / 24,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                    // Container(
+                                    //   height: height / 13,
+                                    //   child:
+                                    // ),
+                                  ],
                                 ),
-                              ),
-                              model.pm2 != null
-                                  ? Text(
-                                '${model.pm2}',
-                                style: TextStyle(
-                                  fontSize: height / 30,
-                                  color: Colors.white,
-                                  fontWeight:
-                                  FontWeight.w500,
+                                SizedBox(
+                                  width: width / 10,
                                 ),
-                              )
-                                  : FadingText(
-                                "..",
-                                style: TextStyle(
-                                  fontSize: height / 30,
-                                  color: Colors.white,
-                                  fontWeight:
-                                  FontWeight.w500,
+
+                                ///Humidity
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      height: height / 35,
+                                      width: width * 0.08,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                        image:
+                                            AssetImage('assets/humidity.png'),
+                                      )),
+                                    ),
+
+                                    Text(
+                                      '${model.humidity ?? ""} %',
+                                      style: TextStyle(
+                                        fontSize: height / 24,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                    // Container(
+                                    //   height: height / 13,
+                                    //   child:
+                                    // ),
+                                  ],
                                 ),
-                              ),
-                              // Container(
-                              //   height: height / 13,
-                              //   child:
-                              // ),
-                            ],
+                              ],
+                            ),
                           ),
 
                           SizedBox(
-                            width: width / 12,
+                            height: height / 20,
                           ),
 
-                          ///PM 10
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'PM 10',
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
+                          /// Air Description
+                          model.pm2 == null
+                              ? Container(
+                                  height: height * 0.3,
+                                  child: Stack(
+                                    alignment: AlignmentDirectional.topCenter,
+                                    children: [
+                                      ///Fan Image and Slider
+                                      Container(
+                                        height: height * 0.2,
+                                        width: width * 0.4,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              "assets/fanOffPurifierOff.png",
+                                            ),
+                                            fit: BoxFit.fitWidth,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : CircularKnobView(
+                                  height: height,
+                                  width: width,
+                                  value: double.parse(model.pm2 ?? "0.0"),
+                                  index: model.qualityIndex,
                                 ),
+
+                          /// Air Quality
+                          model.pm2 == null
+                              ? FadingText(
+                                  "..",
+                                  style: TextStyle(
+                                    fontSize: height * 0.043,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              : Container(
+                                  height: height * 0.06,
+                                  width: width * 0.9,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: width * 0.13,
+                                        height: height * 0.03,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              "assets/${model.quality[model.qualityIndex]}Air.png",
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        model.qualityText[model.qualityIndex],
+                                        style: TextStyle(
+                                          fontSize: height * 0.043,
+                                          color: model
+                                              .qualityColor[model.qualityIndex],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                          SizedBox(
+                            height: height / 20,
+                          ),
+
+                          Icon(
+                            Icons.wifi_outlined,
+                            color: Colors.white70,
+                            size: height / 25,
+                          ),
+
+                          ///Device Name
+                          InkWell(
+                            onTap: () {
+                              print("hello mujhe dabaya gaya hai");
+                              _modalBottomSheetMenu();
+                            },
+                            child: Container(
+                              width: width * 0.8,
+                              alignment: Alignment.center,
+                              child: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    0.0,
+                                    height * 0.02,
+                                    0.0,
+                                    0.0,
+                                  ),
+                                  child: Text(
+                                    "${model.currentName[model.lastDevice] ?? ""}",
+                                    style: TextStyle(
+                                      fontSize: height / 45,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )
+                                  // child: !model.editingStatus
+                                  //     ? Text(
+                                  //         "${model.currentName[model.lastDevice] ?? ""}",
+                                  //         style: TextStyle(
+                                  //           fontSize: height / 45,
+                                  //           color: model.primaryColor,
+                                  //           fontWeight: FontWeight.w500,
+                                  //         ),
+                                  //       )
+                                  //     : Padding(
+                                  //         padding: EdgeInsets.fromLTRB(
+                                  //           0.0,
+                                  //           0.0,
+                                  //           0.0,
+                                  //           height * 0.0333,
+                                  //         ),
+                                  //         child: Container(
+                                  //           height: height / 20,
+                                  //           width: width * 0.5,
+                                  //           child: TextFormField(
+                                  //             showCursor: true,
+                                  //             autofocus: true,
+                                  //             decoration:
+                                  //                 InputDecoration(
+                                  //               enabledBorder:
+                                  //                   UnderlineInputBorder(
+                                  //                 borderSide:
+                                  //                     BorderSide(
+                                  //                   color: primaryColor,
+                                  //                 ),
+                                  //               ),
+                                  //               focusedBorder:
+                                  //                   UnderlineInputBorder(
+                                  //                 borderSide:
+                                  //                     BorderSide(
+                                  //                   color: primaryColor,
+                                  //                 ),
+                                  //               ),
+                                  //               border:
+                                  //                   UnderlineInputBorder(
+                                  //                 borderSide:
+                                  //                     BorderSide(
+                                  //                   color: primaryColor,
+                                  //                 ),
+                                  //               ),
+                                  //             ),
+                                  //             cursorColor: primaryColor,
+                                  //             controller:
+                                  //                 model.nameEditor,
+                                  //             textAlign:
+                                  //                 TextAlign.center,
+                                  //             onFieldSubmitted: (text) {
+                                  //               model.editingStatus =
+                                  //                   false;
+                                  //               model.updateName(text);
+                                  //             },
+                                  //             onEditingComplete: () {
+                                  //               print("Complelte");
+                                  //             },
+                                  //           ),
+                                  //         ),
+                                  //       ),
+                                  ),
+                            ),
+                          ),
+
+                          /// Divider
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              0.0,
+                              height * 0.01,
+                              0.0,
+                              height * 0.0333,
+                            ),
+                            child: Container(
+                              width: width / 5,
+                              child: Divider(
+                                thickness: 1,
+                                color: Colors.white,
                               ),
-                              model.pm10 != null
-                                  ? Text(
-                                '${model.pm10}',
-                                style: TextStyle(
-                                  fontSize: height / 30,
-                                  color: Colors.white,
-                                  fontWeight:
-                                  FontWeight.w500,
+                            ),
+                          ),
+
+                          ///PM values
+                          Container(
+                            height: height * 0.0833,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ///PM 2.5
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'PM 2.5',
+                                      style: TextStyle(
+                                        fontSize: height / 45,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: height * 0.01,
+                                    ),
+                                    model.pm2 != null
+                                        ? Row(
+                                            children: [
+                                              Text(
+                                                '${double.parse(model.pm2).ceil()} ',
+                                                style: TextStyle(
+                                                  fontSize: height / 30,
+                                                  color: model.qualityColor[
+                                                      model.qualityIndex],
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                              Text(
+                                                'ppm',
+                                                style: TextStyle(
+                                                  fontSize: height / 45,
+                                                  color: model.qualityColor[
+                                                      model.qualityIndex],
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : FadingText(
+                                            "..",
+                                            style: TextStyle(
+                                              fontSize: height / 30,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                    // Container(
+                                    //   height: height / 13,
+                                    //   child:
+                                    // ),
+                                  ],
                                 ),
-                              )
-                                  : FadingText(
-                                "..",
-                                style: TextStyle(
-                                  fontSize: height / 30,
-                                  color: Colors.white,
-                                  fontWeight:
-                                  FontWeight.w500,
+
+                                SizedBox(
+                                  width: width / 12,
                                 ),
-                              ),
-                              // Container(
-                              //   height: height / 13,
-                              //   child:
-                              // ),
-                            ],
+
+                                ///PM 10
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'PM 10',
+                                      style: TextStyle(
+                                        fontSize: height / 48,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: height * 0.01,
+                                    ),
+
+                                    model.pm10 != null
+                                        ? Row(
+                                            children: [
+                                              Text(
+                                                '${double.parse(model.pm10).ceil()} ',
+                                                style: TextStyle(
+                                                  fontSize: height / 30,
+                                                  color: model.qualityColor[
+                                                      model.qualityIndex],
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                              Text(
+                                                'ppm',
+                                                style: TextStyle(
+                                                  fontSize: height / 48,
+                                                  color: model.qualityColor[
+                                                      model.qualityIndex],
+                                                  fontWeight: FontWeight.w300,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : FadingText(
+                                            "..",
+                                            style: TextStyle(
+                                              fontSize: height / 30,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                    // Container(
+                                    //   height: height / 13,
+                                    //   child:
+                                    // ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              )
+                    )
                   : Container(
-                height: height,
-                width: width,
-                child: Center(
-                  child: FadingText(
-                    "....",
-                    style: TextStyle(
-                      fontSize: height / 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300,
+                      height: height,
+                      width: width,
+                      child: Center(
+                        child: FadingText(
+                          "....",
+                          style: TextStyle(
+                            fontSize: height / 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ),
           ),
         );

@@ -88,6 +88,7 @@ class MqttService {
   // subscribe to topic succeeded
   void onSubscribed(String topic) {
     print('Subscribed topic: $topic');
+
     ///comment in prod
     // if (topic ==
     //     "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE")
@@ -129,6 +130,13 @@ class MqttService {
       //     "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
       //   setInitialValues(jsonDecode(payload));
       // }
+      if (c[0].topic == "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 1.0" ||
+          c[0].topic ==
+              "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 2.5" ||
+          c[0].topic ==
+              "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/PM 10") {
+        setInitialValues(payload, c[0].topic);
+      }
 
       if (payload != ownMessage) {
         // if (c[0].topic ==

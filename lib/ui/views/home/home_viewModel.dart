@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/firestore_service.dart';
@@ -29,6 +30,7 @@ class HomeViewModel extends BaseViewModel {
       locator<StreamingSharedPreferencesService>();
   final FirestoreService _firestoreService = locator<FirestoreService>();
   var scaffoldKey = GlobalKey<ScaffoldState>();
+
   /// Devices:
   int lastDevice;
 
@@ -57,6 +59,16 @@ class HomeViewModel extends BaseViewModel {
 
   /// Drawer List
   List<Widget> totalList = [];
+
+  /// List of quality
+  List<String> quality = ["good", "medium", "poor"];
+  List<String> qualityText = ["Good", "Medium", "Poor"];
+  List<Color> qualityColor = [
+    Color(0xff5aa897),
+    Color(0xfffdc830),
+    Color(0xffa55962)
+  ];
+  int qualityIndex = 0;
 
   /// User Logs out
   void logout() {
@@ -291,6 +303,19 @@ class HomeViewModel extends BaseViewModel {
           rootTopic + currentMac[lastDevice] + '/' + "PM 2.5");
       _mqttService
           .subscribeToTopic(rootTopic + currentMac[lastDevice] + '/' + "PM 10");
+
+      /// Uncomment for PM testing
+      // double val = 0.0;
+      // Timer.periodic(Duration(milliseconds: 500), (timer) {
+      //   val = val + 10;
+      //   _mqttService.publishPayload(
+      //       "$val", rootTopic + currentMac[lastDevice] + '/' + "PM 2.5");
+      //   _mqttService.publishPayload(
+      //       "$val", rootTopic + currentMac[lastDevice] + '/' + "PM 10");
+      //   if (val >= 360) {
+      //     val = 0;
+      //   }
+      // });
     });
   }
 
@@ -305,12 +330,29 @@ class HomeViewModel extends BaseViewModel {
     } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 10") {
       pm10 = value;
     }
+    double pmInt = double.parse(pm2);
+    int tempIndex;
+    if (pmInt <= 40) {
+      tempIndex = 0;
+    } else if (pmInt > 40 && pmInt <= 250) {
+      tempIndex = 1;
+    } else {
+      tempIndex = 2;
+    }
+    if (tempIndex != qualityIndex) {
+      setQualityIndexAsPerAir(tempIndex);
+    }
     notifyListeners();
   }
 
   /// Navigates to configure bluetooth screen screen
   void goToBluetoothScreen() {
     _navigationService.navigateTo(Routes.addDeviceView);
+  }
+
+  void setQualityIndexAsPerAir(int index) {
+    qualityIndex = index;
+    notifyListeners();
   }
 
   /// The Json retrieved from weather api is of following structure :
