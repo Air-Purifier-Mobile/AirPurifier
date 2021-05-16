@@ -136,14 +136,11 @@ class BluetoothService {
               mac: 'Wifi Connected',
             );
             messageOrder++;
-            int totalDevices = _streamingSharedPreferencesService
-                .readIntFromStreamingSP("totalDevices");
             List<String> mac = _streamingSharedPreferencesService
                 .readStringListFromStreamingSP("MAC");
             List<String> name = _streamingSharedPreferencesService
                 .readStringListFromStreamingSP("name");
-            if (mac.contains(macAddress)) {
-            } else {
+            if (mac.contains(macAddress)) {} else {
               mac.add(macAddress);
               name.add("Device-${mac.length + 1}");
               _streamingSharedPreferencesService.changeStringListInStreamingSP(
