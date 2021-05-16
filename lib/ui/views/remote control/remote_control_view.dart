@@ -1,8 +1,6 @@
 import 'package:air_purifier/app/constants.dart';
-import 'package:air_purifier/ui/views/chameleon_container/chameleon_container_view.dart';
 import 'package:air_purifier/ui/views/remote%20control/remote_control_viewModel.dart';
 import 'package:air_purifier/ui/widgets/speedController.dart';
-import 'package:air_purifier/ui/widgets/toggleLedMode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
@@ -60,6 +58,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                       width: width,
                       color: Colors.transparent,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
@@ -70,7 +69,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                             width: width,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage("assets/fan.png"),
+                                image: AssetImage("assets/${model.fanImage}.png"),
                                 fit: BoxFit.fitHeight,
                               ),
                             ),
@@ -704,7 +703,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     height: height / 60,
                                   ),
                                   Text(
-                                    "Fan",
+                                    "Fan Controls",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: height / 45,
@@ -732,7 +731,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     height: height / 60,
                                   ),
                                   GestureDetector(
-                                    onTap: () => model.togglePurifier(),
+                                    onTap: model.purifierMode==1? model.togglePurifier:null,
                                     child: Container(
                                       height: height / 18,
                                       width: height / 18,
@@ -753,7 +752,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                                     height: height / 60,
                                   ),
                                   Text(
-                                    "Purifier",
+                                    "Purifier Controls",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: height / 45,
@@ -767,234 +766,243 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                           SizedBox(
                             height: height / 30,
                           ),
-                          Center(
-                            child: Container(
-                              width: width * 0.868,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white54,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  height / 34,
+                          Column(
+                            children: [
+                              Center(
+                                child: Container(
+                                  width: width * 0.868,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white54,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      height / 34,
+                                    ),
+                                  ),
+                                  child: FlutterToggleTab(
+                                    // width in percent, to set full width just set to 100
+                                    width: width * 0.2,
+                                    borderRadius: 30,
+                                    height: height / 17,
+                                    initialIndex: model.purifierMode,
+                                    selectedIndex: model.purifierMode,
+                                    selectedBackgroundColors: [
+                                      Colors.white,
+                                    ],
+                                    unSelectedBackgroundColors: [
+                                      primaryColor,
+                                    ],
+                                    selectedTextStyle: TextStyle(
+                                      color: primaryColor,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    unSelectedTextStyle: TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    labels: ["Auto", "Manual", "Sleep"],
+                                    selectedLabelIndex: (index) {
+                                      print("Selected Index $index");
+                                      switch (index) {
+                                        case 0:
+                                          {
+                                            model.publishMessage("APMA");
+                                            model.purifierState = false;
+                                            model.purifierImageState = true;
+                                          }
+                                          break;
+                                        case 1:
+                                          {
+                                            model.publishMessage("APMM");
+                                            model.purifierState = true;
+                                            model.refreshDeviceState();
+                                          }
+                                          break;
+                                        case 2:
+                                          {
+                                            model.publishMessage("APMS");
+                                            model.purifierState = false;
+                                            model.purifierImageState = true;
+                                          }
+                                          break;
+                                        default:
+                                          {
+                                            Fluttertoast.showToast(
+                                              msg: "What was the input? $index",
+                                            );
+                                          }
+                                      }
+                                      model.setPurifierMode(index);
+                                    },
+                                  ),
                                 ),
                               ),
-                              child: FlutterToggleTab(
-                                // width in percent, to set full width just set to 100
-                                width: width * 0.2,
-                                borderRadius: 30,
-                                height: height / 17,
-                                initialIndex: model.purifierMode,
-                                selectedIndex: model.purifierMode,
-                                selectedBackgroundColors: [
-                                  Colors.white,
-                                ],
-                                unSelectedBackgroundColors: [
-                                  primaryColor,
-                                ],
-                                selectedTextStyle: TextStyle(
-                                  color: primaryColor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                unSelectedTextStyle: TextStyle(
-                                  color: Colors.white54,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                labels: ["Auto", "Manual", "Sleep"],
-                                selectedLabelIndex: (index) {
-                                  print("Selected Index $index");
-                                  switch (index) {
-                                    case 0:
-                                      {
-                                        model.publishMessage("APMA");
-                                        model.purifierState = false;
-                                      }
-                                      break;
-                                    case 1:
-                                      {
-                                        model.publishMessage("APMM");
-                                        model.purifierState = true;
-                                      }
-                                      break;
-                                    case 2:
-                                      {
-                                        model.publishMessage("APMS");
-                                        model.purifierState = false;
-                                      }
-                                      break;
-                                    default:
-                                      {
-                                        Fluttertoast.showToast(
-                                          msg: "What was the input? $index",
-                                        );
-                                      }
-                                  }
-                                  model.setPurifierMode(index);
-                                },
+                              SizedBox(
+                                height: height / 40,
                               ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: height / 40,
-                          ),
-                          Center(
-                            child: Text(
-                              "Purifier Mode",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: height / 45,
-                                fontWeight: FontWeight.w300,
+                              Center(
+                                child: Text(
+                                  "Purifier Mode",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: height / 45,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
+
                           SizedBox(
                             height: height * 0.02,
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: height / 60,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  color: Colors.white,
-                                  height: 1,
-                                  width: width * 0.35,
-                                ),
-                                SizedBox(
-                                  width: width * 0.01,
-                                ),
-                                Container(
-                                  height: height / 35,
-                                  width: height / 35,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
-                                  child: ChameleonContainerView(),
-                                ),
-                                SizedBox(
-                                  width: width * 0.01,
-                                ),
-                                Container(
-                                  color: Colors.white,
-                                  height: 1,
-                                  width: width * 0.35,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              height: height / 25,
-                              width: width * 0.7,
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  trackHeight: 1.0,
-                                  thumbColor: HexColor("dd453a"),
-                                  disabledThumbColor: HexColor("dd453a"),
-                                  activeTrackColor: Colors.white,
-                                  inactiveTrackColor: Colors.white,
-                                  disabledActiveTrackColor: Colors.white70,
-                                  disabledInactiveTrackColor: Colors.white70,
-                                ),
-                                child: Slider(
-                                  value: model.red.toDouble(),
-                                  min: 0.0,
-                                  max: 255.0,
-                                  onChangeEnd: (val) {
-                                    print(val.toString());
-                                    model.changeRed(val, true);
-                                  },
-                                  onChanged: model.ledState
-                                      ? (val) {
-                                          model.changeRed(val, false);
-                                        }
-                                      : null,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: width * 0.7,
-                              height: height / 25,
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  trackHeight: 1.0,
-                                  thumbColor: HexColor("32db44"),
-                                  disabledThumbColor: HexColor("32db44"),
-                                  activeTrackColor: Colors.white,
-                                  inactiveTrackColor: Colors.white,
-                                  disabledActiveTrackColor: Colors.white70,
-                                  disabledInactiveTrackColor: Colors.white70,
-                                ),
-                                child: Slider(
-                                  value: model.green.toDouble(),
-                                  min: 0.0,
-                                  max: 255.0,
-                                  onChangeEnd: (val) {
-                                    print(val.toString());
-                                    model.changeGreen(val, true);
-                                  },
-                                  onChanged: model.ledState
-                                      ? (val) {
-                                          model.changeGreen(val, false);
-                                        }
-                                      : null,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: width * 0.7,
-                              height: height / 25,
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  trackHeight: 1.0,
-                                  thumbColor: HexColor("3b7ddb"),
-                                  disabledThumbColor: HexColor("3b7ddb"),
-                                  activeTrackColor: Colors.white,
-                                  inactiveTrackColor: Colors.white,
-                                  disabledActiveTrackColor: Colors.white70,
-                                  disabledInactiveTrackColor: Colors.white70,
-                                ),
-                                child: Slider(
-                                  value: model.blue.toDouble(),
-                                  min: 0.0,
-                                  max: 255.0,
-                                  onChangeEnd: (val) {
-                                    print(val.toString());
-                                    model.changeBlue(val, true);
-                                  },
-                                  onChanged: model.ledState
-                                      ? (val) {
-                                          model.changeBlue(val, false);
-                                        }
-                                      : null,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: height / 40,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              width / 1.5,
-                              height / 80 + (model.ledState ? 0.0 : 2.50),
-                              0.0,
-                              0.0,
-                            ),
-                            child: LedToggle(
-                              ledMode: model.ledState,
-                              backColor: primaryColor,
-                              toggleLedMode: model.toggleLedMode,
-                            ),
-                          ),
+
+                          // Padding(
+                          //   padding: EdgeInsets.symmetric(
+                          //     vertical: height / 60,
+                          //   ),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     children: [
+                          //       Container(
+                          //         color: Colors.white,
+                          //         height: 1,
+                          //         width: width * 0.35,
+                          //       ),
+                          //       SizedBox(
+                          //         width: width * 0.01,
+                          //       ),
+                          //       Container(
+                          //         height: height / 35,
+                          //         width: height / 35,
+                          //         decoration: BoxDecoration(
+                          //           shape: BoxShape.circle,
+                          //         ),
+                          //         clipBehavior: Clip.hardEdge,
+                          //         child: ChameleonContainerView(),
+                          //       ),
+                          //       SizedBox(
+                          //         width: width * 0.01,
+                          //       ),
+                          //       Container(
+                          //         color: Colors.white,
+                          //         height: 1,
+                          //         width: width * 0.35,
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // Center(
+                          //   child: Container(
+                          //     height: height / 25,
+                          //     width: width * 0.7,
+                          //     child: SliderTheme(
+                          //       data: SliderThemeData(
+                          //         trackHeight: 1.0,
+                          //         thumbColor: HexColor("dd453a"),
+                          //         disabledThumbColor: HexColor("dd453a"),
+                          //         activeTrackColor: Colors.white,
+                          //         inactiveTrackColor: Colors.white,
+                          //         disabledActiveTrackColor: Colors.white70,
+                          //         disabledInactiveTrackColor: Colors.white70,
+                          //       ),
+                          //       child: Slider(
+                          //         value: model.red.toDouble(),
+                          //         min: 0.0,
+                          //         max: 255.0,
+                          //         onChangeEnd: (val) {
+                          //           print(val.toString());
+                          //           model.changeRed(val, true);
+                          //         },
+                          //         onChanged: model.ledState
+                          //             ? (val) {
+                          //                 model.changeRed(val, false);
+                          //               }
+                          //             : null,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // Center(
+                          //   child: Container(
+                          //     width: width * 0.7,
+                          //     height: height / 25,
+                          //     child: SliderTheme(
+                          //       data: SliderThemeData(
+                          //         trackHeight: 1.0,
+                          //         thumbColor: HexColor("32db44"),
+                          //         disabledThumbColor: HexColor("32db44"),
+                          //         activeTrackColor: Colors.white,
+                          //         inactiveTrackColor: Colors.white,
+                          //         disabledActiveTrackColor: Colors.white70,
+                          //         disabledInactiveTrackColor: Colors.white70,
+                          //       ),
+                          //       child: Slider(
+                          //         value: model.green.toDouble(),
+                          //         min: 0.0,
+                          //         max: 255.0,
+                          //         onChangeEnd: (val) {
+                          //           print(val.toString());
+                          //           model.changeGreen(val, true);
+                          //         },
+                          //         onChanged: model.ledState
+                          //             ? (val) {
+                          //                 model.changeGreen(val, false);
+                          //               }
+                          //             : null,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // Center(
+                          //   child: Container(
+                          //     width: width * 0.7,
+                          //     height: height / 25,
+                          //     child: SliderTheme(
+                          //       data: SliderThemeData(
+                          //         trackHeight: 1.0,
+                          //         thumbColor: HexColor("3b7ddb"),
+                          //         disabledThumbColor: HexColor("3b7ddb"),
+                          //         activeTrackColor: Colors.white,
+                          //         inactiveTrackColor: Colors.white,
+                          //         disabledActiveTrackColor: Colors.white70,
+                          //         disabledInactiveTrackColor: Colors.white70,
+                          //       ),
+                          //       child: Slider(
+                          //         value: model.blue.toDouble(),
+                          //         min: 0.0,
+                          //         max: 255.0,
+                          //         onChangeEnd: (val) {
+                          //           print(val.toString());
+                          //           model.changeBlue(val, true);
+                          //         },
+                          //         onChanged: model.ledState
+                          //             ? (val) {
+                          //                 model.changeBlue(val, false);
+                          //               }
+                          //             : null,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   height: height / 40,
+                          // ),
+                          // Padding(
+                          //   padding: EdgeInsets.fromLTRB(
+                          //     width / 1.5,
+                          //     height / 80 + (model.ledState ? 0.0 : 2.50),
+                          //     0.0,
+                          //     0.0,
+                          //   ),
+                          //   child: LedToggle(
+                          //     ledMode: model.ledState,
+                          //     backColor: primaryColor,
+                          //     toggleLedMode: model.toggleLedMode,
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

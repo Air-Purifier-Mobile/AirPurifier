@@ -14,6 +14,7 @@ class MqttService {
   Function refreshCallBack;
   String ownMessage;
   String mac;
+  String rootTopic = "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/";
   List<MqttReceivedMessage<MqttMessage>> responseList = [];
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
@@ -87,6 +88,12 @@ class MqttService {
   // subscribe to topic succeeded
   void onSubscribed(String topic) {
     print('Subscribed topic: $topic');
+    ///comment in prod
+    // if (topic ==
+    //     "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE")
+    // publishPayload(
+    //     '{"AP motor":"OFF","AC motor":"OFF","AP mode":"MANUAL","LED mode":"AUTO","AP speed":1,"AC speed":1,"R color":0,"G color":0,"B color":0}',
+    //     rootTopic + mac + "/RESPONSE");
   }
 
   // subscribe to topic failed
@@ -116,6 +123,12 @@ class MqttService {
       print(
         'Received message:$payload own Message:$ownMessage fromTopic:${c[0].topic}',
       );
+
+      ///comment in prod
+      // if (c[0].topic ==
+      //     "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
+      //   setInitialValues(jsonDecode(payload));
+      // }
 
       if (payload != ownMessage) {
         // if (c[0].topic ==

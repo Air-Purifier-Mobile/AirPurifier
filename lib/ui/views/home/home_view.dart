@@ -143,6 +143,28 @@ class HomeView extends StatelessWidget {
         }
 
         return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.transparent,
+            elevation: 0,
+            leading: InkWell(
+              onTap: () {
+                model.scaffoldKey.currentState.openDrawer();
+                model.notifyListeners();
+              },
+              child: Container(
+                width: 50.0,
+                height: 50.0,
+                child: Icon(
+                  Icons.menu,
+                  color: Colors.white,
+                  size: height / 27,
+                ),
+              ),
+            ),
+          ),
+          backgroundColor: primaryColor,
           key: model.scaffoldKey,
           drawer: Drawer(
             elevation: 0.0,
@@ -294,6 +316,7 @@ class HomeView extends StatelessWidget {
                 ? Colors.white
                 : model.primaryColor,
             onPressed: () {
+              ///uncomment in prod
               if ((model.pm1 == null || model.pm1 != "") &&
                   (model.pm2 == null || model.pm2 != "") &&
                   (model.pm10 == null || model.pm10 != "")) {
@@ -341,476 +364,422 @@ class HomeView extends StatelessWidget {
                 model.notifyListeners();
               }
             },
-            child: SafeArea(
-              child: KeyboardDismisser(
-                child: Stack(
-                  alignment: AlignmentDirectional.topEnd,
+            child: KeyboardDismisser(
+              child: model.temperature != null
+                  ? Container(
+                height: height,
+                width: width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ///Background Image
-                    FadeInImage(
-                      height: height,
-                      width: width,
-                      fadeInDuration: Duration(milliseconds: 300),
-                      image: AssetImage(
-                        model.today.hour > 6 && model.today.hour < 19
-                            ? "assets/day.png"
-                            : "assets/night.png",
+                    ///Temp
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        model.today.hour > 6 &&
+                            model.today.hour < 19
+                            ? width / 1.6
+                            : 0.0,
+                        height * 0.05,
+                        model.today.hour > 6 &&
+                            model.today.hour < 19
+                            ? 0.0
+                            : width / 1.6,
+                        0.0,
                       ),
-                      fit: BoxFit.fitHeight,
-                      placeholder: AssetImage("assets/placeholder.png"),
-                    ),
-
-                    ///Data
-                    model.temperature != null
-                        ? Container(
-                      height: height,
-                      width: width,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          ///Temp
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              model.today.hour > 6 &&
+                          Text(
+                            '${(model.description[0].toUpperCase() + model.description.substring(1)).toString() ?? ""}',
+                            style: TextStyle(
+                              fontSize: height / 40,
+                              color: model.today.hour > 6 &&
                                   model.today.hour < 19
-                                  ? width / 1.6
-                                  : 0.0,
-                              height * 0.05,
-                              model.today.hour > 6 &&
-                                  model.today.hour < 19
-                                  ? 0.0
-                                  : width / 1.6,
-                              0.0,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${(model.description[0].toUpperCase() + model.description.substring(1)).toString() ?? ""}',
-                                  style: TextStyle(
-                                    fontSize: height / 40,
-                                    color: model.today.hour > 6 &&
-                                        model.today.hour < 19
-                                        ? model.primaryColor
-                                        : Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  '${model.temperature ?? ""}°',
-                                  style: TextStyle(
-                                    fontSize: height / 12,
-                                    color: model.today.hour > 6 &&
-                                        model.today.hour < 19
-                                        ? model.primaryColor
-                                        : Colors.white,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                // Container(
-                                //   height: height / 13,
-                                //   child:
-                                // ),
-                              ],
+                                  ? model.primaryColor
+                                  : Colors.white,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
+                          Text(
+                            '${model.temperature ?? ""}°',
+                            style: TextStyle(
+                              fontSize: height / 12,
+                              color: model.today.hour > 6 &&
+                                  model.today.hour < 19
+                                  ? model.primaryColor
+                                  : Colors.white,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          // Container(
+                          //   height: height / 13,
+                          //   child:
+                          // ),
+                        ],
+                      ),
+                    ),
 
-                          ///City
-                          Padding(
+                    ///City
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        0.0,
+                        height * 0.37,
+                        0.0,
+                        0.0,
+                      ),
+                      child: Text(
+                        '${model.cityName ?? ""}',
+                        style: TextStyle(
+                          fontSize: height / 23,
+                          color: model.primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    ///Date
+                    Text(
+                      "${model.getDay(model.today.weekday)} | ${model.getMonth(model.today.month)} ${model.today.day}",
+                      style: TextStyle(
+                        fontSize: height / 45,
+                        color: model.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    ///Device Name
+                    InkWell(
+                      onTap: () {
+                        print("hello mujhe dabaya gaya hai");
+                        _modalBottomSheetMenu();
+                      },
+                      child: Container(
+                        width: width * 0.8,
+                        alignment: Alignment.center,
+                        child: Padding(
                             padding: EdgeInsets.fromLTRB(
                               0.0,
-                              height * 0.37,
+                              height * 0.02,
                               0.0,
                               0.0,
                             ),
                             child: Text(
-                              '${model.cityName ?? ""}',
+                              "${model.currentName[model.lastDevice] ?? ""}",
                               style: TextStyle(
-                                fontSize: height / 23,
+                                fontSize: height / 45,
                                 color: model.primaryColor,
                                 fontWeight: FontWeight.w500,
                               ),
-                            ),
-                          ),
+                            )
+                          // child: !model.editingStatus
+                          //     ? Text(
+                          //         "${model.currentName[model.lastDevice] ?? ""}",
+                          //         style: TextStyle(
+                          //           fontSize: height / 45,
+                          //           color: model.primaryColor,
+                          //           fontWeight: FontWeight.w500,
+                          //         ),
+                          //       )
+                          //     : Padding(
+                          //         padding: EdgeInsets.fromLTRB(
+                          //           0.0,
+                          //           0.0,
+                          //           0.0,
+                          //           height * 0.0333,
+                          //         ),
+                          //         child: Container(
+                          //           height: height / 20,
+                          //           width: width * 0.5,
+                          //           child: TextFormField(
+                          //             showCursor: true,
+                          //             autofocus: true,
+                          //             decoration:
+                          //                 InputDecoration(
+                          //               enabledBorder:
+                          //                   UnderlineInputBorder(
+                          //                 borderSide:
+                          //                     BorderSide(
+                          //                   color: primaryColor,
+                          //                 ),
+                          //               ),
+                          //               focusedBorder:
+                          //                   UnderlineInputBorder(
+                          //                 borderSide:
+                          //                     BorderSide(
+                          //                   color: primaryColor,
+                          //                 ),
+                          //               ),
+                          //               border:
+                          //                   UnderlineInputBorder(
+                          //                 borderSide:
+                          //                     BorderSide(
+                          //                   color: primaryColor,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //             cursorColor: primaryColor,
+                          //             controller:
+                          //                 model.nameEditor,
+                          //             textAlign:
+                          //                 TextAlign.center,
+                          //             onFieldSubmitted: (text) {
+                          //               model.editingStatus =
+                          //                   false;
+                          //               model.updateName(text);
+                          //             },
+                          //             onEditingComplete: () {
+                          //               print("Complelte");
+                          //             },
+                          //           ),
+                          //         ),
+                          //       ),
+                        ),
+                      ),
+                    ),
 
-                          ///Date
-                          Text(
-                            "${model.getDay(model.today.weekday)} | ${model.getMonth(model.today.month)} ${model.today.day}",
-                            style: TextStyle(
-                              fontSize: height / 45,
-                              color: model.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                    /// Divider
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        0.0,
+                        0.0,
+                        0.0,
+                        height * 0.0333,
+                      ),
+                      child: Container(
+                        width: width / 1.5,
+                        child: Divider(
+                          thickness: 0.5,
+                          color: model.primaryColor,
+                        ),
+                      ),
+                    ),
 
-                          ///Device Name
-                          InkWell(
-                            onTap: () {
-                              print("hello mujhe dabaya gaya hai");
-                              _modalBottomSheetMenu();
-                            },
-                            child: Container(
-                              width: width * 0.8,
-                              alignment: Alignment.center,
-                              child: Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    0.0,
-                                    height * 0.02,
-                                    0.0,
-                                    0.0,
-                                  ),
-                                  child: Text(
-                                    "${model.currentName[model.lastDevice] ?? ""}",
-                                    style: TextStyle(
-                                      fontSize: height / 45,
-                                      color: model.primaryColor,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  )
-                                // child: !model.editingStatus
-                                //     ? Text(
-                                //         "${model.currentName[model.lastDevice] ?? ""}",
-                                //         style: TextStyle(
-                                //           fontSize: height / 45,
-                                //           color: model.primaryColor,
-                                //           fontWeight: FontWeight.w500,
-                                //         ),
-                                //       )
-                                //     : Padding(
-                                //         padding: EdgeInsets.fromLTRB(
-                                //           0.0,
-                                //           0.0,
-                                //           0.0,
-                                //           height * 0.0333,
-                                //         ),
-                                //         child: Container(
-                                //           height: height / 20,
-                                //           width: width * 0.5,
-                                //           child: TextFormField(
-                                //             showCursor: true,
-                                //             autofocus: true,
-                                //             decoration:
-                                //                 InputDecoration(
-                                //               enabledBorder:
-                                //                   UnderlineInputBorder(
-                                //                 borderSide:
-                                //                     BorderSide(
-                                //                   color: primaryColor,
-                                //                 ),
-                                //               ),
-                                //               focusedBorder:
-                                //                   UnderlineInputBorder(
-                                //                 borderSide:
-                                //                     BorderSide(
-                                //                   color: primaryColor,
-                                //                 ),
-                                //               ),
-                                //               border:
-                                //                   UnderlineInputBorder(
-                                //                 borderSide:
-                                //                     BorderSide(
-                                //                   color: primaryColor,
-                                //                 ),
-                                //               ),
-                                //             ),
-                                //             cursorColor: primaryColor,
-                                //             controller:
-                                //                 model.nameEditor,
-                                //             textAlign:
-                                //                 TextAlign.center,
-                                //             onFieldSubmitted: (text) {
-                                //               model.editingStatus =
-                                //                   false;
-                                //               model.updateName(text);
-                                //             },
-                                //             onEditingComplete: () {
-                                //               print("Complelte");
-                                //             },
-                                //           ),
-                                //         ),
-                                //       ),
+                    ///Humidity and Temperature
+                    Container(
+                      height: height * 0.08333,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment:
+                        MainAxisAlignment.start,
+                        children: [
+                          ///Humidity
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Humidity',
+                                style: TextStyle(
+                                  fontSize: height * 0.0222,
+                                  color: model.primaryColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                            ),
-                          ),
 
-                          /// Divider
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              0.0,
-                              0.0,
-                              0.0,
-                              height * 0.0333,
-                            ),
-                            child: Container(
-                              width: width / 1.5,
-                              child: Divider(
-                                thickness: 0.5,
-                                color: model.primaryColor,
+                              Text(
+                                '${model.humidity ?? ""} %',
+                                style: TextStyle(
+                                  fontSize: height / 24,
+                                  color: model.primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ),
-
-                          ///Humidity and Temperature
-                          Container(
-                            height: height * 0.08333,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment:
-                              MainAxisAlignment.start,
-                              children: [
-                                ///Humidity
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Humidity',
-                                      style: TextStyle(
-                                        fontSize: height * 0.0222,
-                                        color: model.primaryColor,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-
-                                    Text(
-                                      '${model.humidity ?? ""} %',
-                                      style: TextStyle(
-                                        fontSize: height / 24,
-                                        color: model.primaryColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    // Container(
-                                    //   height: height / 13,
-                                    //   child:
-                                    // ),
-                                  ],
-                                ),
-
-                                SizedBox(
-                                  width: width / 6,
-                                ),
-
-                                ///Temperature
-                                Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Temperature',
-                                      style: TextStyle(
-                                        fontSize: height / 45,
-                                        color: model.primaryColor,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${model.temperature ?? ""}°',
-                                      style: TextStyle(
-                                        fontSize: height / 24,
-                                        color: model.primaryColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    // Container(
-                                    //   height: height / 13,
-                                    //   child:
-                                    // ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              // Container(
+                              //   height: height / 13,
+                              //   child:
+                              // ),
+                            ],
                           ),
 
                           SizedBox(
-                            height: height * 0.025,
+                            width: width / 6,
                           ),
 
-                          ///PM values
-                          Container(
-                            height: height * 0.0833,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment:
-                              MainAxisAlignment.start,
-                              children: [
-                                ///PM 1.0
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'PM 1.0',
-                                      style: TextStyle(
-                                        fontSize: height / 45,
-                                        color: model.primaryColor,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    model.pm1 != null
-                                        ? Text(
-                                      '${model.pm1}',
-                                      style: TextStyle(
-                                        fontSize: height / 30,
-                                        color: model.primaryColor,
-                                        fontWeight:
-                                        FontWeight.w500,
-                                      ),
-                                    )
-                                        : FadingText(
-                                      "..",
-                                      style: TextStyle(
-                                        fontSize: height / 30,
-                                        color: model.primaryColor,
-                                        fontWeight:
-                                        FontWeight.w500,
-                                      ),
-                                    ),
-                                    // Container(
-                                    //   height: height / 13,
-                                    //   child:
-                                    // ),
-                                  ],
+                          ///Temperature
+                          Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Temperature',
+                                style: TextStyle(
+                                  fontSize: height / 45,
+                                  color: model.primaryColor,
+                                  fontWeight: FontWeight.w400,
                                 ),
-
-                                SizedBox(
-                                  width: width / 12,
+                              ),
+                              Text(
+                                '${model.temperature ?? ""}°',
+                                style: TextStyle(
+                                  fontSize: height / 24,
+                                  color: model.primaryColor,
+                                  fontWeight: FontWeight.w500,
                                 ),
-
-                                ///PM 2.5
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'PM 2.5',
-                                      style: TextStyle(
-                                        fontSize: height / 45,
-                                        color: model.primaryColor,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    model.pm2 != null
-                                        ? Text(
-                                      '${model.pm2}',
-                                      style: TextStyle(
-                                        fontSize: height / 30,
-                                        color: model.primaryColor,
-                                        fontWeight:
-                                        FontWeight.w500,
-                                      ),
-                                    )
-                                        : FadingText(
-                                      "..",
-                                      style: TextStyle(
-                                        fontSize: height / 30,
-                                        color: model.primaryColor,
-                                        fontWeight:
-                                        FontWeight.w500,
-                                      ),
-                                    ),
-                                    // Container(
-                                    //   height: height / 13,
-                                    //   child:
-                                    // ),
-                                  ],
-                                ),
-
-                                SizedBox(
-                                  width: width / 12,
-                                ),
-
-                                ///PM 10
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'PM 10',
-                                      style: TextStyle(
-                                        fontSize: height / 45,
-                                        color: model.primaryColor,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    model.pm10 != null
-                                        ? Text(
-                                      '${model.pm10}',
-                                      style: TextStyle(
-                                        fontSize: height / 30,
-                                        color: model.primaryColor,
-                                        fontWeight:
-                                        FontWeight.w500,
-                                      ),
-                                    )
-                                        : FadingText(
-                                      "..",
-                                      style: TextStyle(
-                                        fontSize: height / 30,
-                                        color: model.primaryColor,
-                                        fontWeight:
-                                        FontWeight.w500,
-                                      ),
-                                    ),
-                                    // Container(
-                                    //   height: height / 13,
-                                    //   child:
-                                    // ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              ),
+                              // Container(
+                              //   height: height / 13,
+                              //   child:
+                              // ),
+                            ],
                           ),
                         ],
                       ),
-                    )
-                        : Container(
-                      height: height,
-                      width: width,
-                      child: Center(
-                        child: FadingText(
-                          "....",
-                          style: TextStyle(
-                            fontSize: height / 20,
-                            color: model.primaryColor,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ),
                     ),
 
-                    ///Menu
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        model.today.hour > 6 && model.today.hour < 19
-                            ? width / 40
-                            : width / 1.1,
-                        10.0,
-                        model.today.hour > 6 && model.today.hour < 19
-                            ? width / 1.1
-                            : width / 40,
-                        0.0,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          model.scaffoldKey.currentState.openDrawer();
-                          model.notifyListeners();
-                        },
-                        child: Container(
-                          width: 50.0,
-                          height: 50.0,
-                          child: Icon(
-                            Icons.menu,
-                            color:
-                            model.today.hour > 6 && model.today.hour < 19
-                                ? model.primaryColor
-                                : Colors.white,
-                            size: height / 27,
+                    SizedBox(
+                      height: height * 0.025,
+                    ),
+
+                    ///PM values
+                    Container(
+                      height: height * 0.0833,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment:
+                        MainAxisAlignment.start,
+                        children: [
+                          ///PM 1.0
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'PM 1.0',
+                                style: TextStyle(
+                                  fontSize: height / 45,
+                                  color: model.primaryColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              model.pm1 != null
+                                  ? Text(
+                                '${model.pm1}',
+                                style: TextStyle(
+                                  fontSize: height / 30,
+                                  color: model.primaryColor,
+                                  fontWeight:
+                                  FontWeight.w500,
+                                ),
+                              )
+                                  : FadingText(
+                                "..",
+                                style: TextStyle(
+                                  fontSize: height / 30,
+                                  color: model.primaryColor,
+                                  fontWeight:
+                                  FontWeight.w500,
+                                ),
+                              ),
+                              // Container(
+                              //   height: height / 13,
+                              //   child:
+                              // ),
+                            ],
                           ),
-                        ),
+
+                          SizedBox(
+                            width: width / 12,
+                          ),
+
+                          ///PM 2.5
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'PM 2.5',
+                                style: TextStyle(
+                                  fontSize: height / 45,
+                                  color: model.primaryColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              model.pm2 != null
+                                  ? Text(
+                                '${model.pm2}',
+                                style: TextStyle(
+                                  fontSize: height / 30,
+                                  color: model.primaryColor,
+                                  fontWeight:
+                                  FontWeight.w500,
+                                ),
+                              )
+                                  : FadingText(
+                                "..",
+                                style: TextStyle(
+                                  fontSize: height / 30,
+                                  color: model.primaryColor,
+                                  fontWeight:
+                                  FontWeight.w500,
+                                ),
+                              ),
+                              // Container(
+                              //   height: height / 13,
+                              //   child:
+                              // ),
+                            ],
+                          ),
+
+                          SizedBox(
+                            width: width / 12,
+                          ),
+
+                          ///PM 10
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'PM 10',
+                                style: TextStyle(
+                                  fontSize: height / 45,
+                                  color: model.primaryColor,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              model.pm10 != null
+                                  ? Text(
+                                '${model.pm10}',
+                                style: TextStyle(
+                                  fontSize: height / 30,
+                                  color: model.primaryColor,
+                                  fontWeight:
+                                  FontWeight.w500,
+                                ),
+                              )
+                                  : FadingText(
+                                "..",
+                                style: TextStyle(
+                                  fontSize: height / 30,
+                                  color: model.primaryColor,
+                                  fontWeight:
+                                  FontWeight.w500,
+                                ),
+                              ),
+                              // Container(
+                              //   height: height / 13,
+                              //   child:
+                              // ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
+                ),
+              )
+                  : Container(
+                height: height,
+                width: width,
+                child: Center(
+                  child: FadingText(
+                    "....",
+                    style: TextStyle(
+                      fontSize: height / 20,
+                      color: model.primaryColor,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
                 ),
               ),
             ),

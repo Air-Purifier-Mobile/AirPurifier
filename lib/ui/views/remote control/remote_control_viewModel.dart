@@ -43,6 +43,9 @@ class RemoteControlViewModel extends BaseViewModel {
   /// 2 = Sleep Mode
   int purifierMode;
 
+  ///image file name for fan
+  String fanImage='';
+
   String mac;
   String rootTopic = "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/";
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
@@ -69,14 +72,18 @@ class RemoteControlViewModel extends BaseViewModel {
   /// Toggle fan
   void toggleFan() {
     fanState = !fanState;
+    fanImageState = fanState;
     publishMessage(fanState ? "ACON" : "ACOFF");
+    setFanImage();
     notifyListeners();
   }
 
   /// Toggle Purifier
   void togglePurifier() {
     purifierState = !purifierState;
+    purifierImageState = purifierState;
     publishMessage(purifierState ? "APON" : "APOFF");
+    setFanImage();
     notifyListeners();
   }
 
@@ -166,9 +173,6 @@ class RemoteControlViewModel extends BaseViewModel {
   /// Publishes message on "IN" topic requesting a device component's state change
   void publishMessage(String message) {
     String topic = rootTopic + mac + "IN";
-    // _mqttService.publishPayload(
-    //     '{"AP motor":"OFF","AP mode":"MANUAL","LED mode":"AUTO","AP speed":1,"R color":0,"G color":0,"B color":0}',
-    //     rootTopic + mac + "RESPONSE");
     _mqttService.publishPayload(message, topic);
   }
 
@@ -197,8 +201,14 @@ class RemoteControlViewModel extends BaseViewModel {
       fanSpeed = 1;
       fanState = true;
 
+
       /// Set Purifier Mode
       purifierMode = 0;
+
+      fanImageState = false;
+      purifierImageState = true;
+
+      setFanImage();
 
       /// Set Led state
       ledState = true;
@@ -213,6 +223,7 @@ class RemoteControlViewModel extends BaseViewModel {
       /// Set Fan State
       fanSpeed = map["AC speed"];
       fanState = map["AC motor"] == "ON";
+      fanImageState = fanState;
 
       /// Set Led state
       ledState = map["LED mode"] != "AUTO";
@@ -222,16 +233,27 @@ class RemoteControlViewModel extends BaseViewModel {
 
       /// Set Purifier Mode
       if (map["AP mode"] == "AUTO") {
+        purifierImageState = true;
         purifierMode = 0;
         purifierState = false;
       } else if (map["AP mode"] == "MANUAL") {
+        purifierImageState = purifierState;
         purifierMode = 1;
-        purifierState = true;
       } else {
+        purifierImageState = true;
         purifierMode = 2;
         purifierState = false;
       }
     }
+    setFanImage();
+    notifyListeners();
+  }
+
+  bool fanImageState ;
+  bool purifierImageState ;
+  void setFanImage(){
+    fanImage = "fan" + (fanImageState ? "On" : "Off").toString()
+        + "Purifier" + (purifierImageState ? "On" : "Off");
     notifyListeners();
   }
 }

@@ -43,19 +43,24 @@ class _SpeedControllerState extends State<SpeedController> {
 
   void increase() {
     if (widget.enabled) {
+      if(widget.value + 1 <= widget.maxValue)
       setState(() {
+        widget.value++;
         widget.changeCallBack(
-            widget.value + 1 <= widget.maxValue ? widget.value + 1 : index);
+            widget.value );
       });
     }
   }
 
   void decrease() {
     if (widget.enabled) {
-      setState(() {
-        widget.changeCallBack(
-            widget.value - 1 >= widget.minValue ? widget.value - 1 : index);
-      });
+
+      if(widget.value - 1 >= widget.minValue)
+        setState(() {
+          widget.value--;
+          widget.changeCallBack(
+              widget.value );
+        });
     }
   }
 
