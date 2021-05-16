@@ -28,7 +28,7 @@ class HomeViewModel extends BaseViewModel {
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
   final FirestoreService _firestoreService = locator<FirestoreService>();
-
+  var scaffoldKey = GlobalKey<ScaffoldState>();
   /// Devices:
   int lastDevice;
 
