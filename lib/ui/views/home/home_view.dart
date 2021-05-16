@@ -141,7 +141,6 @@ class HomeView extends StatelessWidget {
                 );
               });
         }
-
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -312,9 +311,7 @@ class HomeView extends StatelessWidget {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            backgroundColor: model.today.hour > 6 && model.today.hour < 19
-                ? Colors.white
-                : model.primaryColor,
+            backgroundColor: Colors.white,
             onPressed: () {
               ///uncomment in prod
               if ((model.pm1 == null || model.pm1 != "") &&
@@ -332,9 +329,7 @@ class HomeView extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                    model.today.hour > 6 && model.today.hour < 19
-                        ? "assets/remote_day.png"
-                        : "assets/remote_night.png",
+                     "assets/remote_day.png",
                   ),
                   fit: BoxFit.fitHeight,
                 ),
@@ -373,79 +368,118 @@ class HomeView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ///Temp
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        model.today.hour > 6 &&
-                            model.today.hour < 19
-                            ? width / 1.6
-                            : 0.0,
-                        height * 0.05,
-                        model.today.hour > 6 &&
-                            model.today.hour < 19
-                            ? 0.0
-                            : width / 1.6,
-                        0.0,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '${(model.description[0].toUpperCase() + model.description.substring(1)).toString() ?? ""}',
-                            style: TextStyle(
-                              fontSize: height / 40,
-                              color: model.today.hour > 6 &&
-                                  model.today.hour < 19
-                                  ? model.primaryColor
-                                  : Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            '${model.temperature ?? ""}°',
-                            style: TextStyle(
-                              fontSize: height / 12,
-                              color: model.today.hour > 6 &&
-                                  model.today.hour < 19
-                                  ? model.primaryColor
-                                  : Colors.white,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          // Container(
-                          //   height: height / 13,
-                          //   child:
-                          // ),
-                        ],
-                      ),
-                    ),
 
                     ///City
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         0.0,
-                        height * 0.37,
+                        height * 0.1,
                         0.0,
-                        0.0,
+                        height*0.02,
                       ),
                       child: Text(
                         '${model.cityName ?? ""}',
                         style: TextStyle(
-                          fontSize: height / 23,
-                          color: model.primaryColor,
-                          fontWeight: FontWeight.w500,
+                          fontSize: height / 35,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                     ),
 
-                    ///Date
-                    Text(
-                      "${model.getDay(model.today.weekday)} | ${model.getMonth(model.today.month)} ${model.today.day}",
-                      style: TextStyle(
-                        fontSize: height / 45,
-                        color: model.primaryColor,
-                        fontWeight: FontWeight.w500,
+                    ///Humidity and Temperature
+                    Container(
+                      height: height * 0.08333,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment:
+                        MainAxisAlignment.start,
+                        children: [
+                          ///Temperature
+                          Row(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                height: height/35,
+                                width: width*0.08,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/temperature.png'
+                                      ),
+                                    )
+                                ),
+                              ),
+                              Text(
+                                '${model.temperature ?? ""}°',
+                                style: TextStyle(
+                                  fontSize: height / 24,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              // Container(
+                              //   height: height / 13,
+                              //   child:
+                              // ),
+                            ],
+                          ),
+                          SizedBox(
+                            width: width / 10,
+                          ),
+                          ///Humidity
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            children: [
+
+                              Container(
+                                height: height/35,
+                                width: width*0.08,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'assets/humidity.png'
+                                      ),
+                                    )
+                                ),
+                              ),
+
+                              Text(
+                                '${model.humidity ?? ""} %',
+                                style: TextStyle(
+                                  fontSize: height / 24,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              // Container(
+                              //   height: height / 13,
+                              //   child:
+                              // ),
+                            ],
+                          ),
+                        ],
                       ),
+                    ),
+
+                    ///Fan Image and Slider
+                    Container(
+                      color: Colors.red,
+                      height: height/2.5,
+                      width: width*0.9,
+                    ),
+
+                    SizedBox(
+                      height: height/20,
+                    ),
+                    Icon(
+                      Icons.wifi_outlined,
+                      color: Colors.white70,
+                      size: height/25,
                     ),
 
                     ///Device Name
@@ -468,7 +502,7 @@ class HomeView extends StatelessWidget {
                               "${model.currentName[model.lastDevice] ?? ""}",
                               style: TextStyle(
                                 fontSize: height / 45,
-                                color: model.primaryColor,
+                                color: Colors.white,
                                 fontWeight: FontWeight.w500,
                               ),
                             )
@@ -542,96 +576,20 @@ class HomeView extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         0.0,
-                        0.0,
+                        height * 0.01,
                         0.0,
                         height * 0.0333,
                       ),
                       child: Container(
-                        width: width / 1.5,
+                        width: width / 5,
                         child: Divider(
-                          thickness: 0.5,
-                          color: model.primaryColor,
+                          thickness: 1,
+                          color: Colors.white,
                         ),
                       ),
                     ),
 
-                    ///Humidity and Temperature
-                    Container(
-                      height: height * 0.08333,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment:
-                        MainAxisAlignment.start,
-                        children: [
-                          ///Humidity
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Humidity',
-                                style: TextStyle(
-                                  fontSize: height * 0.0222,
-                                  color: model.primaryColor,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
 
-                              Text(
-                                '${model.humidity ?? ""} %',
-                                style: TextStyle(
-                                  fontSize: height / 24,
-                                  color: model.primaryColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              // Container(
-                              //   height: height / 13,
-                              //   child:
-                              // ),
-                            ],
-                          ),
-
-                          SizedBox(
-                            width: width / 6,
-                          ),
-
-                          ///Temperature
-                          Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Temperature',
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: model.primaryColor,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                '${model.temperature ?? ""}°',
-                                style: TextStyle(
-                                  fontSize: height / 24,
-                                  color: model.primaryColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              // Container(
-                              //   height: height / 13,
-                              //   child:
-                              // ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: height * 0.025,
-                    ),
 
                     ///PM values
                     Container(
@@ -642,46 +600,46 @@ class HomeView extends StatelessWidget {
                         MainAxisAlignment.start,
                         children: [
                           ///PM 1.0
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'PM 1.0',
-                                style: TextStyle(
-                                  fontSize: height / 45,
-                                  color: model.primaryColor,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              model.pm1 != null
-                                  ? Text(
-                                '${model.pm1}',
-                                style: TextStyle(
-                                  fontSize: height / 30,
-                                  color: model.primaryColor,
-                                  fontWeight:
-                                  FontWeight.w500,
-                                ),
-                              )
-                                  : FadingText(
-                                "..",
-                                style: TextStyle(
-                                  fontSize: height / 30,
-                                  color: model.primaryColor,
-                                  fontWeight:
-                                  FontWeight.w500,
-                                ),
-                              ),
-                              // Container(
-                              //   height: height / 13,
-                              //   child:
-                              // ),
-                            ],
-                          ),
+                          // Column(
+                          //   mainAxisSize: MainAxisSize.min,
+                          //   children: [
+                          //     Text(
+                          //       'PM 1.0',
+                          //       style: TextStyle(
+                          //         fontSize: height / 45,
+                          //         color: Colors.white,
+                          //         fontWeight: FontWeight.w400,
+                          //       ),
+                          //     ),
+                          //     model.pm1 != null
+                          //         ? Text(
+                          //       '${model.pm1}',
+                          //       style: TextStyle(
+                          //         fontSize: height / 30,
+                          //         color: Colors.white,
+                          //         fontWeight:
+                          //         FontWeight.w500,
+                          //       ),
+                          //     )
+                          //         : FadingText(
+                          //       "..",
+                          //       style: TextStyle(
+                          //         fontSize: height / 30,
+                          //         color: Colors.white,
+                          //         fontWeight:
+                          //         FontWeight.w500,
+                          //       ),
+                          //     ),
+                          //     // Container(
+                          //     //   height: height / 13,
+                          //     //   child:
+                          //     // ),
+                          //   ],
+                          // ),
 
-                          SizedBox(
-                            width: width / 12,
-                          ),
+                          // SizedBox(
+                          //   width: width / 12,
+                          // ),
 
                           ///PM 2.5
                           Column(
@@ -691,7 +649,7 @@ class HomeView extends StatelessWidget {
                                 'PM 2.5',
                                 style: TextStyle(
                                   fontSize: height / 45,
-                                  color: model.primaryColor,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -700,7 +658,7 @@ class HomeView extends StatelessWidget {
                                 '${model.pm2}',
                                 style: TextStyle(
                                   fontSize: height / 30,
-                                  color: model.primaryColor,
+                                  color: Colors.white,
                                   fontWeight:
                                   FontWeight.w500,
                                 ),
@@ -709,7 +667,7 @@ class HomeView extends StatelessWidget {
                                 "..",
                                 style: TextStyle(
                                   fontSize: height / 30,
-                                  color: model.primaryColor,
+                                  color: Colors.white,
                                   fontWeight:
                                   FontWeight.w500,
                                 ),
@@ -733,7 +691,7 @@ class HomeView extends StatelessWidget {
                                 'PM 10',
                                 style: TextStyle(
                                   fontSize: height / 45,
-                                  color: model.primaryColor,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -742,7 +700,7 @@ class HomeView extends StatelessWidget {
                                 '${model.pm10}',
                                 style: TextStyle(
                                   fontSize: height / 30,
-                                  color: model.primaryColor,
+                                  color: Colors.white,
                                   fontWeight:
                                   FontWeight.w500,
                                 ),
@@ -751,7 +709,7 @@ class HomeView extends StatelessWidget {
                                 "..",
                                 style: TextStyle(
                                   fontSize: height / 30,
-                                  color: model.primaryColor,
+                                  color: Colors.white,
                                   fontWeight:
                                   FontWeight.w500,
                                 ),
@@ -776,7 +734,7 @@ class HomeView extends StatelessWidget {
                     "....",
                     style: TextStyle(
                       fontSize: height / 20,
-                      color: model.primaryColor,
+                      color: Colors.white,
                       fontWeight: FontWeight.w300,
                     ),
                   ),
