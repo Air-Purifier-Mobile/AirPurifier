@@ -569,7 +569,7 @@ class HomeView extends StatelessWidget {
                               : CircularKnobView(
                                   height: height,
                                   width: width,
-                                  value: double.parse(model.pm2 ?? "0.0"),
+                                  value_temp: model.pm2,
                                   index: model.qualityIndex,
                                 ),
 
@@ -751,7 +751,7 @@ class HomeView extends StatelessWidget {
                                     SizedBox(
                                       height: height * 0.01,
                                     ),
-                                    model.pm2 != null
+                                    (model.pm2 != null) && (model.pm2 != '')
                                         ? Row(
                                             children: [
                                               Text(
@@ -809,7 +809,7 @@ class HomeView extends StatelessWidget {
                                       height: height * 0.01,
                                     ),
 
-                                    model.pm10 != null
+                                    (model.pm10 != null) && (model.pm10 != '')
                                         ? Row(
                                             children: [
                                               Text(

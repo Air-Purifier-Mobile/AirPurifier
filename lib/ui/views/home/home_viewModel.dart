@@ -195,8 +195,8 @@ class HomeViewModel extends BaseViewModel {
     pm1 = null;
     pm2 = null;
     pm10 = null;
-    notifyListeners();
     getLocation();
+    notifyListeners();
   }
 
   /// Change last Device
