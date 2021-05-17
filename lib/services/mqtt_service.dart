@@ -11,6 +11,7 @@ class MqttService {
   Function connectionSuccessful;
   Function changeDisplayText;
   Function setInitialValues;
+  Function setGraphValues;
   Function refreshCallBack;
   String ownMessage;
   String mac;
@@ -24,12 +25,14 @@ class MqttService {
     Function _changeDisplayText,
     Function setInit,
     Function refresh,
+    {Function graphInit}
   ) async {
     String clientID = getRandomString(20).toString();
     connectionSuccessful = _connectionSuccessful;
     changeDisplayText = _changeDisplayText;
     setInitialValues = setInit;
     refreshCallBack = refresh;
+    setGraphValues = graphInit;
     _client = MqttServerClient.withPort('mqtt.flespi.io', clientID, 8883);
     _client.logging(on: true);
     _client.onConnected = onConnected;
@@ -143,6 +146,11 @@ class MqttService {
         //     "/sushrutpatwardhan@gmail.com/AP EMBEDDED/Airpurifier/$mac/IN") {
         //   refreshCallBack();
         // }
+
+        if (c[0].topic ==
+            "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/GRAPH") {
+          setGraphValues(jsonDecode(payload));
+        }
         if (c[0].topic ==
             "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
           setInitialValues(jsonDecode(payload));
