@@ -4,6 +4,7 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:draw_graph/models/feature.dart';
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
@@ -365,6 +366,18 @@ class HomeViewModel extends BaseViewModel {
 
   /// Sample graph Json data
   /// {"total":10,"ref":300,"pm1.0":[10,10,7,6,10,7,10,8,8,11],"pm2.5":[12,13,11,10,14,13,14,10,12,13],"pm10":[18,15,11,11,19,16,16,10,12,14]}
+  List<Feature> features = [
+    Feature(
+      title: "Drink Water",
+      color: Colors.blue,
+      data: [0.2, 0.8, 1, 0.7, 0.6],
+    ),
+    Feature(
+      title: "Exercise",
+      color: Colors.pink,
+      data: [1, 0.8, 6, 0.7, 0.3, 8],
+    ),
+  ];
   void getGraphValues(Map map){
     print(map.toString());
   }

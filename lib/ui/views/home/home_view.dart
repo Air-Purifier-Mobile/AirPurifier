@@ -1,5 +1,6 @@
 import 'package:air_purifier/app/constants.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
+import 'package:draw_graph/draw_graph.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -455,11 +456,6 @@ class HomeView extends StatelessWidget {
             // ),
             resizeToAvoidBottomInset: false,
             body: SlidingUpPanel(
-              padding: EdgeInsets.fromLTRB(
-                  0,
-                  0,
-                  0,
-                  0),
               renderPanelSheet: false,
               controller: model.panelController,
               backdropTapClosesPanel: true,
@@ -493,13 +489,15 @@ class HomeView extends StatelessWidget {
                   color: Color(0xFF05051C),
                 ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         width *0.2,
                         0,
                         width *0.2,
-                        0,
+                        height/20,
                       ),
                       child: Container(
                         width: width *0.2,
@@ -509,6 +507,17 @@ class HomeView extends StatelessWidget {
                         ),
                       ),
                     ),
+                    LineGraph(
+                      features: model.features,
+                      size: Size(320, 400),
+                      labelX: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'],
+                      labelY: ['20%', '40%', '60%', '80%', '100%'],
+                      showDescription: true,
+                      graphColor: Colors.white30,
+                      graphOpacity: 0.2,
+                      verticalFeatureDirection: true,
+                      descriptionHeight: 130,
+                    )
                   ],
                 ),
               ),
