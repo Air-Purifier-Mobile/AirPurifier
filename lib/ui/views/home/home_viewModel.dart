@@ -16,6 +16,8 @@ import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../main.dart';
+
 class HomeViewModel extends BaseViewModel {
   /// weather api url
   static const endPointUrl = 'https://api.openweathermap.org/data/2.5';
@@ -307,8 +309,6 @@ class HomeViewModel extends BaseViewModel {
           rootTopic + currentMac[lastDevice] + '/' + "PM 2.5");
       _mqttService
           .subscribeToTopic(rootTopic + currentMac[lastDevice] + '/' + "PM 10");
-      _mqttService
-          .subscribeToTopic(rootTopic + currentMac[lastDevice] + '/' + "GRAPH");
 
       /// Uncomment for PM testing
       // double val = 0.0;
@@ -399,34 +399,7 @@ class HomeViewModel extends BaseViewModel {
     ),
   ];
 
-  void getGraphValues() {
-    _mqttService.publishPayload(
-        "GRAPH", rootTopic + currentMac[lastDevice] + '/' + "IN");
-  }
-
-  void gotGraphValues(Map map) {
-    print(map.toString());
-  }
-
   /// Graph Data
-  int noOfDays;
-  List<String> days;
-  List<double> data = [];
-  void fetchFromPreferences() {
-    days = _streamingSharedPreferencesService
-        .readStringListFromStreamingSP("days");
-    days.map((day) {
-      List<String> dataInString =
-          _streamingSharedPreferencesService.readStringListFromStreamingSP(day);
-      dataInString.forEach((element) {
-        data.add(double.parse(element));
-      });
-    });
-  }
-
-  void checkAndPostRequestForGraphData() {
-    DateTime currentTime = DateTime.now();
-  }
 
   ScrollController graphScrollController = ScrollController();
   List<String> yLabels = [

@@ -20,13 +20,9 @@ class MqttService {
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
   final NavigationService _navigationService = locator<NavigationService>();
-  void setupConnection(
-    Function _connectionSuccessful,
-    Function _changeDisplayText,
-    Function setInit,
-    Function refresh,
-    {Function graphInit}
-  ) async {
+  void setupConnection(Function _connectionSuccessful,
+      Function _changeDisplayText, Function setInit, Function refresh,
+      {Function graphInit}) async {
     String clientID = getRandomString(20).toString();
     connectionSuccessful = _connectionSuccessful;
     changeDisplayText = _changeDisplayText;
@@ -149,7 +145,7 @@ class MqttService {
 
         if (c[0].topic ==
             "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/GRAPH") {
-          setGraphValues(jsonDecode(payload));
+          setGraphValues(jsonDecode(payload), mac);
         }
         if (c[0].topic ==
             "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {
