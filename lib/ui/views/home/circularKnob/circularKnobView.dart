@@ -80,7 +80,7 @@ class CircularKnobView extends StatelessWidget {
 
               ///Fan Image and Slider
               Container(
-                height: height * 0.2,
+                height: height * 0.25,
                 width: width * 0.4,
                 decoration: BoxDecoration(
                   image: DecorationImage(

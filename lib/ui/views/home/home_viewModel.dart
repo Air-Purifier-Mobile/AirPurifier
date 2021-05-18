@@ -329,26 +329,36 @@ class HomeViewModel extends BaseViewModel {
   void setInitialValues(String value, String topic) {
     /// Sets pm1, pm2, pm10 values corresponding to topic.
     // print("\n----------------\n$value + $topic\n---------------------");
-    if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 1.0") {
-      pm1 = value;
-    } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 2.5") {
-      pm2 = value;
-    } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 10") {
-      pm10 = value;
+    try
+    {
+      if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 1.0") {
+        pm1 = value;
+      } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 2.5") {
+        pm2 = value;
+      } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 10") {
+        pm10 = value;
+      }
+      try
+      {
+        double pmInt = double.parse(pm2);
+        int tempIndex;
+        if (pmInt <= 40) {
+          tempIndex = 0;
+        } else if (pmInt > 40 && pmInt <= 250) {
+          tempIndex = 1;
+        } else {
+          tempIndex = 2;
+        }
+        if (tempIndex != qualityIndex) {
+          setQualityIndexAsPerAir(tempIndex);
+        }
+      }catch(E){
+        print(E.toString());
+      }
+      notifyListeners();
+    }catch(E){
+      print(E.toString());
     }
-    double pmInt = double.parse(pm2);
-    int tempIndex;
-    if (pmInt <= 40) {
-      tempIndex = 0;
-    } else if (pmInt > 40 && pmInt <= 250) {
-      tempIndex = 1;
-    } else {
-      tempIndex = 2;
-    }
-    if (tempIndex != qualityIndex) {
-      setQualityIndexAsPerAir(tempIndex);
-    }
-    notifyListeners();
   }
 
   /// Navigates to configure bluetooth screen screen
@@ -371,9 +381,24 @@ class HomeViewModel extends BaseViewModel {
   List<Feature> features = [
     Feature(
       title: "Drink Water",
-      color: Colors.white,
-      data: [0.2, 0.8, 1, 0.7, 0.6,0.2, 0.8, 1, 0.7, 0.6],
-    )
+      color: Color.fromRGBO(255, 255, 255, 1),
+      data: [0.01, 0.8, 1, 0.7, 0.6,0.2, 0.8, 1, 0.7, 0.6],
+    ),
+    Feature(
+      title: "Good",
+      color: Colors.greenAccent,
+      data: List<double>.filled(151, 0.1),
+    ),
+    Feature(
+      title: "Medium",
+      color: Colors.orangeAccent,
+      data: List<double>.filled(151, 0.625),
+    ),
+    Feature(
+      title: "Poor",
+      color: Colors.redAccent,
+      data: List<double>.filled(151, 1),
+    ),
   ];
 
   void getGraphValues(){
@@ -385,45 +410,71 @@ class HomeViewModel extends BaseViewModel {
 
   }
   ScrollController graphScrollController = ScrollController();
-  /// The Json retrieved from weather api is of following structure :
-  // Map dummy = {
-  //   "coord": {"lon": 80.3319, "lat": 26.4499},
-  //   "weather": [
-  //     {
-  //       "id": 721,
-  //       "main": "Haze",
-  //       "description": "haze",
-  //       "icon": "50n",
-  //     }
-  //   ],
-  //   "base": "stations",
-  //   "main": {
-  //     "temp": 302.15,
-  //     "feels_like": 303.36,
-  //     "temp_min": 302.15,
-  //     "temp_max": 302.15,
-  //     "pressure": 1006,
-  //     "humidity": 45
-  //   },
-  //   "visibility": 4000,
-  //   "wind": {
-  //     "speed": 1.03,
-  //     "deg": 0,
-  //   },
-  //   "clouds": {
-  //     "all": 0,
-  //   },
-  //   "dt": 1616947408,
-  //   "sys": {
-  //     "type": 1,
-  //     "id": 9176,
-  //     "country": "IN",
-  //     "sunrise": 1616891640,
-  //     "sunset": 1616935999,
-  //   },
-  //   "timezone": 19800,
-  //   "id": 1267995,
-  //   "name": "Kanpur",
-  //   "cod": 200,
-  // };
+  List<String> yLabels = [
+    '','','',
+    'Good',
+    '','','','','','','','','','','','','','','','','','','','',
+    'Medium',
+    '','','','','','','','','','','','','','','','','','','','','','','','',
+    'Poor',
+  ];
+  List<String> xLabels = [
+    'Monday',
+    '','','','','','','','','','','','','','','','','','','','',
+    'Tuesday',
+    '','','','','','','','','','','','','','','','','','','','','','','','',
+    'Wednesday',
+    '','','','','','','','','','','','','','','','','','','','','','','','',
+    'Thursday',
+    '','','','','','','','','','','','','','','','','','','','','','','','',
+    'Friday',
+    '','','','','','','','','','','','','','','','','','','','','','','','',
+    'Saturday',
+    '','','','','','','','','','','','','','','','','','','','','','','','',
+    'Sunday',
+  ];
 }
+
+
+
+/// The Json retrieved from weather api is of following structure :
+// Map dummy = {
+//   "coord": {"lon": 80.3319, "lat": 26.4499},
+//   "weather": [
+//     {
+//       "id": 721,
+//       "main": "Haze",
+//       "description": "haze",
+//       "icon": "50n",
+//     }
+//   ],
+//   "base": "stations",
+//   "main": {
+//     "temp": 302.15,
+//     "feels_like": 303.36,
+//     "temp_min": 302.15,
+//     "temp_max": 302.15,
+//     "pressure": 1006,
+//     "humidity": 45
+//   },
+//   "visibility": 4000,
+//   "wind": {
+//     "speed": 1.03,
+//     "deg": 0,
+//   },
+//   "clouds": {
+//     "all": 0,
+//   },
+//   "dt": 1616947408,
+//   "sys": {
+//     "type": 1,
+//     "id": 9176,
+//     "country": "IN",
+//     "sunrise": 1616891640,
+//     "sunset": 1616935999,
+//   },
+//   "timezone": 19800,
+//   "id": 1267995,
+//   "name": "Kanpur",
+//   "cod": 200,
+// };

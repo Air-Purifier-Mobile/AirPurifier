@@ -526,29 +526,11 @@ class HomeView extends StatelessWidget {
                             LineGraph(
                               features: model.features,
                               size: Size(width * 2, height * 0.35),
-                              labelX: [
-                                'Day 1',
-                                'Day 2',
-                                'Day 3',
-                                'Day 4',
-                                'Day 5',
-                                'Day 1',
-                                'Day 2',
-                                'Day 3',
-                                'Day 4',
-                                'Day 5',
-                              ],
-                              labelY: [
-                                '20%',
-                                '40%',
-                                '60%',
-                                '80%',
-                                '100%',
-
-                              ],
+                              labelX: model.xLabels,
+                              labelY: model.yLabels,
                               showDescription: false,
-                              graphColor: Colors.white30,
-                              graphOpacity: 0.2,
+                              graphColor: Colors.white,
+                              graphOpacity: 0,
                               verticalFeatureDirection: true,
                             ),
                           ],
@@ -1013,15 +995,18 @@ class HomeView extends StatelessWidget {
                     child: FloatingActionButton(
                       backgroundColor: Colors.white,
                       onPressed: () {
+                        print('remote button pressed-'+model.pm2+' '+model.pm10);
                         ///uncomment in prod
-                        if ((model.pm1 == null || model.pm1 != "") &&
-                            (model.pm2 == null || model.pm2 != "") &&
-                            (model.pm10 == null || model.pm10 != "")) {
+                        if ((model.pm2 == null || model.pm2 == "") &&
+                            (model.pm10 == null || model.pm10 == "")) {
+                          print('remote button pressed 2-'+model.pm2+' '+model.pm10);
                           Fluttertoast.showToast(
                             msg: "Please turn on power supply to device",
                           );
-                        } else
+                        } else {
+                          print('Going to remote');
                           model.gotoRemoteScreen();
+                        }
                       },
                       child: Container(
                         height: width / 12,
