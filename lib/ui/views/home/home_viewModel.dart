@@ -277,7 +277,7 @@ class HomeViewModel extends BaseViewModel {
           (String display) {},
           setInitialValues,
           getLocation,
-          graphInit: getGraphValues,
+          graphInit: gotGraphValues,
         );
       },
     );
@@ -307,6 +307,8 @@ class HomeViewModel extends BaseViewModel {
           rootTopic + currentMac[lastDevice] + '/' + "PM 2.5");
       _mqttService
           .subscribeToTopic(rootTopic + currentMac[lastDevice] + '/' + "PM 10");
+      _mqttService
+          .subscribeToTopic(rootTopic + currentMac[lastDevice] + '/' + "GRAPH");
 
       /// Uncomment for PM testing
       // double val = 0.0;
@@ -369,18 +371,20 @@ class HomeViewModel extends BaseViewModel {
   List<Feature> features = [
     Feature(
       title: "Drink Water",
-      color: Colors.blue,
-      data: [0.2, 0.8, 1, 0.7, 0.6],
-    ),
-    Feature(
-      title: "Exercise",
-      color: Colors.pink,
-      data: [1, 0.8, 6, 0.7, 0.3, 8],
-    ),
+      color: Colors.white,
+      data: [0.2, 0.8, 1, 0.7, 0.6,0.2, 0.8, 1, 0.7, 0.6],
+    )
   ];
-  void getGraphValues(Map map){
-    print(map.toString());
+
+  void getGraphValues(){
+    _mqttService.publishPayload(
+        "GRAPH", rootTopic + currentMac[lastDevice] + '/' + "IN");
   }
+  void gotGraphValues(Map map){
+    print(map.toString());
+
+  }
+  ScrollController graphScrollController = ScrollController();
   /// The Json retrieved from weather api is of following structure :
   // Map dummy = {
   //   "coord": {"lon": 80.3319, "lat": 26.4499},

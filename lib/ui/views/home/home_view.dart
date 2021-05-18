@@ -2,6 +2,7 @@ import 'package:air_purifier/app/constants.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -155,7 +156,12 @@ class HomeView extends StatelessWidget {
           onVerticalDragEnd: (e) {
             if (e.primaryVelocity > 0) {
               model.closePanel();
-            } else if (e.primaryVelocity < 0) model.panelController.open();
+            } else if (e.primaryVelocity < 0) {
+              model.panelController.open();
+              model.graphScrollController.position.animateTo(
+                  model.graphScrollController.position.maxScrollExtent,
+                  duration: Duration(seconds: 1), curve: Curves.linearToEaseOut);
+            }
           },
           onHorizontalDragEnd: (e) {
             if (e.primaryVelocity > 0) {
@@ -512,30 +518,47 @@ class HomeView extends StatelessWidget {
                     Expanded(
                       child: Container(
                         height: height * 0.44,
-                        child: LineGraph(
-                          features: model.features,
-                          size: Size(width * 0.8, height * 0.35),
-                          labelX: [
-                            'Day 1',
-                            'Day 2',
-                            'Day 3',
-                            'Day 4',
-                            'Day 5',
+                        child: ListView(
+                          controller: model.graphScrollController,
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            LineGraph(
+                              features: model.features,
+                              size: Size(width * 2, height * 0.35),
+                              labelX: [
+                                'Day 1',
+                                'Day 2',
+                                'Day 3',
+                                'Day 4',
+                                'Day 5',
+                                'Day 1',
+                                'Day 2',
+                                'Day 3',
+                                'Day 4',
+                                'Day 5',
+                              ],
+                              labelY: [
+                                '20%',
+                                '40%',
+                                '60%',
+                                '80%',
+                                '100%',
+
+                              ],
+                              showDescription: false,
+                              graphColor: Colors.white30,
+                              graphOpacity: 0.2,
+                              verticalFeatureDirection: true,
+                            ),
                           ],
-                          labelY: [
-                            '20%',
-                            '40%',
-                            '60%',
-                            '80%',
-                            '100%',
-                          ],
-                          showDescription: true,
-                          graphColor: Colors.white30,
-                          graphOpacity: 0.2,
-                          verticalFeatureDirection: true,
-                          descriptionHeight: height * 0.05,
+
                         ),
                       ),
+                    ),
+                    Container(
+                      height: height*0.1,
+                      width: width,
                     ),
                   ],
                 ),
