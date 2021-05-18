@@ -145,7 +145,7 @@ class MqttService {
 
         if (c[0].topic ==
             "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/GRAPH") {
-          setGraphValues(jsonDecode(payload), mac);
+          setGraphValues(jsonDecode(payload));
         }
         if (c[0].topic ==
             "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/RESPONSE") {

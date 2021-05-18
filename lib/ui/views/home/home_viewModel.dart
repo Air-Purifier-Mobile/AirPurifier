@@ -225,6 +225,7 @@ class HomeViewModel extends BaseViewModel {
     currentName = _streamingSharedPreferencesService
         .readStringListFromStreamingSP("name");
     nameEditor.text = currentName[lastDevice];
+    fetchFromPreferences();
     print(lastDevice.toString() +
         " " +
         currentMac.toString() +
@@ -285,6 +286,96 @@ class HomeViewModel extends BaseViewModel {
     );
   }
 
+  void sendGraphRequestsToMqtt() {
+    DateTime currentTime = DateTime.now();
+    int day = _streamingSharedPreferencesService.readIntFromStreamingSP("day");
+    int month =
+        _streamingSharedPreferencesService.readIntFromStreamingSP("month");
+    int hour =
+        _streamingSharedPreferencesService.readIntFromStreamingSP("hour");
+    int year =
+        _streamingSharedPreferencesService.readIntFromStreamingSP("year");
+    DateTime lastSync = DateTime(year, month, day, hour);
+    if (lastSync.isBefore(currentTime)) {
+      if ((currentTime.hour - lastSync.hour).abs() >= 2) {
+        _mqttService.publishPayload(
+          "GRAPH",
+          "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/" +
+              currentMac[lastDevice] +
+              '/' +
+              "IN",
+        );
+        Duration difference = currentTime.difference(lastSync);
+        differenceInHours = difference.inHours;
+        _streamingSharedPreferencesService.changeIntInStreamingSP(
+            "day", currentTime.day);
+        _streamingSharedPreferencesService.changeIntInStreamingSP(
+            "month", currentTime.month);
+        _streamingSharedPreferencesService.changeIntInStreamingSP(
+            "year", currentTime.year);
+        _streamingSharedPreferencesService.changeIntInStreamingSP(
+            "hour", currentTime.hour);
+      }
+    }
+  }
+
+  int differenceInHours;
+  void gotGraphValues(Map map) {
+    print(map.toString());
+    List<int> pm2Data = map["pm2.5"];
+
+    /// ek ghante mai 12
+    fetchFromPreferences();
+
+    /// filling null values
+    for (int i = 0; i < differenceInHours; i++) {
+      data.add(List<double>.filled(12, 0.0));
+      hours.add((hours.length + 1).toString() + currentMac[lastDevice]);
+    }
+
+    /// Over writing data from device
+    int lastHour = data.length - 1;
+    int j = 11;
+    for (int i = pm2Data.length - 1; i >= 0; i--) {
+      if (pm2Data[i] > 600) data[lastHour][j] = 1;
+      data[lastHour][j] = pm2Data[i].toDouble() / 600.0;
+      j--;
+      if (j == 0 && lastHour != 0) {
+        j = 11;
+        lastHour--;
+      }
+    }
+
+    /// syncing data with share prefs
+    _streamingSharedPreferencesService.changeStringListInStreamingSP(
+      "hours$currentMac[lastDevice]",
+      hours,
+    );
+    int i = 0;
+    hours.forEach((hour) {
+      List<String> tempList = data[i].map((e) => e.toString()).toList();
+      _streamingSharedPreferencesService.changeStringListInStreamingSP(
+        hour,
+        tempList,
+      );
+      i++;
+    });
+  }
+
+  void fetchFromPreferences() {
+    hours = _streamingSharedPreferencesService
+        .readStringListFromStreamingSP("hours$currentMac[lastDevice]");
+    if (hours != []) {
+      data = [];
+      hours.map((hour) {
+        List<String> dataInString = _streamingSharedPreferencesService
+            .readStringListFromStreamingSP("$hour$currentMac[lastDevice]");
+        data.add(
+            dataInString.map((dataPoint) => double.parse(dataPoint)).toList());
+      });
+    }
+  }
+
   ///Disconnects broker and navigates to remote screen
   void gotoRemoteScreen() {
     _mqttService.disconnectBroker();
@@ -309,6 +400,19 @@ class HomeViewModel extends BaseViewModel {
           rootTopic + currentMac[lastDevice] + '/' + "PM 2.5");
       _mqttService
           .subscribeToTopic(rootTopic + currentMac[lastDevice] + '/' + "PM 10");
+
+      /// syncing device
+      Future.delayed(Duration(seconds: 1), () {
+        _mqttService.subscribeToTopic(
+          "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/" +
+              currentMac[lastDevice] +
+              '/' +
+              "GRAPH",
+        );
+        Future.delayed(Duration(seconds: 2), () {
+          sendGraphRequestsToMqtt();
+        });
+      });
 
       /// Uncomment for PM testing
       // double val = 0.0;

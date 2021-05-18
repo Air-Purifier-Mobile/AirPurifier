@@ -2,7 +2,6 @@ import 'package:air_purifier/app/constants.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
