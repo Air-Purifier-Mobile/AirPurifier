@@ -11,7 +11,6 @@ import 'package:air_purifier/services/authentication_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foldable_sidebar/foldable_sidebar.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
@@ -198,7 +197,6 @@ class HomeViewModel extends BaseViewModel {
     pm2 = null;
     pm10 = null;
     getLocation();
-    panelController.close();
     notifyListeners();
   }
 
@@ -359,11 +357,6 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  PanelController panelController = PanelController();
-  void closePanel(){
-    panelController.close();
-  }
-
   /// Sample graph Json data
   /// {"total":10,"ref":300,"pm1.0":[10,10,7,6,10,7,10,8,8,11],"pm2.5":[12,13,11,10,14,13,14,10,12,13],"pm10":[18,15,11,11,19,16,16,10,12,14]}
   List<Feature> features = [
@@ -378,9 +371,10 @@ class HomeViewModel extends BaseViewModel {
       data: [1, 0.8, 6, 0.7, 0.3, 8],
     ),
   ];
-  void getGraphValues(Map map){
+  void getGraphValues(Map map) {
     print(map.toString());
   }
+
   /// The Json retrieved from weather api is of following structure :
   // Map dummy = {
   //   "coord": {"lon": 80.3319, "lat": 26.4499},
