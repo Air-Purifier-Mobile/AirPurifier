@@ -1,4 +1,5 @@
 import 'package:air_purifier/app/constants.dart';
+import 'package:air_purifier/main.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
 import 'package:draw_graph/draw_graph.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -155,7 +156,7 @@ class HomeView extends StatelessWidget {
           onVerticalDragEnd: (e) {
             if (e.primaryVelocity > 0) {
               model.closePanel();
-            } else if (e.primaryVelocity < 0) {
+            } else if (e.primaryVelocity < 0 && model.gotGraphData) {
               model.panelController.open();
               model.graphScrollController.position.animateTo(
                   model.graphScrollController.position.maxScrollExtent,
@@ -515,28 +516,40 @@ class HomeView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        height: height * 0.44,
-                        child: ListView(
-                          controller: model.graphScrollController,
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            LineGraph(
-                              features: model.features,
-                              size: Size(width * 2, height * 0.35),
-                              labelX: model.xLabels,
-                              labelY: model.yLabels,
-                              showDescription: false,
-                              graphColor: Colors.white,
-                              graphOpacity: 0,
-                              verticalFeatureDirection: true,
+                    model.gotGraphData
+                        ? Expanded(
+                            child: Container(
+                              height: height * 0.44,
+                              child: ListView(
+                                controller: model.graphScrollController,
+                                physics: BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  LineGraph(
+                                    features: model.features,
+                                    size: Size(data.length * width * 0.8,
+                                        height * 0.35),
+                                    labelX: model.xLabels,
+                                    labelY: model.yLabels,
+                                    showDescription: false,
+                                    graphColor: Colors.white,
+                                    graphOpacity: 0,
+                                    verticalFeatureDirection: true,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          )
+                        : Center(
+                            child: FadingText(
+                              "....",
+                              style: TextStyle(
+                                fontSize: height / 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
                     Container(
                       height: height * 0.1,
                       width: width,

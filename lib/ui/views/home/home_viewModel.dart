@@ -273,6 +273,7 @@ class HomeViewModel extends BaseViewModel {
         }
 
         setBusy(true);
+        renderGraphData();
 
         /// Initiates a connection to MQTT broker
         _mqttService.setupConnection(
@@ -284,6 +285,69 @@ class HomeViewModel extends BaseViewModel {
         );
       },
     );
+  }
+
+  List<double> plotData = [];
+  bool gotGraphData = false;
+  void renderGraphData() {
+    int weekDay = DateTime.now().weekday;
+    List<String> fillers = List<String>.filled(287, "");
+    if (data.length < 168) {
+      data.forEach((element) {
+        plotData.addAll(element);
+      });
+      int totalDays = (data.length / 24).ceil();
+      int start = weekDay - totalDays;
+      if (start < 0) start = start + 7;
+      xLabels = [];
+      while (start != weekDay) {
+        xLabels.addAll(fillers);
+        xLabels.add(getDay(start));
+        start = (start + 1) % 7;
+      }
+      xLabels.addAll(fillers);
+      xLabels.add(getDay(weekDay));
+    } else {
+      int startIndex = data.length - 168 - 1;
+      for (; startIndex < data.length; startIndex++) {
+        plotData.addAll(data[startIndex]);
+      }
+      int lastDay = weekDay - 6;
+      if (lastDay < 0) lastDay = lastDay + 7;
+      xLabels = [];
+      while (lastDay != weekDay) {
+        xLabels.addAll(fillers);
+        xLabels.add(getDay(lastDay));
+        lastDay = (lastDay + 1) % 7;
+      }
+      xLabels.addAll(fillers);
+      xLabels.add(getDay(weekDay));
+    }
+
+    features.addAll([
+      Feature(
+        title: "Drink Water",
+        color: Color.fromRGBO(255, 255, 255, 1),
+        data: plotData,
+      ),
+      Feature(
+        title: "Good",
+        color: Colors.greenAccent,
+        data: List<double>.filled(151, 0.1),
+      ),
+      Feature(
+        title: "Medium",
+        color: Colors.orangeAccent,
+        data: List<double>.filled(151, 0.625),
+      ),
+      Feature(
+        title: "Poor",
+        color: Colors.redAccent,
+        data: List<double>.filled(151, 1),
+      ),
+    ]);
+    gotGraphData = true;
+    notifyListeners();
   }
 
   void sendGraphRequestsToMqtt() {
@@ -360,6 +424,7 @@ class HomeViewModel extends BaseViewModel {
       );
       i++;
     });
+    renderGraphData();
   }
 
   void fetchFromPreferences() {
@@ -480,28 +545,7 @@ class HomeViewModel extends BaseViewModel {
 
   /// Sample graph Json data
   /// {"total":10,"ref":300,"pm1.0":[10,10,7,6,10,7,10,8,8,11],"pm2.5":[12,13,11,10,14,13,14,10,12,13],"pm10":[18,15,11,11,19,16,16,10,12,14]}
-  List<Feature> features = [
-    Feature(
-      title: "Drink Water",
-      color: Color.fromRGBO(255, 255, 255, 1),
-      data: [0.01, 0.8, 1, 0.7, 0.6, 0.2, 0.8, 1, 0.7, 0.6],
-    ),
-    Feature(
-      title: "Good",
-      color: Colors.greenAccent,
-      data: List<double>.filled(151, 0.1),
-    ),
-    Feature(
-      title: "Medium",
-      color: Colors.orangeAccent,
-      data: List<double>.filled(151, 0.625),
-    ),
-    Feature(
-      title: "Poor",
-      color: Colors.redAccent,
-      data: List<double>.filled(151, 1),
-    ),
-  ];
+  List<Feature> features = [];
 
   /// Graph Data
 
