@@ -7,17 +7,19 @@ import 'package:stacked/stacked.dart';
 class CircularKnobView extends StatelessWidget {
   double height;
   double width;
-  double value;
+  String value_temp;
   int index;
   CircularKnobView({
     Key key,
     this.height,
     this.width,
-    this.value,
+    this.value_temp,
     this.index,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    if(value_temp.isEmpty) value_temp = '0.0';
+    double value = double.parse(value_temp);
     return ViewModelBuilder<CircularKnobViewModel>.reactive(
       viewModelBuilder: () => CircularKnobViewModel(),
       onModelReady: (model) => model.onModelReady(value, index),
@@ -33,40 +35,43 @@ class CircularKnobView extends StatelessWidget {
               Container(
                 height: height * 0.3,
                 width: width * 0.6,
-                child: SleekCircularSlider(
-                  min: 0,
-                  max: 400,
-                  initialValue: value < 400 ? value : 400,
-                  onChangeEnd: (value) {
-                    print(value);
-                  },
-                  appearance: CircularSliderAppearance(
-                    startAngle: 165,
-                    angleRange: 210,
-                    customWidths: CustomSliderWidths(
-                      trackWidth: 2,
-                      progressBarWidth: 10,
-                      handlerSize: 0,
-                    ),
-                    customColors: CustomSliderColors(
-                      progressBarColors: [
-                        model.progressBarColorsStart[index],
-                        model.progressBarColorsEnd[index]
-                      ],
-                      dynamicGradient: true,
-                      progressBarColor: Colors.white,
-                      trackColor: Colors.white,
-                      hideShadow: true,
-                    ),
-                    infoProperties: InfoProperties(
-                      modifier: (value) {
-                        // widget.changeColor(widget.colorCode, value.ceil());
-                        print("\n\nvalue : $value\n\n");
-                        return value.ceil().toString();
-                      },
-                      mainLabelStyle: TextStyle(
-                        fontSize: 20,
-                        color: Colors.transparent,
+                child: AbsorbPointer(
+                  absorbing: true,
+                  child: SleekCircularSlider(
+                    min: 0,
+                    max: 400,
+                    initialValue: value < 400 ? value : 400,
+                    onChangeEnd: (value) {
+                      print(value);
+                    },
+                    appearance: CircularSliderAppearance(
+                      startAngle: 165,
+                      angleRange: 210,
+                      customWidths: CustomSliderWidths(
+                        trackWidth: 2,
+                        progressBarWidth: 10,
+                        handlerSize: 0,
+                      ),
+                      customColors: CustomSliderColors(
+                        progressBarColors: [
+                          model.progressBarColorsStart[index],
+                          model.progressBarColorsEnd[index]
+                        ],
+                        dynamicGradient: true,
+                        progressBarColor: Colors.white,
+                        trackColor: Colors.white,
+                        hideShadow: true,
+                      ),
+                      infoProperties: InfoProperties(
+                        modifier: (value) {
+                          // widget.changeColor(widget.colorCode, value.ceil());
+                          print("\n\nvalue : $value\n\n");
+                          return value.ceil().toString();
+                        },
+                        mainLabelStyle: TextStyle(
+                          fontSize: 20,
+                          color: Colors.transparent,
+                        ),
                       ),
                     ),
                   ),

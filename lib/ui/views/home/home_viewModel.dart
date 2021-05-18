@@ -4,12 +4,14 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:draw_graph/models/feature.dart';
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foldable_sidebar/foldable_sidebar.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:http/http.dart' as http;
 import 'package:stacked_services/stacked_services.dart';
@@ -195,8 +197,9 @@ class HomeViewModel extends BaseViewModel {
     pm1 = null;
     pm2 = null;
     pm10 = null;
-    notifyListeners();
     getLocation();
+    panelController.close();
+    notifyListeners();
   }
 
   /// Change last Device
@@ -274,6 +277,7 @@ class HomeViewModel extends BaseViewModel {
           (String display) {},
           setInitialValues,
           getLocation,
+          graphInit: getGraphValues,
         );
       },
     );
@@ -355,6 +359,28 @@ class HomeViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  PanelController panelController = PanelController();
+  void closePanel(){
+    panelController.close();
+  }
+
+  /// Sample graph Json data
+  /// {"total":10,"ref":300,"pm1.0":[10,10,7,6,10,7,10,8,8,11],"pm2.5":[12,13,11,10,14,13,14,10,12,13],"pm10":[18,15,11,11,19,16,16,10,12,14]}
+  List<Feature> features = [
+    Feature(
+      title: "Drink Water",
+      color: Colors.blue,
+      data: [0.2, 0.8, 1, 0.7, 0.6],
+    ),
+    Feature(
+      title: "Exercise",
+      color: Colors.pink,
+      data: [1, 0.8, 6, 0.7, 0.3, 8],
+    ),
+  ];
+  void getGraphValues(Map map){
+    print(map.toString());
+  }
   /// The Json retrieved from weather api is of following structure :
   // Map dummy = {
   //   "coord": {"lon": 80.3319, "lat": 26.4499},

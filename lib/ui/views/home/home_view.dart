@@ -1,11 +1,13 @@
 import 'package:air_purifier/app/constants.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
+import 'package:draw_graph/draw_graph.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:progress_indicators/progress_indicators.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:stacked/stacked.dart';
 
 import 'home_viewModel.dart';
@@ -143,306 +145,387 @@ class HomeView extends StatelessWidget {
               });
         }
 
-        return Scaffold(
-          extendBodyBehindAppBar: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.transparent,
-            elevation: 0,
-            leading: InkWell(
-              onTap: () {
-                model.scaffoldKey.currentState.openDrawer();
-                model.notifyListeners();
-              },
-              child: Container(
-                width: 50.0,
-                height: 50.0,
-                child: Icon(
-                  Icons.menu,
-                  color: Colors.white,
-                  size: height / 27,
+        return GestureDetector(
+          onTap: () {
+            FirebaseAnalytics().logEvent(
+              name: "Touched_home_Screen",
+              parameters: {"Key1": "Value 1"},
+            );
+          },
+          onVerticalDragEnd: (e) {
+            if (e.primaryVelocity > 0) {
+              model.closePanel();
+            } else if (e.primaryVelocity < 0)
+              model.panelController.open();
+          },
+          onHorizontalDragEnd: (e) {
+            if (e.primaryVelocity > 0) {
+              model.scaffoldKey.currentState.openDrawer();
+              model.closePanel();
+              model.notifyListeners();
+            } else {
+              model.scaffoldKey.currentState.isEndDrawerOpen
+                  ? Navigator.of(context).pop()
+                  : null;
+              model.notifyListeners();
+            }
+          },
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.transparent,
+              elevation: 0,
+              leading: InkWell(
+                onTap: () {
+                  model.scaffoldKey.currentState.openDrawer();
+                  model.closePanel();
+                  model.notifyListeners();
+                },
+                child: Container(
+                  width: 50.0,
+                  height: 50.0,
+                  child: Icon(
+                    Icons.menu,
+                    color: Colors.white,
+                    size: height / 27,
+                  ),
                 ),
               ),
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.refresh,
+                  ),
+                  onPressed: () {
+                    model.refresh();
+                  },
+                ),
+              ],
             ),
-          ),
-          backgroundColor: primaryColor,
-          key: model.scaffoldKey,
-          drawer: Drawer(
-            elevation: 0.0,
-            child: LayoutBuilder(
-              builder: (context, constraint) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraint.maxHeight,
-                      maxWidth: width * 0.65,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Container(
-                        color: Color(0xFF05051C),
-                        child: Column(
-                          children: <Widget>[
-                            DrawerHeader(
-                              child: Container(
-                                width: width * 0.3,
-                                height: width * 0.3,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage(
-                                      "assets/drawerAeolus.png",
+            backgroundColor: primaryColor,
+            key: model.scaffoldKey,
+            drawer: Drawer(
+              elevation: 0.0,
+              child: LayoutBuilder(
+                builder: (context, constraint) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraint.maxHeight,
+                        maxWidth: width * 0.65,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Container(
+                          color: Color(0xFF05051C),
+                          child: Column(
+                            children: <Widget>[
+                              DrawerHeader(
+                                child: Container(
+                                  width: width * 0.3,
+                                  height: width * 0.3,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                        "assets/drawerAeolus.png",
+                                      ),
+                                      fit: BoxFit.contain,
                                     ),
-                                    fit: BoxFit.contain,
                                   ),
                                 ),
                               ),
-                            ),
 
-                            /// Divider
-                            Padding(
-                              padding:
-                                  EdgeInsets.symmetric(vertical: height * 0.01),
-                              child: Container(
-                                width: width * 0.5,
-                                child: Divider(
-                                  thickness: 1,
-                                  color: Colors.white,
+                              /// Divider
+                              Padding(
+                                padding:
+                                    EdgeInsets.symmetric(vertical: height * 0.01),
+                                child: Container(
+                                  width: width * 0.5,
+                                  child: Divider(
+                                    thickness: 1,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            /// Device List
-                            Container(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: model.currentName.map<Widget>((name) {
-                                  return ListTile(
-                                    key: Key(name),
-                                    onTap: () {
-                                      /// Select Device
-                                      model.changeDevice(name);
-                                      Navigator.of(context).pop();
-                                    },
-                                    horizontalTitleGap: 0.0,
-                                    leading: Container(
-                                      width: width * 0.09,
-                                      height: height * 0.05,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: AssetImage("assets/room.png"),
+                              /// Device List
+                              Container(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: model.currentName.map<Widget>((name) {
+                                    return ListTile(
+                                      key: Key(name),
+                                      onTap: () {
+                                        /// Select Device
+                                        model.changeDevice(name);
+                                        Navigator.of(context).pop();
+                                      },
+                                      horizontalTitleGap: 0.0,
+                                      leading: Container(
+                                        width: width * 0.09,
+                                        height: height * 0.05,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage("assets/room.png"),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    title: Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                        10.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                      ),
-                                      child: Text(
-                                        name,
-                                        style: TextStyle(
-                                          fontSize: height / 45,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
+                                      title: Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                          10.0,
+                                          0.0,
+                                          0.0,
+                                          0.0,
+                                        ),
+                                        child: Text(
+                                          name,
+                                          style: TextStyle(
+                                            fontSize: height / 45,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-
-                            /// Add a Device
-                            ListTile(
-                              onTap: () {
-                                // Go to Bluetooth
-                                model.goToBluetoothScreen();
-                              },
-                              horizontalTitleGap: 0.0,
-                              leading: Icon(
-                                Icons.add_circle,
-                                color: Colors.white,
-                                size: height * 0.047,
-                              ),
-                              title: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10.0,
-                                  0.0,
-                                  0.0,
-                                  0.0,
+                                    );
+                                  }).toList(),
                                 ),
-                                child: Text(
-                                  "Add Device",
-                                  style: TextStyle(
-                                    fontSize: height / 45,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                              ),
+
+                              /// Add a Device
+                              ListTile(
+                                onTap: () {
+                                  // Go to Bluetooth
+                                  model.goToBluetoothScreen();
+                                },
+                                horizontalTitleGap: 0.0,
+                                leading: Icon(
+                                  Icons.add_circle,
+                                  color: Colors.white,
+                                  size: height * 0.047,
+                                ),
+                                title: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    10.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                  ),
+                                  child: Text(
+                                    "Add Device",
+                                    style: TextStyle(
+                                      fontSize: height / 45,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
 
-                            /// Divider
-                            Padding(
-                              padding:
-                                  EdgeInsets.symmetric(vertical: height * 0.01),
-                              child: Container(
-                                width: width * 0.5,
-                                child: Divider(
-                                  thickness: 1,
+                              /// Divider
+                              Padding(
+                                padding:
+                                    EdgeInsets.symmetric(vertical: height * 0.01),
+                                child: Container(
+                                  width: width * 0.5,
+                                  child: Divider(
+                                    thickness: 1,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+
+                              /// Re configure Device
+                              ListTile(
+                                onTap: () {
+                                  // Go to Bluetooth
+                                  model.goToBluetoothScreen();
+                                },
+                                horizontalTitleGap: 0.0,
+                                leading: Icon(
+                                  Icons.settings,
                                   color: Colors.white,
                                 ),
-                              ),
-                            ),
-
-                            /// Re configure Device
-                            ListTile(
-                              onTap: () {
-                                // Go to Bluetooth
-                                model.goToBluetoothScreen();
-                              },
-                              horizontalTitleGap: 0.0,
-                              leading: Icon(
-                                Icons.settings,
-                                color: Colors.white,
-                              ),
-                              title: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10.0,
-                                  0.0,
-                                  0.0,
-                                  0.0,
-                                ),
-                                child: Text(
-                                  "Reconfigure Device",
-                                  style: TextStyle(
-                                    fontSize: height / 45,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                                title: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    10.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                  ),
+                                  child: Text(
+                                    "Reconfigure Device",
+                                    style: TextStyle(
+                                      fontSize: height / 45,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
 
-                            /// Remove Current Device
-                            ListTile(
-                              onTap: () {
-                                // Go to Bluetooth
-                                model.removeDevice();
-                              },
-                              horizontalTitleGap: 0.0,
-                              leading: Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                              ),
-                              title: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10.0,
-                                  0.0,
-                                  0.0,
-                                  0.0,
+                              /// Remove Current Device
+                              ListTile(
+                                onTap: () {
+                                  // Go to Bluetooth
+                                  model.removeDevice();
+                                },
+                                horizontalTitleGap: 0.0,
+                                leading: Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
                                 ),
-                                child: Text(
-                                  "Remove Current Device",
-                                  style: TextStyle(
-                                    fontSize: height / 45,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                                title: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    10.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                  ),
+                                  child: Text(
+                                    "Remove Current Device",
+                                    style: TextStyle(
+                                      fontSize: height / 45,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
 
-                            /// Log Out
-                            ListTile(
-                              onTap: () {
-                                model.logout();
-                              },
-                              horizontalTitleGap: 0.0,
-                              leading: Icon(
-                                Icons.exit_to_app,
-                                color: Colors.white,
-                              ),
-                              title: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  10.0,
-                                  0.0,
-                                  0.0,
-                                  0.0,
+                              /// Log Out
+                              ListTile(
+                                onTap: () {
+                                  model.logout();
+                                },
+                                horizontalTitleGap: 0.0,
+                                leading: Icon(
+                                  Icons.exit_to_app,
+                                  color: Colors.white,
                                 ),
-                                child: Text(
-                                  "Log Out",
-                                  style: TextStyle(
-                                    fontSize: height / 45,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                                title: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    10.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                  ),
+                                  child: Text(
+                                    "Log Out",
+                                    style: TextStyle(
+                                      fontSize: height / 45,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.white,
-            onPressed: () {
-              ///uncomment in prod
-              if ((model.pm1 == null || model.pm1 != "") &&
-                  (model.pm2 == null || model.pm2 != "") &&
-                  (model.pm10 == null || model.pm10 != "")) {
-                Fluttertoast.showToast(
-                  msg: "Please turn on power supply to device",
-                );
-              } else
-                model.gotoRemoteScreen();
-            },
-            child: Container(
-              height: width / 12,
-              width: width / 12,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    "assets/remote_day.png",
-                  ),
-                  fit: BoxFit.fitHeight,
-                ),
+                  );
+                },
               ),
             ),
-          ),
-          resizeToAvoidBottomInset: false,
-          body: GestureDetector(
-            onTap: () {
-              FirebaseAnalytics().logEvent(
-                name: "Touched_home_Screen",
-                parameters: {"Key1": "Value 1"},
-              );
-            },
-            onVerticalDragEnd: (e) {
-              if (e.primaryVelocity > 0) {
-                model.refresh();
-              }
-            },
-            onHorizontalDragEnd: (e) {
-              if (e.primaryVelocity > 0) {
-                model.scaffoldKey.currentState.openDrawer();
-                model.notifyListeners();
-              } else {
-                model.scaffoldKey.currentState.isEndDrawerOpen
-                    ? Navigator.of(context).pop()
-                    : null;
-                model.notifyListeners();
-              }
-            },
-            child: KeyboardDismisser(
-              child: model.temperature != null
-                  ? Container(
+            // floatingActionButton: FloatingActionButton(
+            //   backgroundColor: Colors.white,
+            //   onPressed: () {
+            //     ///uncomment in prod
+            //     if ((model.pm1 == null || model.pm1 != "") &&
+            //         (model.pm2 == null || model.pm2 != "") &&
+            //         (model.pm10 == null || model.pm10 != "")) {
+            //       Fluttertoast.showToast(
+            //         msg: "Please turn on power supply to device",
+            //       );
+            //     } else
+            //       model.gotoRemoteScreen();
+            //   },
+            //   child: Container(
+            //     height: width / 12,
+            //     width: width / 12,
+            //     decoration: BoxDecoration(
+            //       image: DecorationImage(
+            //         image: AssetImage(
+            //           "assets/remote_day.png",
+            //         ),
+            //         fit: BoxFit.fitHeight,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            resizeToAvoidBottomInset: false,
+            body: SlidingUpPanel(
+              renderPanelSheet: false,
+              controller: model.panelController,
+              backdropTapClosesPanel: true,
+              borderRadius: BorderRadius.circular(width*0.2),
+              maxHeight: height/2,
+              parallaxEnabled: true,
+              minHeight: height/40,
+              collapsed: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFF05051C),
+                  borderRadius: BorderRadius.circular(width*0.06),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    width *0.4,
+                    height * 0.01,
+                    width *0.4,
+                    height * 0.0333,
+                  ),
+                  child: Container(
+                    width: width *0.2,
+                    child: Divider(
+                      thickness: 3,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              panel: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFF05051C),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        width *0.2,
+                        0,
+                        width *0.2,
+                        height/20,
+                      ),
+                      child: Container(
+                        width: width *0.2,
+                        child: Divider(
+                          thickness: 3,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    LineGraph(
+                      features: model.features,
+                      size: Size(320, 400),
+                      labelX: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'],
+                      labelY: ['20%', '40%', '60%', '80%', '100%'],
+                      showDescription: true,
+                      graphColor: Colors.white30,
+                      graphOpacity: 0.2,
+                      verticalFeatureDirection: true,
+                      descriptionHeight: 130,
+                    )
+                  ],
+                ),
+              ),
+              body: Stack(
+                children: [
+                  KeyboardDismisser(
+                    child: model.temperature != null
+                        ? Container(
                       height: height,
                       width: width,
                       child: Column(
@@ -484,9 +567,9 @@ class HomeView extends StatelessWidget {
                                       width: width * 0.08,
                                       decoration: BoxDecoration(
                                           image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/temperature.png'),
-                                      )),
+                                            image: AssetImage(
+                                                'assets/temperature.png'),
+                                          )),
                                     ),
                                     Text(
                                       '${model.temperature ?? ""}°',
@@ -516,9 +599,9 @@ class HomeView extends StatelessWidget {
                                       width: width * 0.08,
                                       decoration: BoxDecoration(
                                           image: DecorationImage(
-                                        image:
+                                            image:
                                             AssetImage('assets/humidity.png'),
-                                      )),
+                                          )),
                                     ),
 
                                     Text(
@@ -546,71 +629,71 @@ class HomeView extends StatelessWidget {
                           /// Air Description
                           model.pm2 == null
                               ? Container(
-                                  height: height * 0.3,
-                                  child: Stack(
-                                    alignment: AlignmentDirectional.topCenter,
-                                    children: [
-                                      ///Fan Image and Slider
-                                      Container(
-                                        height: height * 0.2,
-                                        width: width * 0.4,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                              "assets/fanOffPurifierOff.png",
-                                            ),
-                                            fit: BoxFit.fitWidth,
-                                          ),
-                                        ),
+                            height: height * 0.3,
+                            child: Stack(
+                              alignment: AlignmentDirectional.topCenter,
+                              children: [
+                                ///Fan Image and Slider
+                                Container(
+                                  height: height * 0.2,
+                                  width: width * 0.4,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                        "assets/fanOffPurifierOff.png",
                                       ),
-                                    ],
+                                      fit: BoxFit.fitWidth,
+                                    ),
                                   ),
-                                )
-                              : CircularKnobView(
-                                  height: height,
-                                  width: width,
-                                  value: double.parse(model.pm2 ?? "0.0"),
-                                  index: model.qualityIndex,
                                 ),
+                              ],
+                            ),
+                          )
+                              : CircularKnobView(
+                            height: height,
+                            width: width,
+                            value_temp: model.pm2,
+                            index: model.qualityIndex,
+                          ),
 
                           /// Air Quality
                           model.pm2 == null
                               ? FadingText(
-                                  "..",
-                                  style: TextStyle(
-                                    fontSize: height * 0.043,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                )
+                            "..",
+                            style: TextStyle(
+                              fontSize: height * 0.043,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
                               : Container(
-                                  height: height * 0.06,
-                                  width: width * 0.9,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: width * 0.13,
-                                        height: height * 0.03,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                              "assets/${model.quality[model.qualityIndex]}Air.png",
-                                            ),
-                                          ),
-                                        ),
+                            height: height * 0.06,
+                            width: width * 0.9,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: width * 0.13,
+                                  height: height * 0.03,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                        "assets/${model.quality[model.qualityIndex]}Air.png",
                                       ),
-                                      Text(
-                                        model.qualityText[model.qualityIndex],
-                                        style: TextStyle(
-                                          fontSize: height * 0.043,
-                                          color: model
-                                              .qualityColor[model.qualityIndex],
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
+                                Text(
+                                  model.qualityText[model.qualityIndex],
+                                  style: TextStyle(
+                                    fontSize: height * 0.043,
+                                    color: model
+                                        .qualityColor[model.qualityIndex],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
 
                           SizedBox(
                             height: height / 20,
@@ -646,69 +729,69 @@ class HomeView extends StatelessWidget {
                                       fontWeight: FontWeight.w500,
                                     ),
                                   )
-                                  // child: !model.editingStatus
-                                  //     ? Text(
-                                  //         "${model.currentName[model.lastDevice] ?? ""}",
-                                  //         style: TextStyle(
-                                  //           fontSize: height / 45,
-                                  //           color: model.primaryColor,
-                                  //           fontWeight: FontWeight.w500,
-                                  //         ),
-                                  //       )
-                                  //     : Padding(
-                                  //         padding: EdgeInsets.fromLTRB(
-                                  //           0.0,
-                                  //           0.0,
-                                  //           0.0,
-                                  //           height * 0.0333,
-                                  //         ),
-                                  //         child: Container(
-                                  //           height: height / 20,
-                                  //           width: width * 0.5,
-                                  //           child: TextFormField(
-                                  //             showCursor: true,
-                                  //             autofocus: true,
-                                  //             decoration:
-                                  //                 InputDecoration(
-                                  //               enabledBorder:
-                                  //                   UnderlineInputBorder(
-                                  //                 borderSide:
-                                  //                     BorderSide(
-                                  //                   color: primaryColor,
-                                  //                 ),
-                                  //               ),
-                                  //               focusedBorder:
-                                  //                   UnderlineInputBorder(
-                                  //                 borderSide:
-                                  //                     BorderSide(
-                                  //                   color: primaryColor,
-                                  //                 ),
-                                  //               ),
-                                  //               border:
-                                  //                   UnderlineInputBorder(
-                                  //                 borderSide:
-                                  //                     BorderSide(
-                                  //                   color: primaryColor,
-                                  //                 ),
-                                  //               ),
-                                  //             ),
-                                  //             cursorColor: primaryColor,
-                                  //             controller:
-                                  //                 model.nameEditor,
-                                  //             textAlign:
-                                  //                 TextAlign.center,
-                                  //             onFieldSubmitted: (text) {
-                                  //               model.editingStatus =
-                                  //                   false;
-                                  //               model.updateName(text);
-                                  //             },
-                                  //             onEditingComplete: () {
-                                  //               print("Complelte");
-                                  //             },
-                                  //           ),
-                                  //         ),
-                                  //       ),
-                                  ),
+                                // child: !model.editingStatus
+                                //     ? Text(
+                                //         "${model.currentName[model.lastDevice] ?? ""}",
+                                //         style: TextStyle(
+                                //           fontSize: height / 45,
+                                //           color: model.primaryColor,
+                                //           fontWeight: FontWeight.w500,
+                                //         ),
+                                //       )
+                                //     : Padding(
+                                //         padding: EdgeInsets.fromLTRB(
+                                //           0.0,
+                                //           0.0,
+                                //           0.0,
+                                //           height * 0.0333,
+                                //         ),
+                                //         child: Container(
+                                //           height: height / 20,
+                                //           width: width * 0.5,
+                                //           child: TextFormField(
+                                //             showCursor: true,
+                                //             autofocus: true,
+                                //             decoration:
+                                //                 InputDecoration(
+                                //               enabledBorder:
+                                //                   UnderlineInputBorder(
+                                //                 borderSide:
+                                //                     BorderSide(
+                                //                   color: primaryColor,
+                                //                 ),
+                                //               ),
+                                //               focusedBorder:
+                                //                   UnderlineInputBorder(
+                                //                 borderSide:
+                                //                     BorderSide(
+                                //                   color: primaryColor,
+                                //                 ),
+                                //               ),
+                                //               border:
+                                //                   UnderlineInputBorder(
+                                //                 borderSide:
+                                //                     BorderSide(
+                                //                   color: primaryColor,
+                                //                 ),
+                                //               ),
+                                //             ),
+                                //             cursorColor: primaryColor,
+                                //             controller:
+                                //                 model.nameEditor,
+                                //             textAlign:
+                                //                 TextAlign.center,
+                                //             onFieldSubmitted: (text) {
+                                //               model.editingStatus =
+                                //                   false;
+                                //               model.updateName(text);
+                                //             },
+                                //             onEditingComplete: () {
+                                //               print("Complelte");
+                                //             },
+                                //           ),
+                                //         ),
+                                //       ),
+                              ),
                             ),
                           ),
 
@@ -751,37 +834,37 @@ class HomeView extends StatelessWidget {
                                     SizedBox(
                                       height: height * 0.01,
                                     ),
-                                    model.pm2 != null
+                                    (model.pm2 != null) && (model.pm2 != '')
                                         ? Row(
-                                            children: [
-                                              Text(
-                                                '${double.parse(model.pm2).ceil()} ',
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.qualityColor[
-                                                      model.qualityIndex],
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                              Text(
-                                                'ppm',
-                                                style: TextStyle(
-                                                  fontSize: height / 45,
-                                                  color: model.qualityColor[
-                                                      model.qualityIndex],
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : FadingText(
-                                            "..",
-                                            style: TextStyle(
-                                              fontSize: height / 30,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                      children: [
+                                        Text(
+                                          '${double.parse(model.pm2).ceil()} ',
+                                          style: TextStyle(
+                                            fontSize: height / 30,
+                                            color: model.qualityColor[
+                                            model.qualityIndex],
+                                            fontWeight: FontWeight.w300,
                                           ),
+                                        ),
+                                        Text(
+                                          'ppm',
+                                          style: TextStyle(
+                                            fontSize: height / 45,
+                                            color: model.qualityColor[
+                                            model.qualityIndex],
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                        : FadingText(
+                                      "..",
+                                      style: TextStyle(
+                                        fontSize: height / 30,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                     // Container(
                                     //   height: height / 13,
                                     //   child:
@@ -809,37 +892,37 @@ class HomeView extends StatelessWidget {
                                       height: height * 0.01,
                                     ),
 
-                                    model.pm10 != null
+                                    (model.pm10 != null) && (model.pm10 != '')
                                         ? Row(
-                                            children: [
-                                              Text(
-                                                '${double.parse(model.pm10).ceil()} ',
-                                                style: TextStyle(
-                                                  fontSize: height / 30,
-                                                  color: model.qualityColor[
-                                                      model.qualityIndex],
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                              Text(
-                                                'ppm',
-                                                style: TextStyle(
-                                                  fontSize: height / 48,
-                                                  color: model.qualityColor[
-                                                      model.qualityIndex],
-                                                  fontWeight: FontWeight.w300,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : FadingText(
-                                            "..",
-                                            style: TextStyle(
-                                              fontSize: height / 30,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                      children: [
+                                        Text(
+                                          '${double.parse(model.pm10).ceil()} ',
+                                          style: TextStyle(
+                                            fontSize: height / 30,
+                                            color: model.qualityColor[
+                                            model.qualityIndex],
+                                            fontWeight: FontWeight.w300,
                                           ),
+                                        ),
+                                        Text(
+                                          'ppm',
+                                          style: TextStyle(
+                                            fontSize: height / 48,
+                                            color: model.qualityColor[
+                                            model.qualityIndex],
+                                            fontWeight: FontWeight.w300,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                        : FadingText(
+                                      "..",
+                                      style: TextStyle(
+                                        fontSize: height / 30,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                     // Container(
                                     //   height: height / 13,
                                     //   child:
@@ -852,7 +935,7 @@ class HomeView extends StatelessWidget {
                         ],
                       ),
                     )
-                  : Container(
+                        : Container(
                       height: height,
                       width: width,
                       child: Center(
@@ -866,6 +949,39 @@ class HomeView extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
+                  Positioned(
+                    right: width*0.02,
+                    bottom: height/20,
+                    child: FloatingActionButton(
+                      backgroundColor: Colors.white,
+                      onPressed: () {
+                        ///uncomment in prod
+                        if ((model.pm1 == null || model.pm1 != "") &&
+                            (model.pm2 == null || model.pm2 != "") &&
+                            (model.pm10 == null || model.pm10 != "")) {
+                          Fluttertoast.showToast(
+                            msg: "Please turn on power supply to device",
+                          );
+                        } else
+                          model.gotoRemoteScreen();
+                      },
+                      child: Container(
+                        height: width / 12,
+                        width: width / 12,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              "assets/remote_day.png",
+                            ),
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

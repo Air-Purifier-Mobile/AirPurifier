@@ -47,7 +47,7 @@ class PhoneAuthenticationService {
         .retrieveUserDocument(_authenticationService.getUID())
         .then((temp) {
       if (!temp.exists || temp.data()['MAC'].isEmpty)
-        _navigationService.replaceWith(Routes.addDeviceView);
+        _navigationService.clearStackAndShow(Routes.addDeviceView);
       else {
         List<String> mac =
             temp.data()['MAC'].map<String>((s) => s as String).toList();
@@ -61,7 +61,7 @@ class PhoneAuthenticationService {
           "name",
           name,
         );
-        _navigationService.replaceWith(Routes.homeView);
+        _navigationService.clearStackAndShow(Routes.homeView);
       }
     });
   }
