@@ -195,9 +195,15 @@ class HomeView extends StatelessWidget {
                               'Day 2',
                               'Day 3',
                               'Day 4',
-                              'Day 5'
+                              'Day 5',
                             ],
-                            labelY: ['20%', '40%', '60%', '80%', '100%'],
+                            labelY: [
+                              '20%',
+                              '40%',
+                              '60%',
+                              '80%',
+                              '100%',
+                            ],
                             showDescription: true,
                             graphColor: Colors.white30,
                             graphOpacity: 0.2,
