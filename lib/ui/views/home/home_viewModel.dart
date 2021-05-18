@@ -329,8 +329,7 @@ class HomeViewModel extends BaseViewModel {
   void setInitialValues(String value, String topic) {
     /// Sets pm1, pm2, pm10 values corresponding to topic.
     // print("\n----------------\n$value + $topic\n---------------------");
-    try
-    {
+    try {
       if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 1.0") {
         pm1 = value;
       } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 2.5") {
@@ -338,8 +337,7 @@ class HomeViewModel extends BaseViewModel {
       } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 10") {
         pm10 = value;
       }
-      try
-      {
+      try {
         double pmInt = double.parse(pm2);
         int tempIndex;
         if (pmInt <= 40) {
@@ -352,11 +350,11 @@ class HomeViewModel extends BaseViewModel {
         if (tempIndex != qualityIndex) {
           setQualityIndexAsPerAir(tempIndex);
         }
-      }catch(E){
+      } catch (E) {
         print(E.toString());
       }
       notifyListeners();
-    }catch(E){
+    } catch (E) {
       print(E.toString());
     }
   }
@@ -372,7 +370,7 @@ class HomeViewModel extends BaseViewModel {
   }
 
   PanelController panelController = PanelController();
-  void closePanel(){
+  void closePanel() {
     panelController.close();
   }
 
@@ -382,7 +380,7 @@ class HomeViewModel extends BaseViewModel {
     Feature(
       title: "Drink Water",
       color: Color.fromRGBO(255, 255, 255, 1),
-      data: [0.01, 0.8, 1, 0.7, 0.6,0.2, 0.8, 1, 0.7, 0.6],
+      data: [0.01, 0.8, 1, 0.7, 0.6, 0.2, 0.8, 1, 0.7, 0.6],
     ),
     Feature(
       title: "Good",
@@ -401,41 +399,238 @@ class HomeViewModel extends BaseViewModel {
     ),
   ];
 
-  void getGraphValues(){
+  void getGraphValues() {
     _mqttService.publishPayload(
         "GRAPH", rootTopic + currentMac[lastDevice] + '/' + "IN");
   }
-  void gotGraphValues(Map map){
-    print(map.toString());
 
+  void gotGraphValues(Map map) {
+    print(map.toString());
   }
+
+  /// Graph Data
+  int noOfDays;
+  List<String> days;
+  List<double> data = [];
+  void fetchFromPreferences() {
+    days = _streamingSharedPreferencesService
+        .readStringListFromStreamingSP("days");
+    days.map((day) {
+      List<String> dataInString =
+          _streamingSharedPreferencesService.readStringListFromStreamingSP(day);
+      dataInString.forEach((element) {
+        data.add(double.parse(element));
+      });
+    });
+  }
+
+  void checkAndPostRequestForGraphData() {
+    DateTime currentTime = DateTime.now();
+  }
+
   ScrollController graphScrollController = ScrollController();
   List<String> yLabels = [
-    '','','',
+    '',
+    '',
+    '',
     'Good',
-    '','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Medium',
-    '','','','','','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Poor',
   ];
   List<String> xLabels = [
     'Monday',
-    '','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Tuesday',
-    '','','','','','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Wednesday',
-    '','','','','','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Thursday',
-    '','','','','','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Friday',
-    '','','','','','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Saturday',
-    '','','','','','','','','','','','','','','','','','','','','','','','',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
     'Sunday',
   ];
 }
-
-
 
 /// The Json retrieved from weather api is of following structure :
 // Map dummy = {

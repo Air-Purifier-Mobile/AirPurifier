@@ -160,7 +160,8 @@ class HomeView extends StatelessWidget {
               model.panelController.open();
               model.graphScrollController.position.animateTo(
                   model.graphScrollController.position.maxScrollExtent,
-                  duration: Duration(seconds: 1), curve: Curves.linearToEaseOut);
+                  duration: Duration(seconds: 1),
+                  curve: Curves.linearToEaseOut);
             }
           },
           onHorizontalDragEnd: (e) {
@@ -534,12 +535,11 @@ class HomeView extends StatelessWidget {
                               verticalFeatureDirection: true,
                             ),
                           ],
-
                         ),
                       ),
                     ),
                     Container(
-                      height: height*0.1,
+                      height: height * 0.1,
                       width: width,
                     ),
                   ],
@@ -995,11 +995,18 @@ class HomeView extends StatelessWidget {
                     child: FloatingActionButton(
                       backgroundColor: Colors.white,
                       onPressed: () {
-                        print('remote button pressed-'+model.pm2+' '+model.pm10);
+                        print('remote button pressed-' +
+                            "${model.pm2}" +
+                            ' ' +
+                            "${model.pm10}");
+
                         ///uncomment in prod
                         if ((model.pm2 == null || model.pm2 == "") &&
                             (model.pm10 == null || model.pm10 == "")) {
-                          print('remote button pressed 2-'+model.pm2+' '+model.pm10);
+                          print('remote button pressed 2-' +
+                              "${model.pm2}" +
+                              ' ' +
+                              "${model.pm10}");
                           Fluttertoast.showToast(
                             msg: "Please turn on power supply to device",
                           );

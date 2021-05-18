@@ -38,4 +38,12 @@ class StreamingSharedPreferencesService {
   Future<void> changeIntInStreamingSP(String key, int value) {
     return preferences.setInt(key, value);
   }
+
+  double readDoubleFromStreamingSP(String key) {
+    return preferences.getDouble(key, defaultValue: 0.0).getValue();
+  }
+
+  Future<void> changeDoubleInStreamingSP(String key, double value) {
+    return preferences.setDouble(key, value);
+  }
 }
