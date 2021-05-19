@@ -1,5 +1,4 @@
 import 'package:air_purifier/app/locator.dart';
-import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:air_purifier/app/router.gr.dart' as customRouter;
 import 'package:stacked_services/stacked_services.dart';
-import 'package:workmanager/workmanager.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +37,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-List<String> hours;
-List<List<double>> data = [];
-List<String> macIdList = [];

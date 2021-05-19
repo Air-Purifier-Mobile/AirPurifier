@@ -369,8 +369,20 @@ class HomeViewModel extends BaseViewModel {
               '/' +
               "IN",
         );
+
+        print(currentTime.toString());
+        print(lastSync.toString());
+
         Duration difference = currentTime.difference(lastSync);
-        differenceInHours = difference.inHours;
+
+        if (lastSync.year > 2020)
+          differenceInHours = difference.inHours;
+        else
+          differenceInHours = -1;
+
+        print("Difference in gotGraph-${difference}");
+        print("Diff in hours in gotGraph-${differenceInHours}");
+
         _streamingSharedPreferencesService.changeIntInStreamingSP(
             "day", currentTime.day);
         _streamingSharedPreferencesService.changeIntInStreamingSP(
@@ -383,16 +395,32 @@ class HomeViewModel extends BaseViewModel {
     }
   }
 
+  List<String> hours = [];
+  List<List<double>> data = [];
+  List<String> macIdList = [];
+
   int differenceInHours;
-  void gotGraphValues(Map map) {
-    print(map.toString());
-    List<int> pm2Data = map["pm2.5"];
+  void gotGraphValues(Map<String, dynamic> map) {
+    print('Complte Json----' + map.toString());
+
+    List<dynamic> pm2DataTemp = map["pm2.5"];
+
+    List<int> pm2Data =
+        pm2DataTemp.map((e) => int.parse(e.toString())).toList();
+    print('Pm2.5 List in int-----' + pm2DataTemp.toString());
 
     /// ek ghante mai 12
-    fetchFromPreferences();
 
     /// filling null values
+    if (differenceInHours < 0) {
+      differenceInHours = (pm2Data.length / 12).ceil();
+    } else
+      fetchFromPreferences();
+
+    print("Diff in hours after filling null values-${differenceInHours}");
+
     for (int i = 0; i < differenceInHours; i++) {
+      print('Stuck 1st loop');
       data.add(List<double>.filled(12, 0.0));
       hours.add((hours.length + 1).toString() + currentMac[lastDevice]);
     }
@@ -401,6 +429,7 @@ class HomeViewModel extends BaseViewModel {
     int lastHour = data.length - 1;
     int j = 11;
     for (int i = pm2Data.length - 1; i >= 0; i--) {
+      print('Stuck 2nd loop');
       if (pm2Data[i] > 600) data[lastHour][j] = 1;
       data[lastHour][j] = pm2Data[i].toDouble() / 600.0;
       j--;
@@ -429,16 +458,22 @@ class HomeViewModel extends BaseViewModel {
 
   void fetchFromPreferences() {
     hours = _streamingSharedPreferencesService
-        .readStringListFromStreamingSP("hours$currentMac[lastDevice]");
-    if (hours != []) {
+        .readStringListFromStreamingSP("$hours${currentMac[lastDevice]}");
+    print(hours.toString() + "--------------------------------------------1");
+    if (hours != null && hours.length != 0) {
       data = [];
       hours.map((hour) {
+        print(
+            hour.toString() + "--------------------------------------------2");
         List<String> dataInString = _streamingSharedPreferencesService
-            .readStringListFromStreamingSP("$hour$currentMac[lastDevice]");
+            .readStringListFromStreamingSP("$hour${currentMac[lastDevice]}");
         data.add(
             dataInString.map((dataPoint) => double.parse(dataPoint)).toList());
+        print(
+            data.toString() + "--------------------------------------------3");
       });
     }
+    print(data.toString() + "--------------------------------------------4");
   }
 
   ///Disconnects broker and navigates to remote screen
@@ -602,155 +637,7 @@ class HomeViewModel extends BaseViewModel {
     '',
     'Poor',
   ];
-  List<String> xLabels = [
-    'Monday',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    'Tuesday',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    'Wednesday',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    'Thursday',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    'Friday',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    'Saturday',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    'Sunday',
-  ];
+  List<String> xLabels = [];
 }
 
 /// The Json retrieved from weather api is of following structure :

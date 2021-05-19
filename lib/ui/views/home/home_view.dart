@@ -527,7 +527,7 @@ class HomeView extends StatelessWidget {
                                 children: [
                                   LineGraph(
                                     features: model.features,
-                                    size: Size(data.length * width * 0.8,
+                                    size: Size(model.data.length * width * 0.8,
                                         height * 0.35),
                                     labelX: model.xLabels,
                                     labelY: model.yLabels,
