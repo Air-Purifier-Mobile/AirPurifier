@@ -289,6 +289,7 @@ class HomeViewModel extends BaseViewModel {
 
   List<double> plotData = [];
   bool gotGraphData = false;
+
   void renderGraphData() {
     int weekDay = DateTime.now().weekday;
     List<String> fillers = List<String>.filled(287, "");
@@ -301,11 +302,12 @@ class HomeViewModel extends BaseViewModel {
       if (start < 0) start = start + 7;
       xLabels = [];
       while (start != weekDay) {
-        xLabels.addAll(fillers);
+        print('${xLabels.toString()}');
         xLabels.add(getDay(start));
+        xLabels.addAll(fillers);
         start = (start + 1) % 7;
       }
-      xLabels.addAll(fillers);
+      //xLabels.addAll(fillers);
       xLabels.add(getDay(weekDay));
     } else {
       int startIndex = data.length - 168 - 1;
@@ -316,34 +318,34 @@ class HomeViewModel extends BaseViewModel {
       if (lastDay < 0) lastDay = lastDay + 7;
       xLabels = [];
       while (lastDay != weekDay) {
-        xLabels.addAll(fillers);
         xLabels.add(getDay(lastDay));
+        xLabels.addAll(fillers);
         lastDay = (lastDay + 1) % 7;
       }
-      xLabels.addAll(fillers);
+      // xLabels.addAll(fillers);
       xLabels.add(getDay(weekDay));
     }
 
     features.addAll([
       Feature(
-        title: "Drink Water",
+        title: "PM 2.5",
         color: Color.fromRGBO(255, 255, 255, 1),
         data: plotData,
       ),
       Feature(
         title: "Good",
         color: Colors.greenAccent,
-        data: List<double>.filled(151, 0.1),
+        data: List<double>.filled((200), 0.1),
       ),
       Feature(
         title: "Medium",
         color: Colors.orangeAccent,
-        data: List<double>.filled(151, 0.625),
+        data: List<double>.filled(plotData.length, 0.625),
       ),
       Feature(
         title: "Poor",
         color: Colors.redAccent,
-        data: List<double>.filled(151, 1),
+        data: List<double>.filled(plotData.length, 1),
       ),
     ]);
     gotGraphData = true;
@@ -401,7 +403,7 @@ class HomeViewModel extends BaseViewModel {
 
   int differenceInHours;
   void gotGraphValues(Map<String, dynamic> map) {
-    print('Complte Json----' + map.toString());
+    print('Complete Json----' + map.toString());
 
     List<dynamic> pm2DataTemp = map["pm2.5"];
 
@@ -420,33 +422,48 @@ class HomeViewModel extends BaseViewModel {
     print("Diff in hours after filling null values-${differenceInHours}");
 
     for (int i = 0; i < differenceInHours; i++) {
-      print('Stuck 1st loop');
-      data.add(List<double>.filled(12, 0.0));
+      print('Stuck 1st loop $i');
+      List<double> temp = List<double>.filled(12, 0.0);
+      print(temp.toString() + 'temp');
+      data.add(temp);
+      print(data.toString() + 'data');
       hours.add((hours.length + 1).toString() + currentMac[lastDevice]);
+      print(hours.toString() + 'hours');
     }
 
     /// Over writing data from device
     int lastHour = data.length - 1;
     int j = 11;
     for (int i = pm2Data.length - 1; i >= 0; i--) {
-      print('Stuck 2nd loop');
-      if (pm2Data[i] > 600) data[lastHour][j] = 1;
-      data[lastHour][j] = pm2Data[i].toDouble() / 600.0;
+      print('Stuck 2nd loop $i');
+      if (pm2Data[i] > 600)
+        data[lastHour][j] = 1;
+      else
+        data[lastHour][j] = pm2Data[i].toDouble() / 600.0;
+      print(data[lastHour][j].toString() + 'data[lastHour][j]');
+
       j--;
-      if (j == 0 && lastHour != 0) {
+      if (j < 0 && lastHour != 0) {
         j = 11;
         lastHour--;
       }
+      print(lastHour.toString() + 'last hour');
     }
 
     /// syncing data with share prefs
     _streamingSharedPreferencesService.changeStringListInStreamingSP(
-      "hours$currentMac[lastDevice]",
+      "$hours${currentMac[lastDevice]}",
       hours,
     );
+
+    print(
+        "$hours${currentMac[lastDevice]}    ${hours.toString()}  ${data.toString()}");
+
     int i = 0;
     hours.forEach((hour) {
+      print(hour + '\n');
       List<String> tempList = data[i].map((e) => e.toString()).toList();
+      print(tempList.toString() + '\n\n\n');
       _streamingSharedPreferencesService.changeStringListInStreamingSP(
         hour,
         tempList,
