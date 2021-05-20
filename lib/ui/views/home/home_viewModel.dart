@@ -294,10 +294,19 @@ class HomeViewModel extends BaseViewModel {
     int weekDay = DateTime.now().weekday;
     List<String> fillers = List<String>.filled(287, "");
     if (data.length < 168) {
+      // filling plotData
+      int bufferHours = 168 - data.length;
+      List<double> bufferHourData = List.filled(12, 0.0);
+      // Filling null values for buffer data
+      for (int i = 0; i < bufferHours; i++) {
+        plotData.addAll(bufferHourData);
+      }
+      // filling remaining data
       data.forEach((element) {
         plotData.addAll(element);
       });
-      int totalDays = (data.length / 24).ceil();
+      // Constructing xLabel List
+      int totalDays = 6;
       int start = weekDay - totalDays;
       if (start < 0) start = start + 7;
       xLabels = [];
