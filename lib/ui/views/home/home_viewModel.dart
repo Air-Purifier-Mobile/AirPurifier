@@ -135,6 +135,8 @@ class HomeViewModel extends BaseViewModel {
   ///Used to get WeekDay
   String getDay(int day) {
     switch (day) {
+      case 0:
+        return "Sunday";
       case 1:
         return "Monday";
       case 2:
@@ -291,33 +293,51 @@ class HomeViewModel extends BaseViewModel {
   bool gotGraphData = false;
 
   void renderGraphData() {
+    plotData = [];
     int weekDay = DateTime.now().weekday;
+    int currentHour = DateTime.now().hour;
     List<String> fillers = List<String>.filled(287, "");
     if (data.length < 168) {
       // filling plotData
-      int bufferHours = 168 - data.length;
-      List<double> bufferHourData = List.filled(12, 0.0);
+      List<double> bufferHourData = List.filled(288, 0.0);
       // Filling null values for buffer data
-      for (int i = 0; i < bufferHours; i++) {
+      for (int i = 0; i < 7; i++) {
         plotData.addAll(bufferHourData);
+        print("Filling null values for buffer data---" +
+            plotData.length.toString());
       }
+
+      int startHourIndex = 1727 + (currentHour * 12);
+      print('start hour index $startHourIndex');
+
       // filling remaining data
-      data.forEach((element) {
-        plotData.addAll(element);
+      print('raw data - $data');
+      print('raw data length - ${data.length}');
+      for (int x = data.length - 1; x >= 0; x--) {
+        for (int y = 11; y >= 0; y--) {
+          print('individaul data ${data[x][y]} \n');
+          if (startHourIndex >= 0) plotData[startHourIndex--] = data[x][y];
+        }
+      }
+
+      print("Plot data---" + plotData.length.toString());
+      plotData.forEach((element) {
+        print("${element.toString()}");
       });
+
       // Constructing xLabel List
       int totalDays = 6;
       int start = weekDay - totalDays;
       if (start < 0) start = start + 7;
       xLabels = [];
-      while (start != weekDay) {
-        print('${xLabels.toString()}');
+      for (int x = 0; x < 7; x++) {
         xLabels.add(getDay(start));
         xLabels.addAll(fillers);
         start = (start + 1) % 7;
       }
+
+      xLabels.add(getDay(weekDay + 1));
       //xLabels.addAll(fillers);
-      xLabels.add(getDay(weekDay));
     } else {
       int startIndex = data.length - 168 - 1;
       for (; startIndex < data.length; startIndex++) {
@@ -331,8 +351,9 @@ class HomeViewModel extends BaseViewModel {
         xLabels.addAll(fillers);
         lastDay = (lastDay + 1) % 7;
       }
-      // xLabels.addAll(fillers);
-      xLabels.add(getDay(weekDay));
+
+      xLabels.add(getDay(weekDay + 1));
+      //xLabels.addAll(fillers);
     }
 
     features.addAll([
@@ -344,7 +365,7 @@ class HomeViewModel extends BaseViewModel {
       Feature(
         title: "Good",
         color: Colors.greenAccent,
-        data: List<double>.filled((200), 0.1),
+        data: List<double>.filled(plotData.length, 0.1),
       ),
       Feature(
         title: "Medium",
@@ -410,7 +431,7 @@ class HomeViewModel extends BaseViewModel {
   List<List<double>> data = [];
   List<String> macIdList = [];
 
-  int differenceInHours;
+  int differenceInHours = -1;
   void gotGraphValues(Map<String, dynamic> map) {
     print('Complete Json----' + map.toString());
 
