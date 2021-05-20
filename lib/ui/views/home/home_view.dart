@@ -156,7 +156,7 @@ class HomeView extends StatelessWidget {
           onVerticalDragEnd: (e) {
             if (e.primaryVelocity > 0) {
               model.closePanel();
-            } else if (e.primaryVelocity < 0 && model.gotGraphData) {
+            } else if (e.primaryVelocity < 0) {
               model.panelController.open();
               model.graphScrollController.position.animateTo(
                   model.graphScrollController.position.maxScrollExtent,
@@ -527,8 +527,7 @@ class HomeView extends StatelessWidget {
                                 children: [
                                   LineGraph(
                                     features: model.features,
-                                    size: Size(model.data.length * width * 0.8,
-                                        height * 0.35),
+                                    size: Size(width * 4, height * 0.35),
                                     labelX: model.xLabels,
                                     labelY: model.yLabels,
                                     showDescription: false,
@@ -540,13 +539,12 @@ class HomeView extends StatelessWidget {
                               ),
                             ),
                           )
-                        : Center(
-                            child: FadingText(
-                              "....",
-                              style: TextStyle(
-                                fontSize: height / 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w300,
+                        : Expanded(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             ),
                           ),
@@ -1022,6 +1020,8 @@ class HomeView extends StatelessWidget {
                           Fluttertoast.showToast(
                             msg: "Please turn on power supply to device",
                           );
+                          print("Printing SharedPref values\n");
+                          model.printSharedPref();
                         } else {
                           print('Going to remote');
                           model.gotoRemoteScreen();

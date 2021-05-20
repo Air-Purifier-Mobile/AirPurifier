@@ -275,7 +275,12 @@ class HomeViewModel extends BaseViewModel {
         }
 
         setBusy(true);
-        renderGraphData();
+        int shredPrefYear =
+            _streamingSharedPreferencesService.readIntFromStreamingSP("year");
+        if (shredPrefYear >= 2020) {
+          print("Hello rendereing");
+          renderGraphData();
+        }
 
         /// Initiates a connection to MQTT broker
         _mqttService.setupConnection(
@@ -434,14 +439,10 @@ class HomeViewModel extends BaseViewModel {
   int differenceInHours = -1;
   void gotGraphValues(Map<String, dynamic> map) {
     print('Complete Json----' + map.toString());
-
     List<dynamic> pm2DataTemp = map["pm2.5"];
-
     List<int> pm2Data =
         pm2DataTemp.map((e) => int.parse(e.toString())).toList();
     print('Pm2.5 List in int-----' + pm2DataTemp.toString());
-
-    /// ek ghante mai 12
 
     /// filling null values
     if (differenceInHours < 0) {
@@ -482,22 +483,29 @@ class HomeViewModel extends BaseViewModel {
 
     /// syncing data with share prefs
     _streamingSharedPreferencesService.changeStringListInStreamingSP(
-      "$hours${currentMac[lastDevice]}",
+      "hours${currentMac[lastDevice]}",
       hours,
     );
 
     print(
-        "$hours${currentMac[lastDevice]}    ${hours.toString()}  ${data.toString()}");
+        "hours${currentMac[lastDevice]}    ${hours.toString()}  ${data.toString()}");
 
     int i = 0;
     hours.forEach((hour) {
-      print(hour + '\n');
+      // Future.delayed(Duration(milliseconds: 1), () {
+      //
+      // });
+      print(hour + '--------------------------\n');
       List<String> tempList = data[i].map((e) => e.toString()).toList();
       print(tempList.toString() + '\n\n\n');
-      _streamingSharedPreferencesService.changeStringListInStreamingSP(
-        hour,
+      _streamingSharedPreferencesService
+          .changeStringListInStreamingSP(
+        hour.toString().trim(),
         tempList,
-      );
+      )
+          .then((value) {
+        print(value.toString());
+      });
       i++;
     });
     renderGraphData();
@@ -505,15 +513,15 @@ class HomeViewModel extends BaseViewModel {
 
   void fetchFromPreferences() {
     hours = _streamingSharedPreferencesService
-        .readStringListFromStreamingSP("$hours${currentMac[lastDevice]}");
+        .readStringListFromStreamingSP("hours${currentMac[lastDevice]}");
     print(hours.toString() + "--------------------------------------------1");
     if (hours != null && hours.length != 0) {
       data = [];
-      hours.map((hour) {
+      hours.forEach((hour) {
         print(
             hour.toString() + "--------------------------------------------2");
         List<String> dataInString = _streamingSharedPreferencesService
-            .readStringListFromStreamingSP("$hour${currentMac[lastDevice]}");
+            .readStringListFromStreamingSP(hour);
         data.add(
             dataInString.map((dataPoint) => double.parse(dataPoint)).toList());
         print(
@@ -521,6 +529,20 @@ class HomeViewModel extends BaseViewModel {
       });
     }
     print(data.toString() + "--------------------------------------------4");
+  }
+
+  void printSharedPref() {
+    print("Printing shared prefs");
+    List<String> days = _streamingSharedPreferencesService
+        .readStringListFromStreamingSP("hours${currentMac[lastDevice]}");
+    print(days);
+    days.forEach((hour) {
+      print(hour.toString() + "--------------------------------------------2");
+      List<String> dataInString = _streamingSharedPreferencesService
+          .readStringListFromStreamingSP(hour);
+      print(dataInString.toString() +
+          "--------------------------------------------3");
+    });
   }
 
   ///Disconnects broker and navigates to remote screen

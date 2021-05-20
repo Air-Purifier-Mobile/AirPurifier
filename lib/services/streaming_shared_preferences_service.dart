@@ -7,7 +7,9 @@ class StreamingSharedPreferencesService {
     preferences = await StreamingSharedPreferences.instance;
   }
 
-  Future<void> changeStringListInStreamingSP(String key, List<String> list) {
+  Future<bool> changeStringListInStreamingSP(String key, List<String> list) {
+    print("Key : " + key);
+    print("List : " + list.toString());
     return preferences.setStringList(key, list);
   }
 
