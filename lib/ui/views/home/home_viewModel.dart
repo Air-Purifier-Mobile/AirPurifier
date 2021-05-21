@@ -4,6 +4,7 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
@@ -234,6 +235,15 @@ class HomeViewModel extends BaseViewModel {
         currentName.toString() +
         "------------------------------------------------------------------------");
 
+    int day = _streamingSharedPreferencesService.readIntFromStreamingSP("day");
+    int month =
+        _streamingSharedPreferencesService.readIntFromStreamingSP("month");
+    int hour =
+        _streamingSharedPreferencesService.readIntFromStreamingSP("hour");
+    int year =
+        _streamingSharedPreferencesService.readIntFromStreamingSP("year");
+    lastSync = DateTime(year, month, day, hour);
+
     /// Gets the mac ID stored in firebase.
     Future.delayed(
       Duration(seconds: 0),
@@ -294,11 +304,13 @@ class HomeViewModel extends BaseViewModel {
   }
 
   List<double> plotData = [];
+  List<FlSpot> renderList = [];
   bool gotGraphData = false;
-
+  int weekDay;
   void renderGraphData() {
     plotData = [];
-    int weekDay = DateTime.now().weekday;
+    DateTime currentTime = DateTime.now();
+    weekDay = currentTime.weekday;
     int currentHour = DateTime.now().hour;
     List<String> fillers = List<String>.filled(287, "");
     // if (data.length < 168) {
@@ -307,19 +319,31 @@ class HomeViewModel extends BaseViewModel {
     // Filling null values for buffer data
     for (int i = 0; i < 7; i++) {
       plotData.addAll(bufferHourData);
-      print("Filling null values for buffer data---" +
-          plotData.length.toString());
+      // print("Filling null values for buffer data---" +
+      //    plotData.length.toString());
     }
 
+    /// previous 6 day's hours plus current day hour
     int startHourIndex = 1727 + (currentHour * 12);
+    int showTillIndex = startHourIndex;
     print('start hour index $startHourIndex');
-
+    int remainingHours;
+    if (!isGraphRequestSent) {
+      /// Sync with last saved hour
+      print("\n\n");
+      print(lastSync.day);
+      int changeInDay = (currentTime.day - lastSync.day).abs();
+      int changeInHour = (currentTime.hour - lastSync.hour).abs();
+      int betweenHours = (changeInDay * 24) + (changeInHour);
+      remainingHours = 168 - betweenHours;
+      startHourIndex = remainingHours * 12 - 1;
+    }
     // filling remaining data
     print('raw data - $data');
     print('raw data length - ${data.length}');
     for (int x = data.length - 1; x >= 0; x--) {
       for (int y = 11; y >= 0; y--) {
-        print('individaul data ${data[x][y]} \n');
+        print('individaul data ${data[x][y]} + ${startHourIndex} \n');
         if (startHourIndex >= 0) plotData[startHourIndex--] = data[x][y];
       }
     }
@@ -328,7 +352,7 @@ class HomeViewModel extends BaseViewModel {
     plotData.forEach((element) {
       print("${element.toString()}");
     });
-
+    print("${plotData.length}");
     // Constructing xLabel List
     int totalDays = 6;
     int start = weekDay - totalDays;
@@ -339,65 +363,31 @@ class HomeViewModel extends BaseViewModel {
       xLabels.addAll(fillers);
       start = (start + 1) % 7;
     }
-
     xLabels.add(getDay(weekDay + 1));
-    //xLabels.addAll(fillers);
-    // } else {
-    //   int startIndex = 1727 + (currentHour * 12)  ;
-    //   for (; startIndex < data.length; startIndex++) {
-    //     plotData.addAll(data[startIndex]);
-    //   }
-    //   int lastDay = weekDay - 6;
-    //   if (lastDay < 0) lastDay = lastDay + 7;
-    //   xLabels = [];
-    //   for (int x = 0; x < 7; x++) {
-    //     xLabels.add(getDay(lastDay));
-    //     xLabels.addAll(fillers);
-    //     lastDay = (lastDay + 1) % 7;
-    //   }
 
-    //   xLabels.add(getDay(weekDay + 1));
-    //   //xLabels.addAll(fillers);
-    // }
+    for (int i = 0; i < showTillIndex; i++) {
+      renderList.add(FlSpot(i.toDouble(), plotData[i]));
+    }
 
-    // features.addAll([
-    //   Feature(
-    //     title: "PM 2.5",
-    //     color: Color.fromRGBO(255, 255, 255, 1),
-    //     data: plotData,
-    //   ),
-    //   Feature(
-    //     title: "Good",
-    //     color: Colors.greenAccent,
-    //     data: List<double>.filled(plotData.length, 0.1),
-    //   ),
-    //   Feature(
-    //     title: "Medium",
-    //     color: Colors.orangeAccent,
-    //     data: List<double>.filled(plotData.length, 0.625),
-    //   ),
-    //   Feature(
-    //     title: "Poor",
-    //     color: Colors.redAccent,
-    //     data: List<double>.filled(plotData.length, 1),
-    //   ),
-    // ]);
     gotGraphData = true;
     notifyListeners();
   }
 
+  bool isGraphRequestSent = false;
+  DateTime lastSync;
   void sendGraphRequestsToMqtt() {
+    print("sending graph requests");
     DateTime currentTime = DateTime.now();
-    int day = _streamingSharedPreferencesService.readIntFromStreamingSP("day");
-    int month =
-        _streamingSharedPreferencesService.readIntFromStreamingSP("month");
-    int hour =
-        _streamingSharedPreferencesService.readIntFromStreamingSP("hour");
-    int year =
-        _streamingSharedPreferencesService.readIntFromStreamingSP("year");
-    DateTime lastSync = DateTime(year, month, day, hour);
     if (lastSync.isBefore(currentTime)) {
-      if ((currentTime.hour - lastSync.hour).abs() >= 2) {
+      print("sending graph requests 1 + $lastSync");
+      bool isItFirst =
+          _streamingSharedPreferencesService.readBoolFromStreamingSP("first");
+      if ((currentTime.hour - lastSync.hour).abs() >= 2 || !isItFirst) {
+        if (!isItFirst)
+          _streamingSharedPreferencesService.changeBoolInStreamingSP(
+              "first", true);
+        print("sending graph requests 2");
+        isGraphRequestSent = true;
         _mqttService.publishPayload(
           "GRAPH",
           "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/" +
@@ -466,10 +456,7 @@ class HomeViewModel extends BaseViewModel {
     int j = 11;
     for (int i = pm2Data.length - 1; i >= 0; i--) {
       print('Stuck 2nd loop $i');
-      if (pm2Data[i] > 600)
-        data[lastHour][j] = 1;
-      else
-        data[lastHour][j] = pm2Data[i].toDouble() / 600.0;
+      data[lastHour][j] = pm2Data[i].toDouble();
       print(data[lastHour][j].toString() + 'data[lastHour][j]');
 
       j--;
@@ -528,20 +515,6 @@ class HomeViewModel extends BaseViewModel {
       });
     }
     print(data.toString() + "--------------------------------------------4");
-  }
-
-  void printSharedPref() {
-    print("Printing shared prefs");
-    List<String> days = _streamingSharedPreferencesService
-        .readStringListFromStreamingSP("hours${currentMac[lastDevice]}");
-    print(days);
-    days.forEach((hour) {
-      print(hour.toString() + "--------------------------------------------2");
-      List<String> dataInString = _streamingSharedPreferencesService
-          .readStringListFromStreamingSP(hour);
-      print(dataInString.toString() +
-          "--------------------------------------------3");
-    });
   }
 
   ///Disconnects broker and navigates to remote screen

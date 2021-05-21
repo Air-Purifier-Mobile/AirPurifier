@@ -468,32 +468,6 @@ class HomeView extends StatelessWidget {
                 },
               ),
             ),
-            // floatingActionButton: FloatingActionButton(
-            //   backgroundColor: Colors.white,
-            //   onPressed: () {
-            //     ///uncomment in prod
-            //     if ((model.pm1 == null || model.pm1 != "") &&
-            //         (model.pm2 == null || model.pm2 != "") &&
-            //         (model.pm10 == null || model.pm10 != "")) {
-            //       Fluttertoast.showToast(
-            //         msg: "Please turn on power supply to device",
-            //       );
-            //     } else
-            //       model.gotoRemoteScreen();
-            //   },
-            //   child: Container(
-            //     height: width / 12,
-            //     width: width / 12,
-            //     decoration: BoxDecoration(
-            //       image: DecorationImage(
-            //         image: AssetImage(
-            //           "assets/remote_day.png",
-            //         ),
-            //         fit: BoxFit.fitHeight,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             resizeToAvoidBottomInset: false,
             body: SlidingUpPanel(
               renderPanelSheet: false,
@@ -550,31 +524,54 @@ class HomeView extends StatelessWidget {
                     ),
                     model.gotGraphData
                         ? Expanded(
-                            child: Container(
-                              height: height * 0.44,
-                              child: ListView(
+                            child: Stack(children: [
+                              Container(
+                                height: height * 0.306,
+                                child: Flex(
+                                  direction: Axis.vertical,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        width: width * 0.01,
+                                        height: height * 0.1,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 5,
+                                      child: Container(
+                                        width: width * 0.01,
+                                        height: height * 0.1,
+                                        color: Colors.orange,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Container(
+                                        width: width * 0.01,
+                                        height: height * 0.1,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ListView(
                                 controller: model.graphScrollController,
                                 physics: BouncingScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 children: [
                                   Container(
-                                    width: width * 4,
-                                    height: height * 0.35,
-                                    child: LineChartSample1(),
+                                    width: width * 10,
+                                    child: LineChartSample1(
+                                      renderList: model.renderList,
+                                      currentDay: model.weekDay,
+                                    ),
                                   ),
-                                  // LineGraph(
-                                  //   features: model.features,
-                                  //   size: Size(width * 4, height * 0.35),
-                                  //   labelX: model.xLabels,
-                                  //   labelY: model.yLabels,
-                                  //   showDescription: false,
-                                  //   graphColor: Colors.white,
-                                  //   graphOpacity: 0,
-                                  //   verticalFeatureDirection: true,
-                                  // ),
                                 ],
                               ),
-                            ),
+                            ]),
                           )
                         : Expanded(
                             child: Center(
@@ -1058,7 +1055,6 @@ class HomeView extends StatelessWidget {
                             msg: "Please turn on power supply to device",
                           );
                           print("Printing SharedPref values\n");
-                          model.printSharedPref();
                         } else {
                           print('Going to remote');
                           model.gotoRemoteScreen();
