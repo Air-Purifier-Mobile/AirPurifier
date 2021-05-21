@@ -4,7 +4,6 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/mqtt_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
-import 'package:draw_graph/models/feature.dart';
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
@@ -302,87 +301,87 @@ class HomeViewModel extends BaseViewModel {
     int weekDay = DateTime.now().weekday;
     int currentHour = DateTime.now().hour;
     List<String> fillers = List<String>.filled(287, "");
-    if (data.length < 168) {
-      // filling plotData
-      List<double> bufferHourData = List.filled(288, 0.0);
-      // Filling null values for buffer data
-      for (int i = 0; i < 7; i++) {
-        plotData.addAll(bufferHourData);
-        print("Filling null values for buffer data---" +
-            plotData.length.toString());
-      }
-
-      int startHourIndex = 1727 + (currentHour * 12);
-      print('start hour index $startHourIndex');
-
-      // filling remaining data
-      print('raw data - $data');
-      print('raw data length - ${data.length}');
-      for (int x = data.length - 1; x >= 0; x--) {
-        for (int y = 11; y >= 0; y--) {
-          print('individaul data ${data[x][y]} \n');
-          if (startHourIndex >= 0) plotData[startHourIndex--] = data[x][y];
-        }
-      }
-
-      print("Plot data---" + plotData.length.toString());
-      plotData.forEach((element) {
-        print("${element.toString()}");
-      });
-
-      // Constructing xLabel List
-      int totalDays = 6;
-      int start = weekDay - totalDays;
-      if (start < 0) start = start + 7;
-      xLabels = [];
-      for (int x = 0; x < 7; x++) {
-        xLabels.add(getDay(start));
-        xLabels.addAll(fillers);
-        start = (start + 1) % 7;
-      }
-
-      xLabels.add(getDay(weekDay + 1));
-      //xLabels.addAll(fillers);
-    } else {
-      int startIndex = data.length - 168 - 1;
-      for (; startIndex < data.length; startIndex++) {
-        plotData.addAll(data[startIndex]);
-      }
-      int lastDay = weekDay - 6;
-      if (lastDay < 0) lastDay = lastDay + 7;
-      xLabels = [];
-      while (lastDay != weekDay) {
-        xLabels.add(getDay(lastDay));
-        xLabels.addAll(fillers);
-        lastDay = (lastDay + 1) % 7;
-      }
-
-      xLabels.add(getDay(weekDay + 1));
-      //xLabels.addAll(fillers);
+    // if (data.length < 168) {
+    // filling plotData
+    List<double> bufferHourData = List.filled(288, 0.0);
+    // Filling null values for buffer data
+    for (int i = 0; i < 7; i++) {
+      plotData.addAll(bufferHourData);
+      print("Filling null values for buffer data---" +
+          plotData.length.toString());
     }
 
-    features.addAll([
-      Feature(
-        title: "PM 2.5",
-        color: Color.fromRGBO(255, 255, 255, 1),
-        data: plotData,
-      ),
-      Feature(
-        title: "Good",
-        color: Colors.greenAccent,
-        data: List<double>.filled(plotData.length, 0.1),
-      ),
-      Feature(
-        title: "Medium",
-        color: Colors.orangeAccent,
-        data: List<double>.filled(plotData.length, 0.625),
-      ),
-      Feature(
-        title: "Poor",
-        color: Colors.redAccent,
-        data: List<double>.filled(plotData.length, 1),
-      ),
-    ]);
+    int startHourIndex = 1727 + (currentHour * 12);
+    print('start hour index $startHourIndex');
+
+    // filling remaining data
+    print('raw data - $data');
+    print('raw data length - ${data.length}');
+    for (int x = data.length - 1; x >= 0; x--) {
+      for (int y = 11; y >= 0; y--) {
+        print('individaul data ${data[x][y]} \n');
+        if (startHourIndex >= 0) plotData[startHourIndex--] = data[x][y];
+      }
+    }
+
+    print("Plot data---" + plotData.length.toString());
+    plotData.forEach((element) {
+      print("${element.toString()}");
+    });
+
+    // Constructing xLabel List
+    int totalDays = 6;
+    int start = weekDay - totalDays;
+    if (start < 0) start = start + 7;
+    xLabels = [];
+    for (int x = 0; x < 7; x++) {
+      xLabels.add(getDay(start));
+      xLabels.addAll(fillers);
+      start = (start + 1) % 7;
+    }
+
+    xLabels.add(getDay(weekDay + 1));
+    //xLabels.addAll(fillers);
+    // } else {
+    //   int startIndex = 1727 + (currentHour * 12)  ;
+    //   for (; startIndex < data.length; startIndex++) {
+    //     plotData.addAll(data[startIndex]);
+    //   }
+    //   int lastDay = weekDay - 6;
+    //   if (lastDay < 0) lastDay = lastDay + 7;
+    //   xLabels = [];
+    //   for (int x = 0; x < 7; x++) {
+    //     xLabels.add(getDay(lastDay));
+    //     xLabels.addAll(fillers);
+    //     lastDay = (lastDay + 1) % 7;
+    //   }
+
+    //   xLabels.add(getDay(weekDay + 1));
+    //   //xLabels.addAll(fillers);
+    // }
+
+    // features.addAll([
+    //   Feature(
+    //     title: "PM 2.5",
+    //     color: Color.fromRGBO(255, 255, 255, 1),
+    //     data: plotData,
+    //   ),
+    //   Feature(
+    //     title: "Good",
+    //     color: Colors.greenAccent,
+    //     data: List<double>.filled(plotData.length, 0.1),
+    //   ),
+    //   Feature(
+    //     title: "Medium",
+    //     color: Colors.orangeAccent,
+    //     data: List<double>.filled(plotData.length, 0.625),
+    //   ),
+    //   Feature(
+    //     title: "Poor",
+    //     color: Colors.redAccent,
+    //     data: List<double>.filled(plotData.length, 1),
+    //   ),
+    // ]);
     gotGraphData = true;
     notifyListeners();
   }
@@ -649,7 +648,7 @@ class HomeViewModel extends BaseViewModel {
 
   /// Sample graph Json data
   /// {"total":10,"ref":300,"pm1.0":[10,10,7,6,10,7,10,8,8,11],"pm2.5":[12,13,11,10,14,13,14,10,12,13],"pm10":[18,15,11,11,19,16,16,10,12,14]}
-  List<Feature> features = [];
+  // List<Feature> features = [];
 
   /// Graph Data
 

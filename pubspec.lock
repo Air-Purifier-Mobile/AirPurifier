@@ -92,13 +92,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
-  draw_graph:
-    dependency: "direct main"
+  equatable:
+    dependency: transitive
     description:
-      name: draw_graph
+      name: equatable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "2.0.2"
   event_bus:
     dependency: transitive
     description:
@@ -197,6 +197,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.36.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -714,13 +721,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.4"
-  workmanager:
-    dependency: "direct main"
-    description:
-      name: workmanager
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.4"
   xdg_directories:
     dependency: transitive
     description:

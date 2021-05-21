@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:air_purifier/app/constants.dart';
 import 'package:air_purifier/main.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
-import 'package:draw_graph/draw_graph.dart';
+import 'package:air_purifier/ui/views/home/line_graph.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -17,6 +19,36 @@ class HomeView extends StatelessWidget {
   const HomeView({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    List<Map<String, Object>> _data1 = [
+      {
+        'name': 'Jan',
+        'value': 8726.2453,
+      },
+      {
+        'name': 'Feb',
+        'value': 2445.2453,
+      },
+      {
+        'name': 'Mar',
+        'value': 6636.2400,
+      },
+      {
+        'name': 'Apr',
+        'value': 4774.2453,
+      },
+      {
+        'name': 'May',
+        'value': 1066.2453,
+      },
+      {
+        'name': 'Jun',
+        'value': 4576.9932,
+      },
+      {
+        'name': 'Jul',
+        'value': 8926.9823,
+      }
+    ];
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return ViewModelBuilder<HomeViewModel>.reactive(
@@ -525,16 +557,21 @@ class HomeView extends StatelessWidget {
                                 physics: BouncingScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 children: [
-                                  LineGraph(
-                                    features: model.features,
-                                    size: Size(width * 4, height * 0.35),
-                                    labelX: model.xLabels,
-                                    labelY: model.yLabels,
-                                    showDescription: false,
-                                    graphColor: Colors.white,
-                                    graphOpacity: 0,
-                                    verticalFeatureDirection: true,
+                                  Container(
+                                    width: width * 4,
+                                    height: height * 0.35,
+                                    child: LineChartSample1(),
                                   ),
+                                  // LineGraph(
+                                  //   features: model.features,
+                                  //   size: Size(width * 4, height * 0.35),
+                                  //   labelX: model.xLabels,
+                                  //   labelY: model.yLabels,
+                                  //   showDescription: false,
+                                  //   graphColor: Colors.white,
+                                  //   graphOpacity: 0,
+                                  //   verticalFeatureDirection: true,
+                                  // ),
                                 ],
                               ),
                             ),
