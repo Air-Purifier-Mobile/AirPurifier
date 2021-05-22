@@ -163,12 +163,12 @@ class BluetoothDiscoveryView extends StatelessWidget {
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                           Colors.white),
                                     )
-                                  : null,
+                                  : Container(),
                               model.searchOngoing
                                   ? SizedBox(
                                       height: height / 20,
                                     )
-                                  : null,
+                                  : Container(),
                               Text(
                                 model.searchOngoing
                                     ? "Searching for available devices"
