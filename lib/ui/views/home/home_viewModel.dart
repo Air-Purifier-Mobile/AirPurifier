@@ -202,7 +202,6 @@ class HomeViewModel extends BaseViewModel {
     pm2 = null;
     pm10 = null;
     getLocation();
-    panelController.close();
     notifyListeners();
   }
 
@@ -612,11 +611,6 @@ class HomeViewModel extends BaseViewModel {
   void setQualityIndexAsPerAir(int index) {
     qualityIndex = index;
     notifyListeners();
-  }
-
-  PanelController panelController = PanelController();
-  void closePanel() {
-    panelController.close();
   }
 
   /// Sample graph Json data
