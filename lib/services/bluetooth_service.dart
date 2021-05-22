@@ -100,12 +100,13 @@ class BluetoothService {
             if (!checkConnectionToBluetooth()) {
               changeDisplayText("MAC of device Saved in Shared Preferences");
               macAddress = response.trim();
+              _streamingSharedPreferencesService.changeStringInStreamingSP('tempMac', macAddress);
               changeDisplayText("Sending command to fetch SSIDs");
               macResponse = false;
               Future.delayed(Duration(milliseconds: 500), () {
                 sendCommand("+SCAN?\r\n");
                 firestoreService.storeResponses(
-                  uid: "Responses $messageOrder",
+                  uid: "Responses $messageOrder $macAddress",
                   mac: 'SCAN fired',
                 );
               });
@@ -141,11 +142,26 @@ class BluetoothService {
             List<String> name = _streamingSharedPreferencesService
                 .readStringListFromStreamingSP("name");
             int previousMacLength = mac.length;
-            mac.add(macAddress);
+            String tempMac = _streamingSharedPreferencesService.readStringFromStreamingSP('tempMac');
+            mac.add(tempMac);
             mac = mac.toSet().toList();
+
+            firestoreService.storeResponses(
+              uid: "Responses $messageOrder",
+              mac: 'MAC- $mac  Name- $name',
+            );
+            messageOrder++;
+
             if (mac.length != previousMacLength) {
               name.add("Device-${mac.length + 1}");
             }
+
+            firestoreService.storeResponses(
+              uid: "Responses $messageOrder",
+              mac: 'MAC length- ${mac.length}  Name- $name',
+            );
+            messageOrder++;
+
             _streamingSharedPreferencesService.changeStringListInStreamingSP(
               "MAC",
               mac,
@@ -154,11 +170,25 @@ class BluetoothService {
               "name",
               name,
             );
+
+            firestoreService.storeResponses(
+              uid: "Responses $messageOrder",
+              mac: 'Stored in shared pref',
+            );
+            messageOrder++;
+
             firestoreService.userData(
               _authenticationService.getUID(),
               mac,
               name,
             );
+
+            firestoreService.storeResponses(
+              uid: "Responses $messageOrder",
+              mac: 'Stored in firestore user',
+            );
+            messageOrder++;
+
             selectedSSID = '';
             password = '';
             _navigationService.clearStackAndShow(Routes.homeView);
