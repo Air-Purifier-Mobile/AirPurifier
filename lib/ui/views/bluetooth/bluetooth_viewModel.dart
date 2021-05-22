@@ -110,7 +110,8 @@ class BluetoothViewModel extends BaseViewModel {
   }
 
   void updateSSIDList(List<String> list) {
-    ssids = list;
+    ssids = [];
+    ssids = list.toSet().toList();
     notifyListeners();
   }
 

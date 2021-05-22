@@ -25,7 +25,6 @@ class BluetoothDiscoveryViewModel extends BaseViewModel {
         _streamSubscription =
             flutterBluetoothSerial.startDiscovery().listen((event) {
           allDevices.add(event);
-
         }, onError: (error) {
           searchOngoing = false;
           notifyListeners();
@@ -33,8 +32,13 @@ class BluetoothDiscoveryViewModel extends BaseViewModel {
         _streamSubscription.onDone(() {
           searchOngoing = false;
           bluetoothList = [];
+
           for (int i = 0; i < allDevices.length; i++) {
-            bluetoothList.add(allDevices[i].device);
+            if (!bluetoothList.contains(allDevices[i].device) &&
+                allDevices[i].device != null &&
+                allDevices[i].device.name != null &&
+                allDevices[i].device.name != "")
+              bluetoothList.add(allDevices[i].device);
           }
           notifyListeners();
         });

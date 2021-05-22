@@ -372,7 +372,9 @@ class Wifi extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 2.0),
+                          horizontal: width / 20,
+                          vertical: height / 100,
+                        ),
                         child: InkWell(
                           onTap: () {
                             connectSSID(wifiList[index].trim());

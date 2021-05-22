@@ -140,23 +140,25 @@ class BluetoothService {
                 .readStringListFromStreamingSP("MAC");
             List<String> name = _streamingSharedPreferencesService
                 .readStringListFromStreamingSP("name");
-            if (mac.contains(macAddress)) {} else {
-              mac.add(macAddress);
+            int previousMacLength = mac.length;
+            mac.add(macAddress);
+            mac = mac.toSet().toList();
+            if (mac.length != previousMacLength) {
               name.add("Device-${mac.length + 1}");
-              _streamingSharedPreferencesService.changeStringListInStreamingSP(
-                "MAC",
-                mac,
-              );
-              _streamingSharedPreferencesService.changeStringListInStreamingSP(
-                "name",
-                name,
-              );
-              firestoreService.userData(
-                _authenticationService.getUID(),
-                mac,
-                name,
-              );
             }
+            _streamingSharedPreferencesService.changeStringListInStreamingSP(
+              "MAC",
+              mac,
+            );
+            _streamingSharedPreferencesService.changeStringListInStreamingSP(
+              "name",
+              name,
+            );
+            firestoreService.userData(
+              _authenticationService.getUID(),
+              mac,
+              name,
+            );
             selectedSSID = '';
             password = '';
             _navigationService.clearStackAndShow(Routes.homeView);
