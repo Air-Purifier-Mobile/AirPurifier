@@ -25,23 +25,17 @@ class BluetoothDiscoveryViewModel extends BaseViewModel {
         _streamSubscription =
             flutterBluetoothSerial.startDiscovery().listen((event) {
           allDevices.add(event);
-          for (int i = 0; i < allDevices.length; i++) {
-            bluetoothList.add(allDevices[i].device);
-            notifyListeners();
-            // if (allDevices[i].device.name == 'Airpurifier') {
-            //   changeDisplayText('Air Purifier Found.');
-            //   stopScanningDevices();
-            //   connectDevice(allDevices[i].device);
-            //   deviceFound = true;
-            //   break;
-            // }
-          }
+
         }, onError: (error) {
           searchOngoing = false;
           notifyListeners();
         });
         _streamSubscription.onDone(() {
           searchOngoing = false;
+          bluetoothList = [];
+          for (int i = 0; i < allDevices.length; i++) {
+            bluetoothList.add(allDevices[i].device);
+          }
           notifyListeners();
         });
       } else {

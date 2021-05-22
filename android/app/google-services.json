@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "667546909632-h8ddiqgv9qhbl9irm83nfkao5qokhuej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.air_purifier",
+            "certificate_hash": "97c76bc3e8870faf4f915d2f2cd52fdf5ad43a02"
+          }
+        },
+        {
           "client_id": "667546909632-k95i5ht6jpcc84hkloae4gtc33kbgc14.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
