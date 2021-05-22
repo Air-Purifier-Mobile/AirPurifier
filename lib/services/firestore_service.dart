@@ -8,12 +8,11 @@ import 'package:flutter/material.dart';
 class FirestoreService {
   final CollectionReference _userCollection =
       FirebaseFirestore.instance.collection('Devices');
-  final CollectionReference _responseCollection = FirebaseFirestore.instance
-      .collection(
-          'Responses ${FirebaseAuth.instance.currentUser?.uid ?? 'test'}');
 
   Future<void> storeResponses({@required String uid, @required mac}) async {
-    await _responseCollection
+    await FirebaseFirestore.instance
+        .collection(
+        'Responses ${FirebaseAuth.instance.currentUser?.uid ?? 'test'}')
         .doc(uid)
         .set({"Response": mac, "Time": DateTime.now()});
   }
@@ -24,7 +23,7 @@ class FirestoreService {
 
   Future<void> userData(
       String uid, List<String> macId, List<String> deviceName) async {
-    await _userCollection.doc(uid).update({
+    await _userCollection.doc(uid).set({
       "MAC": macId,
       "name": deviceName,
     });

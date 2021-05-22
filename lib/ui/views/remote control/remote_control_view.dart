@@ -768,74 +768,77 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                           ),
                           Column(
                             children: [
-                              Center(
-                                child: Container(
-                                  width: width * 0.868,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.white54,
+                              Padding(
+                               padding: EdgeInsets.symmetric(horizontal: width*0.01),
+
+                                child: Center(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.white54,
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        height / 34,
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(
-                                      height / 34,
+                                    child: FlutterToggleTab(
+                                      // width in percent, to set full width just set to 100
+                                      width: 100,
+                                      borderRadius: 30,
+                                      height: height / 17,
+                                      initialIndex: model.purifierMode,
+                                      selectedIndex: model.purifierMode,
+                                      selectedBackgroundColors: [
+                                        Colors.white,
+                                      ],
+                                      unSelectedBackgroundColors: [
+                                        primaryColor,
+                                      ],
+                                      selectedTextStyle: TextStyle(
+                                        color: primaryColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      unSelectedTextStyle: TextStyle(
+                                        color: Colors.white54,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      labels: ["Auto", "Manual", "Sleep"],
+                                      selectedLabelIndex: (index) {
+                                        print("Selected Index $index");
+                                        switch (index) {
+                                          case 0:
+                                            {
+                                              model.publishMessage("APMA");
+                                              model.purifierState = false;
+                                              model.purifierImageState = true;
+                                            }
+                                            break;
+                                          case 1:
+                                            {
+                                              model.publishMessage("APMM");
+                                              model.purifierState = true;
+                                              model.refreshDeviceState();
+                                            }
+                                            break;
+                                          case 2:
+                                            {
+                                              model.publishMessage("APMS");
+                                              model.purifierState = false;
+                                              model.purifierImageState = true;
+                                            }
+                                            break;
+                                          default:
+                                            {
+                                              Fluttertoast.showToast(
+                                                msg: "What was the input? $index",
+                                              );
+                                            }
+                                        }
+                                        model.setPurifierMode(index);
+                                      },
                                     ),
-                                  ),
-                                  child: FlutterToggleTab(
-                                    // width in percent, to set full width just set to 100
-                                    width: width * 0.2,
-                                    borderRadius: 30,
-                                    height: height / 17,
-                                    initialIndex: model.purifierMode,
-                                    selectedIndex: model.purifierMode,
-                                    selectedBackgroundColors: [
-                                      Colors.white,
-                                    ],
-                                    unSelectedBackgroundColors: [
-                                      primaryColor,
-                                    ],
-                                    selectedTextStyle: TextStyle(
-                                      color: primaryColor,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    unSelectedTextStyle: TextStyle(
-                                      color: Colors.white54,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    labels: ["Auto", "Manual", "Sleep"],
-                                    selectedLabelIndex: (index) {
-                                      print("Selected Index $index");
-                                      switch (index) {
-                                        case 0:
-                                          {
-                                            model.publishMessage("APMA");
-                                            model.purifierState = false;
-                                            model.purifierImageState = true;
-                                          }
-                                          break;
-                                        case 1:
-                                          {
-                                            model.publishMessage("APMM");
-                                            model.purifierState = true;
-                                            model.refreshDeviceState();
-                                          }
-                                          break;
-                                        case 2:
-                                          {
-                                            model.publishMessage("APMS");
-                                            model.purifierState = false;
-                                            model.purifierImageState = true;
-                                          }
-                                          break;
-                                        default:
-                                          {
-                                            Fluttertoast.showToast(
-                                              msg: "What was the input? $index",
-                                            );
-                                          }
-                                      }
-                                      model.setPurifierMode(index);
-                                    },
                                   ),
                                 ),
                               ),

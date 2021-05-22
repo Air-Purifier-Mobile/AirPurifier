@@ -51,10 +51,12 @@ class HomeView extends StatelessWidget {
     ];
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    int counter =0;
     return ViewModelBuilder<HomeViewModel>.reactive(
       viewModelBuilder: () => HomeViewModel(),
       onModelReady: (model) => model.getLocation(),
       builder: (context, model, child) {
+        print('\n\n\n\n\ REBUILDING ${counter++}');
         void _modalBottomSheetMenu() {
           showModalBottomSheet(
               backgroundColor: Colors.transparent,
@@ -177,6 +179,112 @@ class HomeView extends StatelessWidget {
                 );
               });
         }
+        void _modalGraphSheetMenu() {
+          showModalBottomSheet(
+              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
+              context: context,
+              builder: (builder) {
+                return GestureDetector(
+                  onVerticalDragEnd: (e) {
+                    if (e.primaryVelocity > 0) {
+                        Navigator.of(context).pop();
+                    }
+                  },
+                  child: Container(
+                    height: height * 0.5,
+                    width: width,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF05051C),
+                    ),
+                    child: Flex(
+                      direction: Axis.vertical,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            width * 0.2,
+                            0,
+                            width * 0.2,
+                            height * 0.04,
+                          ),
+                          child: Container(
+                            width: width * 0.2,
+                            child: Divider(
+                              thickness: height * 0.003,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        model.gotGraphData
+                            ? Expanded(
+                          child: Stack(children: [
+                            Container(
+                              height: height * 0.306,
+                              child: Flex(
+                                direction: Axis.vertical,
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      width: width * 0.01,
+                                      height: height * 0.1,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                      width: width * 0.01,
+                                      height: height * 0.1,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                      width: width * 0.01,
+                                      height: height * 0.1,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ListView(
+                              controller: model.graphScrollController,
+                              physics: BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                Container(
+                                  width: width * 10,
+                                  child: LineChartSample1(
+                                    renderList: model.renderList,
+                                    currentDay: model.weekDay,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ]),
+                        )
+                            : Expanded(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: height * 0.1,
+                          width: width,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
+        }
 
         return GestureDetector(
           onTap: () {
@@ -187,9 +295,10 @@ class HomeView extends StatelessWidget {
           },
           onVerticalDragEnd: (e) {
             if (e.primaryVelocity > 0) {
-              model.closePanel();
+
             } else if (e.primaryVelocity < 0) {
-              model.panelController.open();
+              if(model.gotGraphData)
+              _modalGraphSheetMenu();
               model.graphScrollController.position.animateTo(
                   model.graphScrollController.position.maxScrollExtent,
                   duration: Duration(seconds: 1),
@@ -199,7 +308,7 @@ class HomeView extends StatelessWidget {
           onHorizontalDragEnd: (e) {
             if (e.primaryVelocity > 0) {
               model.scaffoldKey.currentState.openDrawer();
-              model.closePanel();
+
               model.notifyListeners();
             } else {
               model.scaffoldKey.currentState.isEndDrawerOpen
@@ -469,613 +578,492 @@ class HomeView extends StatelessWidget {
               ),
             ),
             resizeToAvoidBottomInset: false,
-            body: SlidingUpPanel(
-              renderPanelSheet: false,
-              controller: model.panelController,
-              backdropTapClosesPanel: true,
-              borderRadius: BorderRadius.circular(width * 0.2),
-              maxHeight: height / 2,
-              parallaxEnabled: true,
-              minHeight: height / 40,
-              collapsed: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFF05051C),
-                  borderRadius: BorderRadius.circular(width * 0.06),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    width * 0.4,
-                    height * 0.01,
-                    width * 0.4,
-                    height * 0.0333,
-                  ),
-                  child: Container(
-                    width: width * 0.2,
-                    child: Divider(
-                      thickness: 3,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              panel: Container(
-                height: height * 0.5,
-                width: width,
-                decoration: BoxDecoration(
-                  color: Color(0xFF05051C),
-                ),
-                child: Flex(
-                  direction: Axis.vertical,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        width * 0.2,
-                        0,
-                        width * 0.2,
-                        height * 0.04,
-                      ),
-                      child: Container(
-                        width: width * 0.2,
-                        child: Divider(
-                          thickness: height * 0.003,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    model.gotGraphData
-                        ? Expanded(
-                            child: Stack(children: [
-                              Container(
-                                height: height * 0.306,
-                                child: Flex(
-                                  direction: Axis.vertical,
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        width: width * 0.01,
-                                        height: height * 0.1,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 5,
-                                      child: Container(
-                                        width: width * 0.01,
-                                        height: height * 0.1,
-                                        color: Colors.orange,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        width: width * 0.01,
-                                        height: height * 0.1,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              ListView(
-                                controller: model.graphScrollController,
-                                physics: BouncingScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                children: [
-                                  Container(
-                                    width: width * 10,
-                                    child: LineChartSample1(
-                                      renderList: model.renderList,
-                                      currentDay: model.weekDay,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ]),
-                          )
-                        : Expanded(
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
+            body: Stack(
+              children: [
+                KeyboardDismisser(
+                  child: model.temperature != null
+                      ? Container(
+                    height: height,
+                    width: width,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ///City
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            0.0,
+                            height * 0.1,
+                            0.0,
+                            height * 0.02,
+                          ),
+                          child: Text(
+                            '${model.cityName ?? ""}',
+                            style: TextStyle(
+                              fontSize: height / 35,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w300,
                             ),
                           ),
-                    Container(
-                      height: height * 0.1,
-                      width: width,
-                    ),
-                  ],
-                ),
-              ),
-              body: Stack(
-                children: [
-                  KeyboardDismisser(
-                    child: model.temperature != null
-                        ? Container(
-                            height: height,
-                            width: width,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                ///City
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    0.0,
-                                    height * 0.1,
-                                    0.0,
-                                    height * 0.02,
+                        ),
+
+                        ///Humidity and Temperature
+                        Container(
+                          height: height * 0.08333,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ///Temperature
+                              Row(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    height: height / 35,
+                                    width: width * 0.08,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/temperature.png'),
+                                        )),
                                   ),
-                                  child: Text(
-                                    '${model.cityName ?? ""}',
+                                  Text(
+                                    '${model.temperature ?? ""}°',
                                     style: TextStyle(
-                                      fontSize: height / 35,
+                                      fontSize: height / 24,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w300,
                                     ),
                                   ),
-                                ),
+                                  // Container(
+                                  //   height: height / 13,
+                                  //   child:
+                                  // ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: width / 10,
+                              ),
 
-                                ///Humidity and Temperature
-                                Container(
-                                  height: height * 0.08333,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      ///Temperature
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            height: height / 35,
-                                            width: width * 0.08,
-                                            decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/temperature.png'),
-                                            )),
-                                          ),
-                                          Text(
-                                            '${model.temperature ?? ""}°',
-                                            style: TextStyle(
-                                              fontSize: height / 24,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                          // Container(
-                                          //   height: height / 13,
-                                          //   child:
-                                          // ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: width / 10,
-                                      ),
-
-                                      ///Humidity
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            height: height / 35,
-                                            width: width * 0.08,
-                                            decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/humidity.png'),
-                                            )),
-                                          ),
-
-                                          Text(
-                                            '${model.humidity ?? ""} %',
-                                            style: TextStyle(
-                                              fontSize: height / 24,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                          ),
-                                          // Container(
-                                          //   height: height / 13,
-                                          //   child:
-                                          // ),
-                                        ],
-                                      ),
-                                    ],
+                              ///Humidity
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: height / 35,
+                                    width: width * 0.08,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/humidity.png'),
+                                        )),
                                   ),
-                                ),
 
-                                SizedBox(
-                                  height: height / 20,
-                                ),
-
-                                /// Air Description
-                                model.pm2 == null
-                                    ? Container(
-                                        height: height * 0.3,
-                                        child: Stack(
-                                          alignment:
-                                              AlignmentDirectional.topCenter,
-                                          children: [
-                                            ///Fan Image and Slider
-                                            Container(
-                                              height: height * 0.2,
-                                              width: width * 0.4,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                    "assets/fanOffPurifierOff.png",
-                                                  ),
-                                                  fit: BoxFit.fitWidth,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : CircularKnobView(
-                                        height: height,
-                                        width: width,
-                                        value_temp: model.pm2,
-                                        index: model.qualityIndex,
-                                      ),
-
-                                /// Air Quality
-                                model.pm2 == null
-                                    ? FadingText(
-                                        "..",
-                                        style: TextStyle(
-                                          fontSize: height * 0.043,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      )
-                                    : Container(
-                                        height: height * 0.06,
-                                        width: width * 0.9,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              width: width * 0.13,
-                                              height: height * 0.03,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                    "assets/${model.quality[model.qualityIndex]}Air.png",
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              model.qualityText[
-                                                  model.qualityIndex],
-                                              style: TextStyle(
-                                                fontSize: height * 0.043,
-                                                color: model.qualityColor[
-                                                    model.qualityIndex],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                SizedBox(
-                                  height: height / 20,
-                                ),
-
-                                Icon(
-                                  Icons.wifi_outlined,
-                                  color: Colors.white70,
-                                  size: height / 25,
-                                ),
-
-                                ///Device Name
-                                InkWell(
-                                  onTap: () {
-                                    print("hello mujhe dabaya gaya hai");
-                                    _modalBottomSheetMenu();
-                                  },
-                                  child: Container(
-                                    width: width * 0.8,
-                                    alignment: Alignment.center,
-                                    child: Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                          0.0,
-                                          height * 0.02,
-                                          0.0,
-                                          0.0,
-                                        ),
-                                        child: Text(
-                                          "${model.currentName[model.lastDevice] ?? ""}",
-                                          style: TextStyle(
-                                            fontSize: height / 45,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        )
-                                        // child: !model.editingStatus
-                                        //     ? Text(
-                                        //         "${model.currentName[model.lastDevice] ?? ""}",
-                                        //         style: TextStyle(
-                                        //           fontSize: height / 45,
-                                        //           color: model.primaryColor,
-                                        //           fontWeight: FontWeight.w500,
-                                        //         ),
-                                        //       )
-                                        //     : Padding(
-                                        //         padding: EdgeInsets.fromLTRB(
-                                        //           0.0,
-                                        //           0.0,
-                                        //           0.0,
-                                        //           height * 0.0333,
-                                        //         ),
-                                        //         child: Container(
-                                        //           height: height / 20,
-                                        //           width: width * 0.5,
-                                        //           child: TextFormField(
-                                        //             showCursor: true,
-                                        //             autofocus: true,
-                                        //             decoration:
-                                        //                 InputDecoration(
-                                        //               enabledBorder:
-                                        //                   UnderlineInputBorder(
-                                        //                 borderSide:
-                                        //                     BorderSide(
-                                        //                   color: primaryColor,
-                                        //                 ),
-                                        //               ),
-                                        //               focusedBorder:
-                                        //                   UnderlineInputBorder(
-                                        //                 borderSide:
-                                        //                     BorderSide(
-                                        //                   color: primaryColor,
-                                        //                 ),
-                                        //               ),
-                                        //               border:
-                                        //                   UnderlineInputBorder(
-                                        //                 borderSide:
-                                        //                     BorderSide(
-                                        //                   color: primaryColor,
-                                        //                 ),
-                                        //               ),
-                                        //             ),
-                                        //             cursorColor: primaryColor,
-                                        //             controller:
-                                        //                 model.nameEditor,
-                                        //             textAlign:
-                                        //                 TextAlign.center,
-                                        //             onFieldSubmitted: (text) {
-                                        //               model.editingStatus =
-                                        //                   false;
-                                        //               model.updateName(text);
-                                        //             },
-                                        //             onEditingComplete: () {
-                                        //               print("Complelte");
-                                        //             },
-                                        //           ),
-                                        //         ),
-                                        //       ),
-                                        ),
-                                  ),
-                                ),
-
-                                /// Divider
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                    0.0,
-                                    height * 0.01,
-                                    0.0,
-                                    height * 0.0333,
-                                  ),
-                                  child: Container(
-                                    width: width / 5,
-                                    child: Divider(
-                                      thickness: 1,
+                                  Text(
+                                    '${model.humidity ?? ""} %',
+                                    style: TextStyle(
+                                      fontSize: height / 24,
                                       color: Colors.white,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   height: height / 13,
+                                  //   child:
+                                  // ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: height / 20,
+                        ),
+
+                        /// Air Description
+                        model.pm2 == null
+                            ? Container(
+                          height: height * 0.3,
+                          child: Stack(
+                            alignment:
+                            AlignmentDirectional.topCenter,
+                            children: [
+                              ///Fan Image and Slider
+                              Container(
+                                height: height * 0.2,
+                                width: width * 0.4,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                      "assets/fanOffPurifierOff.png",
+                                    ),
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                            : CircularKnobView(
+                          height: height,
+                          width: width,
+                          value_temp: model.pm2,
+                          index: model.qualityIndex,
+                        ),
+
+                        /// Air Quality
+                        model.pm2 == null
+                            ? FadingText(
+                          "..",
+                          style: TextStyle(
+                            fontSize: height * 0.043,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                            : Container(
+                          height: height * 0.06,
+                          width: width * 0.9,
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: width * 0.13,
+                                height: height * 0.03,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                      "assets/${model.quality[model.qualityIndex]}Air.png",
                                     ),
                                   ),
                                 ),
-
-                                ///PM values
-                                Container(
-                                  height: height * 0.0833,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      ///PM 2.5
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            'PM 2.5',
-                                            style: TextStyle(
-                                              fontSize: height / 45,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: height * 0.01,
-                                          ),
-                                          (model.pm2 != null) &&
-                                                  (model.pm2 != '')
-                                              ? Row(
-                                                  children: [
-                                                    Text(
-                                                      '${double.parse(model.pm2).ceil()} ',
-                                                      style: TextStyle(
-                                                        fontSize: height / 30,
-                                                        color: model
-                                                                .qualityColor[
-                                                            model.qualityIndex],
-                                                        fontWeight:
-                                                            FontWeight.w300,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      'ppm',
-                                                      style: TextStyle(
-                                                        fontSize: height / 45,
-                                                        color: model
-                                                                .qualityColor[
-                                                            model.qualityIndex],
-                                                        fontWeight:
-                                                            FontWeight.w300,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              : FadingText(
-                                                  "..",
-                                                  style: TextStyle(
-                                                    fontSize: height / 30,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                          // Container(
-                                          //   height: height / 13,
-                                          //   child:
-                                          // ),
-                                        ],
-                                      ),
-
-                                      SizedBox(
-                                        width: width / 12,
-                                      ),
-
-                                      ///PM 10
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            'PM 10',
-                                            style: TextStyle(
-                                              fontSize: height / 48,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: height * 0.01,
-                                          ),
-
-                                          (model.pm10 != null) &&
-                                                  (model.pm10 != '')
-                                              ? Row(
-                                                  children: [
-                                                    Text(
-                                                      '${double.parse(model.pm10).ceil()} ',
-                                                      style: TextStyle(
-                                                        fontSize: height / 30,
-                                                        color: model
-                                                                .qualityColor[
-                                                            model.qualityIndex],
-                                                        fontWeight:
-                                                            FontWeight.w300,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      'ppm',
-                                                      style: TextStyle(
-                                                        fontSize: height / 48,
-                                                        color: model
-                                                                .qualityColor[
-                                                            model.qualityIndex],
-                                                        fontWeight:
-                                                            FontWeight.w300,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              : FadingText(
-                                                  "..",
-                                                  style: TextStyle(
-                                                    fontSize: height / 30,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                          // Container(
-                                          //   height: height / 13,
-                                          //   child:
-                                          // ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Container(
-                            height: height,
-                            width: width,
-                            child: Center(
-                              child: FadingText(
-                                "....",
+                              ),
+                              Text(
+                                model.qualityText[
+                                model.qualityIndex],
                                 style: TextStyle(
-                                  fontSize: height / 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w300,
+                                  fontSize: height * 0.043,
+                                  color: model.qualityColor[
+                                  model.qualityIndex],
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                  ),
-                  Positioned(
-                    right: width * 0.02,
-                    bottom: height / 20,
-                    child: FloatingActionButton(
-                      backgroundColor: Colors.white,
-                      onPressed: () {
-                        print('remote button pressed-' +
-                            "${model.pm2}" +
-                            ' ' +
-                            "${model.pm10}");
+                        ),
 
-                        ///uncomment in prod
-                        if ((model.pm2 == null || model.pm2 == "") &&
-                            (model.pm10 == null || model.pm10 == "")) {
-                          print('remote button pressed 2-' +
-                              "${model.pm2}" +
-                              ' ' +
-                              "${model.pm10}");
-                          Fluttertoast.showToast(
-                            msg: "Please turn on power supply to device",
-                          );
-                          print("Printing SharedPref values\n");
-                        } else {
-                          print('Going to remote');
-                          model.gotoRemoteScreen();
-                        }
-                      },
-                      child: Container(
-                        height: width / 12,
-                        width: width / 12,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(
-                              "assets/remote_day.png",
+                        SizedBox(
+                          height: height / 20,
+                        ),
+
+                        Icon(
+                          Icons.wifi_outlined,
+                          color: Colors.white70,
+                          size: height / 25,
+                        ),
+
+                        ///Device Name
+                        InkWell(
+                          onTap: () {
+                            print("hello mujhe dabaya gaya hai");
+                            _modalBottomSheetMenu();
+                          },
+                          child: Container(
+                            width: width * 0.8,
+                            alignment: Alignment.center,
+                            child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  0.0,
+                                  height * 0.02,
+                                  0.0,
+                                  0.0,
+                                ),
+                                child: Text(
+                                  "${model.currentName[model.lastDevice] ?? ""}",
+                                  style: TextStyle(
+                                    fontSize: height / 45,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              // child: !model.editingStatus
+                              //     ? Text(
+                              //         "${model.currentName[model.lastDevice] ?? ""}",
+                              //         style: TextStyle(
+                              //           fontSize: height / 45,
+                              //           color: model.primaryColor,
+                              //           fontWeight: FontWeight.w500,
+                              //         ),
+                              //       )
+                              //     : Padding(
+                              //         padding: EdgeInsets.fromLTRB(
+                              //           0.0,
+                              //           0.0,
+                              //           0.0,
+                              //           height * 0.0333,
+                              //         ),
+                              //         child: Container(
+                              //           height: height / 20,
+                              //           width: width * 0.5,
+                              //           child: TextFormField(
+                              //             showCursor: true,
+                              //             autofocus: true,
+                              //             decoration:
+                              //                 InputDecoration(
+                              //               enabledBorder:
+                              //                   UnderlineInputBorder(
+                              //                 borderSide:
+                              //                     BorderSide(
+                              //                   color: primaryColor,
+                              //                 ),
+                              //               ),
+                              //               focusedBorder:
+                              //                   UnderlineInputBorder(
+                              //                 borderSide:
+                              //                     BorderSide(
+                              //                   color: primaryColor,
+                              //                 ),
+                              //               ),
+                              //               border:
+                              //                   UnderlineInputBorder(
+                              //                 borderSide:
+                              //                     BorderSide(
+                              //                   color: primaryColor,
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //             cursorColor: primaryColor,
+                              //             controller:
+                              //                 model.nameEditor,
+                              //             textAlign:
+                              //                 TextAlign.center,
+                              //             onFieldSubmitted: (text) {
+                              //               model.editingStatus =
+                              //                   false;
+                              //               model.updateName(text);
+                              //             },
+                              //             onEditingComplete: () {
+                              //               print("Complelte");
+                              //             },
+                              //           ),
+                              //         ),
+                              //       ),
                             ),
-                            fit: BoxFit.fitHeight,
                           ),
+                        ),
+
+                        /// Divider
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            0.0,
+                            height * 0.01,
+                            0.0,
+                            height * 0.0333,
+                          ),
+                          child: Container(
+                            width: width / 5,
+                            child: Divider(
+                              thickness: 1,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+
+                        ///PM values
+                        Container(
+                          height: height * 0.0833,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              ///PM 2.5
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'PM 2.5',
+                                    style: TextStyle(
+                                      fontSize: height / 45,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: height * 0.01,
+                                  ),
+                                  (model.pm2 != null) &&
+                                      (model.pm2 != '')
+                                      ? Row(
+                                    children: [
+                                      Text(
+                                        '${double.parse(model.pm2).ceil()} ',
+                                        style: TextStyle(
+                                          fontSize: height / 30,
+                                          color: model
+                                              .qualityColor[
+                                          model.qualityIndex],
+                                          fontWeight:
+                                          FontWeight.w300,
+                                        ),
+                                      ),
+                                      Text(
+                                        'ppm',
+                                        style: TextStyle(
+                                          fontSize: height / 45,
+                                          color: model
+                                              .qualityColor[
+                                          model.qualityIndex],
+                                          fontWeight:
+                                          FontWeight.w300,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                      : FadingText(
+                                    "..",
+                                    style: TextStyle(
+                                      fontSize: height / 30,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   height: height / 13,
+                                  //   child:
+                                  // ),
+                                ],
+                              ),
+
+                              SizedBox(
+                                width: width / 12,
+                              ),
+
+                              ///PM 10
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'PM 10',
+                                    style: TextStyle(
+                                      fontSize: height / 48,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: height * 0.01,
+                                  ),
+
+                                  (model.pm10 != null) &&
+                                      (model.pm10 != '')
+                                      ? Row(
+                                    children: [
+                                      Text(
+                                        '${double.parse(model.pm10).ceil()} ',
+                                        style: TextStyle(
+                                          fontSize: height / 30,
+                                          color: model
+                                              .qualityColor[
+                                          model.qualityIndex],
+                                          fontWeight:
+                                          FontWeight.w300,
+                                        ),
+                                      ),
+                                      Text(
+                                        'ppm',
+                                        style: TextStyle(
+                                          fontSize: height / 48,
+                                          color: model
+                                              .qualityColor[
+                                          model.qualityIndex],
+                                          fontWeight:
+                                          FontWeight.w300,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                      : FadingText(
+                                    "..",
+                                    style: TextStyle(
+                                      fontSize: height / 30,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   height: height / 13,
+                                  //   child:
+                                  // ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                      : Container(
+                    height: height,
+                    width: width,
+                    child: Center(
+                      child: FadingText(
+                        "....",
+                        style: TextStyle(
+                          fontSize: height / 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                Positioned(
+                  right: width * 0.02,
+                  bottom: height / 20,
+                  child: FloatingActionButton(
+                    backgroundColor: Colors.white,
+                    onPressed: () {
+                      print('remote button pressed-' +
+                          "${model.pm2}" +
+                          ' ' +
+                          "${model.pm10}");
+
+                      ///uncomment in prod
+                      if ((model.pm2 == null || model.pm2 == "") &&
+                          (model.pm10 == null || model.pm10 == "")) {
+                        print('remote button pressed 2-' +
+                            "${model.pm2}" +
+                            ' ' +
+                            "${model.pm10}");
+                        Fluttertoast.showToast(
+                          msg: "Please turn on power supply to device",
+                        );
+                        print("Printing SharedPref values\n");
+                      } else {
+                        print('Going to remote');
+                        model.gotoRemoteScreen();
+                      }
+                    },
+                    child: Container(
+                      height: width / 12,
+                      width: width / 12,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "assets/remote_day.png",
+                          ),
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );

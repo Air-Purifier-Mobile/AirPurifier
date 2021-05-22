@@ -5,6 +5,7 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:air_purifier/services/firestore_service.dart';
 import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -153,7 +154,7 @@ class BluetoothService {
             messageOrder++;
 
             if (mac.length != previousMacLength) {
-              name.add("Device-${mac.length + 1}");
+              name.add("Device-${mac.length}");
             }
 
             firestoreService.storeResponses(
@@ -178,7 +179,7 @@ class BluetoothService {
             messageOrder++;
 
             firestoreService.userData(
-              _authenticationService.getUID(),
+              FirebaseAuth.instance.currentUser.uid,
               mac,
               name,
             );
@@ -191,6 +192,8 @@ class BluetoothService {
 
             selectedSSID = '';
             password = '';
+
+            connection.dispose();
             _navigationService.clearStackAndShow(Routes.homeView);
           }
           if (response.trim() == "WIFI FAIL") {
@@ -326,55 +329,6 @@ class BluetoothService {
         );
       });
     });
-    // if (device.bondState.isBonded) {
-    //   // Un-pair the device
-    //   changeDisplayText("Entered Device is bonded");
-    //   FlutterBluetoothSerial.instance
-    //       .removeDeviceBondWithAddress(device.address)
-    //       .then((result) {
-    //     if (result) {
-    //       changeDisplayText("Unpaired device");
-    //       // Re-pair  the device
-    //       FlutterBluetoothSerial.instance
-    //           .bondDeviceAtAddress(device.address)
-    //           .then((pairResult) {
-    //         if (pairResult) {
-    //           changeDisplayText("Entered pairing again");
-    //           BluetoothConnection.toAddress(device.address).then((_connection) {
-    //             connection = _connection;
-    //             if (_connection.isConnected) {
-    //               connectedDevice = device;
-    //               changeDisplayText("Connected to Device : ${device.name}");
-    //               Future.delayed(Duration(milliseconds: 500), () {
-    //                 sendTestMessage();
-    //                 startListeningFromDevice();
-    //               });
-    //             } else
-    //               changeDisplayText(
-    //                   "Purifier Not Connected.\nPlease restart application.");
-    //           }).onError((error, stackTrace) {
-    //             firestoreService.storeResponses(
-    //               uid: "StackTrace2",
-    //               mac: "${error.toString()} +  ${stackTrace.toString()}",
-    //             );
-    //             changeDisplayText(
-    //               "Air Purifier refused to connect. Please restart the application.",
-    //             );
-    //           });
-    //         } else {
-    //           changeDisplayText(
-    //               "Please restart application to complete pairing process");
-    //         }
-    //       });
-    //     } else {
-    //       changeDisplayText(
-    //           "Please un-pair the device manually from phone bluetooth settings and refresh");
-    //       connectDevice(device);
-    //     }
-    //   });
-    // } else {
-    //
-    // }
   }
 
   int okCounter = 0;
