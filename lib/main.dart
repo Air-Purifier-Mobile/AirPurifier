@@ -5,10 +5,13 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:air_purifier/app/router.gr.dart' as customRouter;
+import 'package:flutter/services.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp();
   setupLocator();
   print("locator initialised");
