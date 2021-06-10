@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/services/authentication_service.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:foldable_sidebar/foldable_sidebar.dart';
 import 'package:geolocator/geolocator.dart';
@@ -549,6 +550,8 @@ class HomeViewModel extends BaseViewModel {
         "", rootTopic + currentMac[lastDevice] + '/' + "PM 2.5");
     _mqttService.publishPayload(
         "", rootTopic + currentMac[lastDevice] + '/' + "PM 10");
+    _mqttService.publishPayload(
+        "", rootTopic + currentMac[lastDevice] + '/' + "BLEOFF");
     Future.delayed(Duration(milliseconds: 300), () {
       _mqttService.subscribeToTopic(
           rootTopic + currentMac[lastDevice] + '/' + "PM 1.0");
@@ -582,6 +585,21 @@ class HomeViewModel extends BaseViewModel {
       //     val = 0;
       //   }
       // });
+    });
+  }
+
+  /// goto connect device with address
+  void goToBluetoothConnectScreen() {
+    _mqttService.publishPayload(
+        "", rootTopic + currentMac[lastDevice] + '/' + "BLEON");
+    Fluttertoast.showToast(
+        msg: "Preparing re-configuration. Wait for 5 seconds.");
+    Future.delayed(Duration(seconds: 5), () {
+      printWarning(currentMac[lastDevice]);
+      _navigationService.navigateTo(Routes.bluetoothView,
+          arguments: BluetoothDevice(
+            address: currentMac[lastDevice],
+          ));
     });
   }
 

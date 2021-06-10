@@ -485,7 +485,7 @@ class HomeView extends StatelessWidget {
                               ListTile(
                                 onTap: () {
                                   // Go to Bluetooth
-                                  model.goToBluetoothScreen();
+                                  model.goToBluetoothConnectScreen();
                                 },
                                 horizontalTitleGap: 0.0,
                                 leading: Icon(
