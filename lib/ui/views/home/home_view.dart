@@ -5,6 +5,7 @@ import 'package:air_purifier/main.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
 import 'package:air_purifier/ui/views/home/line_graph.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -182,43 +183,44 @@ class HomeView extends StatelessWidget {
 
         void _modalGraphSheetMenu() {
           showModalBottomSheet(
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-              context: context,
-              builder: (builder) {
-                return GestureDetector(
-                  onVerticalDragEnd: (e) {
-                    if (e.primaryVelocity > 0) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: Container(
-                    height: height * 0.5,
-                    width: width,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF05051C),
-                    ),
-                    child: Flex(
-                      direction: Axis.vertical,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            width * 0.2,
-                            0,
-                            width * 0.2,
-                            height * 0.04,
-                          ),
-                          child: Container(
-                            width: width * 0.2,
-                            child: Divider(
-                              thickness: height * 0.003,
-                              color: Colors.white,
-                            ),
+            backgroundColor: Colors.transparent,
+            isScrollControlled: true,
+            context: context,
+            builder: (builder) {
+              return GestureDetector(
+                onVerticalDragEnd: (e) {
+                  if (e.primaryVelocity > 0) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Container(
+                  height: height * 0.5,
+                  width: width,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF05051C),
+                  ),
+                  child: Flex(
+                    direction: Axis.vertical,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          width * 0.2,
+                          0,
+                          width * 0.2,
+                          height * 0.04,
+                        ),
+                        child: Container(
+                          width: width * 0.2,
+                          child: Divider(
+                            thickness: height * 0.003,
+                            color: Colors.white,
                           ),
                         ),
-                        model.gotGraphData
-                            ? Expanded(
-                                child: Stack(children: [
+                      ),
+                      model.gotGraphData
+                          ? Expanded(
+                              child: Stack(
+                                children: [
                                   Container(
                                     height: height * 0.306,
                                     child: Flex(
@@ -265,26 +267,28 @@ class HomeView extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                ]),
-                              )
-                            : Expanded(
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
-                                  ),
+                                ],
+                              ),
+                            )
+                          : Expanded(
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 ),
                               ),
-                        Container(
-                          height: height * 0.1,
-                          width: width,
-                        ),
-                      ],
-                    ),
+                            ),
+                      Container(
+                        height: height * 0.1,
+                        width: width,
+                      ),
+                    ],
                   ),
-                );
-              });
+                ),
+              );
+            },
+          );
         }
 
         return GestureDetector(
@@ -297,11 +301,16 @@ class HomeView extends StatelessWidget {
           onVerticalDragEnd: (e) {
             if (e.primaryVelocity > 0) {
             } else if (e.primaryVelocity < 0) {
-              if (model.gotGraphData) _modalGraphSheetMenu();
-              model.graphScrollController.position.animateTo(
-                  model.graphScrollController.position.maxScrollExtent,
-                  duration: Duration(seconds: 1),
-                  curve: Curves.linearToEaseOut);
+              if (model.gotGraphData) {
+                _modalGraphSheetMenu();
+                Future.delayed(Duration(milliseconds: 200), () {
+                  model.graphScrollController.position.animateTo(
+                    model.graphScrollController.position.maxScrollExtent,
+                    duration: Duration(seconds: 1),
+                    curve: Curves.linearToEaseOut,
+                  );
+                });
+              }
             }
           },
           onHorizontalDragEnd: (e) {
