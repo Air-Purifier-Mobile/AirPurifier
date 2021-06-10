@@ -78,64 +78,6 @@ class HomeViewModel extends BaseViewModel {
   ];
   int qualityIndex = 0;
 
-  /// User Logs out
-  void logout() {
-    _authenticationService.signOut();
-  }
-
-  void removeDevice() {
-    currentMac.removeAt(lastDevice);
-    currentName.removeAt(lastDevice);
-    drawerCurrentState = FSBStatus.FSB_CLOSE;
-    Fluttertoast.showToast(msg: "Device removed");
-    _streamingSharedPreferencesService.changeStringListInStreamingSP(
-      "name",
-      currentName,
-    );
-    _streamingSharedPreferencesService.changeStringListInStreamingSP(
-      "MAC",
-      currentMac,
-    );
-    _firestoreService.userData(
-      _authenticationService.getUID(),
-      currentMac,
-      currentName,
-    );
-    if (lastDevice != 0) {
-      lastDevice--;
-      refresh();
-    } else if (currentName.length >= 1) {
-      refresh();
-    } else {
-      _navigationService.clearStackAndShow(Routes.addDeviceView);
-    }
-  }
-
-  /// updateName
-  void updateName(String name) {
-    nameEditor.text = name;
-    currentName[lastDevice] = name;
-    editingStatus = false;
-    _streamingSharedPreferencesService.changeStringListInStreamingSP(
-      "name",
-      currentName,
-    );
-    _firestoreService.userData(
-      _authenticationService.getUID(),
-      currentMac,
-      currentName,
-    );
-    notifyListeners();
-  }
-
-  /// toggles drawer
-  void menuToggle() {
-    drawerCurrentState = drawerCurrentState == FSBStatus.FSB_OPEN
-        ? FSBStatus.FSB_CLOSE
-        : FSBStatus.FSB_OPEN;
-    notifyListeners();
-  }
-
   ///Used to get WeekDay
   String getDay(int day) {
     switch (day) {
@@ -209,9 +151,7 @@ class HomeViewModel extends BaseViewModel {
     firstPm10 = false;
     firstPm2 = false;
     firstPm10 = false;
-    renderList = [];
-    weekDay = null;
-    renderList10 = [];
+    plotData10 = [];
     notifyListeners();
     getLocation();
     printWarning("refresh ended $pm1 $pm2 $pm10");
@@ -316,33 +256,23 @@ class HomeViewModel extends BaseViewModel {
     printWarning("getLocation ended $pm1 $pm2 $pm10");
   }
 
-  List<double> plotData = [];
-  List<FlSpot> renderList = [];
   List<double> plotData10 = [];
   List<FlSpot> renderList10 = [];
   bool gotGraphData = false;
   int weekDay;
   void renderGraphData() {
     printWarning("renderGraphData started $pm1 $pm2 $pm10");
-    plotData = [];
     plotData10 = [];
     DateTime currentTime = DateTime.now();
     weekDay = currentTime.weekday;
     int currentHour = DateTime.now().hour;
     List<String> fillers = List<String>.filled(287, "");
-    List<String> fillers10 = List<String>.filled(287, "");
     // if (data.length < 168) {
     // filling plotData
     List<double> bufferHourData = List.filled(288, 0.0);
-    List<double> bufferHourData10 = List.filled(288, 0.0);
     // Filling null values for buffer data
     for (int i = 0; i < 7; i++) {
-      plotData.addAll(bufferHourData);
-      // print("Filling null values for buffer data---" +
-      //    plotData.length.toString());
-    }
-    for (int i = 0; i < 7; i++) {
-      plotData10.addAll(bufferHourData10);
+      plotData10.addAll(bufferHourData);
       // print("Filling null values for buffer data---" +
       //    plotData.length.toString());
     }
@@ -352,12 +282,6 @@ class HomeViewModel extends BaseViewModel {
     int showTillIndex = startHourIndex;
     print('start hour index $startHourIndex');
     int remainingHours;
-
-    /// previous 6 day's hours plus current day hour 10
-    int startHourIndex10 = 1727 + (currentHour * 12);
-    int showTillIndex10 = startHourIndex10;
-    print('start hour index $startHourIndex10');
-    int remainingHours10;
     if (!isGraphRequestSent) {
       /// Sync with last saved hour
       print("\n\n");
@@ -367,43 +291,18 @@ class HomeViewModel extends BaseViewModel {
       int betweenHours = (changeInDay * 24) + (changeInHour);
       remainingHours = 168 - betweenHours;
       startHourIndex = remainingHours * 12 - 1;
-
-      /// Sync with last saved hour
-      print("\n\n");
-      print(lastSync.day);
-      int changeInDay10 = (currentTime.day - lastSync.day).abs();
-      int changeInHour10 = (currentTime.hour - lastSync.hour).abs();
-      int betweenHours10 = (changeInDay10 * 24) + (changeInHour10);
-      remainingHours10 = 168 - betweenHours10;
-      startHourIndex10 = remainingHours10 * 12 - 1;
     }
     // filling remaining data
     print('raw data - $data');
     print('raw data length - ${data.length}');
-    // filling remaining data10
-    print('raw data 10 - $data10');
-    print('raw data length 10 - ${data10.length}');
     for (int x = data.length - 1; x >= 0; x--) {
       for (int y = 11; y >= 0; y--) {
-        print('individaul data ${data[x][y]} + $startHourIndex \n');
-        if (startHourIndex >= 0) plotData[startHourIndex--] = data[x][y];
-      }
-    }
-    for (int x = data10.length - 1; x >= 0; x--) {
-      for (int y = 11; y >= 0; y--) {
-        print('individaul data ${data10[x][y]} + $startHourIndex10 \n');
-        if (startHourIndex10 >= 0)
-          plotData10[startHourIndex10--] = data10[x][y];
+        print('individaul data ${data[x][y]} + ${startHourIndex} \n');
+        if (startHourIndex >= 0) plotData10[startHourIndex--] = data[x][y];
       }
     }
 
-    print("Plot data---" + plotData.length.toString());
-    plotData.forEach((element) {
-      print("${element.toString()}");
-    });
-    print("${plotData.length}");
-    // Constructing xLabel List
-    print("Plot data10---" + plotData10.length.toString());
+    print("Plot data---" + plotData10.length.toString());
     plotData10.forEach((element) {
       print("${element.toString()}");
     });
@@ -421,23 +320,9 @@ class HomeViewModel extends BaseViewModel {
     xLabels.add(getDay(weekDay + 1));
 
     for (int i = 0; i < showTillIndex; i++) {
-      renderList.add(FlSpot(i.toDouble(), plotData[i]));
-    }
-    // Constructing xLabel List
-    int totalDays10 = 6;
-    int start10 = weekDay - totalDays10;
-    if (start10 < 0) start10 = start10 + 7;
-    xLabels10 = [];
-    for (int x = 0; x < 7; x++) {
-      xLabels10.add(getDay(start10));
-      xLabels10.addAll(fillers10);
-      start10 = (start10 + 1) % 7;
-    }
-    xLabels10.add(getDay(weekDay + 1));
-
-    for (int i = 0; i < showTillIndex10; i++) {
       renderList10.add(FlSpot(i.toDouble(), plotData10[i]));
     }
+
     gotGraphData = true;
     notifyListeners();
     printWarning("renderGraphData ended $pm1 $pm2 $pm10");
@@ -477,8 +362,8 @@ class HomeViewModel extends BaseViewModel {
         else
           differenceInHours = -1;
 
-        print("Difference in gotGraph-$difference");
-        print("Diff in hours in gotGraph-$differenceInHours");
+        print("Difference in gotGraph-${difference}");
+        print("Diff in hours in gotGraph-${differenceInHours}");
 
         _streamingSharedPreferencesService.changeIntInStreamingSP(
             "day", currentTime.day);
@@ -495,8 +380,6 @@ class HomeViewModel extends BaseViewModel {
 
   List<String> hours = [];
   List<List<double>> data = [];
-  List<String> hours10 = [];
-  List<List<double>> data10 = [];
   List<String> macIdList = [];
 
   int differenceInHours = -1;
@@ -504,21 +387,17 @@ class HomeViewModel extends BaseViewModel {
     printWarning("gotGraphValues started $pm1 $pm2 $pm10");
     print('Complete Json----' + map.toString());
     List<dynamic> pm2DataTemp = map["pm2.5"];
-    List<dynamic> pm10DataTemp = map["pm10"];
     List<int> pm2Data =
         pm2DataTemp.map((e) => int.parse(e.toString())).toList();
-    List<int> pm10Data =
-        pm10DataTemp.map((e) => int.parse(e.toString())).toList();
     print('Pm2.5 List in int-----' + pm2DataTemp.toString());
-    print('Pm10 List in int-----' + pm10DataTemp.toString());
 
     /// filling null values
     if (differenceInHours < 0) {
       differenceInHours = (pm2Data.length / 12).ceil();
     } else
       fetchFromPreferences();
-    // TODO: chenge fetchFromPreferences
-    print("Diff in hours after filling null values-$differenceInHours");
+
+    print("Diff in hours after filling null values-${differenceInHours}");
 
     for (int i = 0; i < differenceInHours; i++) {
       print('Stuck 1st loop $i');
@@ -528,17 +407,6 @@ class HomeViewModel extends BaseViewModel {
       print(data.toString() + 'data');
       hours.add((hours.length + 1).toString() + currentMac[lastDevice]);
       print(hours.toString() + 'hours');
-    }
-
-    for (int i = 0; i < differenceInHours; i++) {
-      print('Stuck 1st loop 10 $i');
-      List<double> temp10 = List<double>.filled(12, 0.0);
-      print(temp10.toString() + 'temp');
-      data10.add(temp10);
-      print(data10.toString() + 'data');
-      hours10.add(
-          (hours10.length + 1).toString() + currentMac[lastDevice] + "pm10");
-      print(hours10.toString() + 'hours10');
     }
 
     /// Over writing data from device
@@ -557,35 +425,12 @@ class HomeViewModel extends BaseViewModel {
       print(lastHour.toString() + 'last hour');
     }
 
-    /// Over writing data from device
-    int lastHour10 = data10.length - 1;
-    int j10 = 11;
-    for (int i = pm10Data.length - 1; i >= 0; i--) {
-      print('Stuck 2nd loop 10 $i');
-      data10[lastHour10][j10] = pm10Data[i].toDouble();
-      print(data10[lastHour10][j10].toString() + 'data10[lastHour10][j10]');
-      j10--;
-      if (j10 < 0 && lastHour10 != 0) {
-        j10 = 11;
-        lastHour10--;
-      }
-      print(lastHour10.toString() + 'last hour');
-    }
-
     /// syncing data with share prefs
     _streamingSharedPreferencesService.changeStringListInStreamingSP(
       "hours${currentMac[lastDevice]}",
       hours,
     );
 
-    /// syncing data with share prefs 10
-    _streamingSharedPreferencesService.changeStringListInStreamingSP(
-      "hours10${currentMac[lastDevice]}",
-      hours10,
-    );
-
-    print(
-        "hours10${currentMac[lastDevice]}    ${hours10.toString()}  ${data10.toString()}");
     print(
         "hours${currentMac[lastDevice]}    ${hours.toString()}  ${data.toString()}");
 
@@ -606,25 +451,6 @@ class HomeViewModel extends BaseViewModel {
         print(value.toString());
       });
       i++;
-    });
-
-    int i10 = 0;
-    hours10.forEach((hour) {
-      // Future.delayed(Duration(milliseconds: 1), () {
-      //
-      // });
-      print(hour + '--------------------------\n');
-      List<String> tempList10 = data10[i10].map((e) => e.toString()).toList();
-      print(tempList10.toString() + '\n\n\n');
-      _streamingSharedPreferencesService
-          .changeStringListInStreamingSP(
-        hour.toString().trim(),
-        tempList10,
-      )
-          .then((value) {
-        print(value.toString());
-      });
-      i10++;
     });
     renderGraphData();
     printWarning("gotGraphValues ended $pm1 $pm2 $pm10");
@@ -648,26 +474,6 @@ class HomeViewModel extends BaseViewModel {
       });
     }
     print(data.toString() + "--------------------------------------------4");
-
-    /// 10
-
-    hours10 = _streamingSharedPreferencesService
-        .readStringListFromStreamingSP("hours10${currentMac[lastDevice]}");
-    print(hours10.toString() + "--------------------------------------------1");
-    if (hours10 != null && hours10.length != 0) {
-      data10 = [];
-      hours10.forEach((hour) {
-        print(
-            hour.toString() + "--------------------------------------------2");
-        List<String> dataInString = _streamingSharedPreferencesService
-            .readStringListFromStreamingSP(hour);
-        data10.add(
-            dataInString.map((dataPoint) => double.parse(dataPoint)).toList());
-        print(data10.toString() +
-            "--------------------------------------------3");
-      });
-    }
-    print(data10.toString() + "--------------------------------------------4");
   }
 
   ///Disconnects broker and navigates to remote screen
@@ -801,8 +607,6 @@ class HomeViewModel extends BaseViewModel {
   ScrollController graphScrollController = ScrollController();
 
   List<String> xLabels = [];
-  List<String> xLabels10 = [];
-
   void printWarning(String text) {
     print('\x1B[33m$text\x1B[0m');
   }
