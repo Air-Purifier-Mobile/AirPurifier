@@ -3,6 +3,7 @@ import 'package:air_purifier/app/router.gr.dart';
 import 'package:air_purifier/services/authentication_service.dart';
 import 'package:air_purifier/services/bluetooth_service.dart';
 import 'package:air_purifier/services/firestore_service.dart';
+import 'package:air_purifier/services/streaming_shared_preferences_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:stacked/stacked.dart';
@@ -23,6 +24,8 @@ class BluetoothDiscoveryViewModel extends BaseViewModel {
   final BluetoothService bluetoothService = locator<BluetoothService>();
   final FirestoreService firestoreService = locator<FirestoreService>();
   final TextEditingController macEditor = TextEditingController();
+  final StreamingSharedPreferencesService _streamingSharedPreferencesService =
+      locator<StreamingSharedPreferencesService>();
 
   void connectViaMacAddress(String address) {
     goToBluetoothPage(
@@ -34,6 +37,8 @@ class BluetoothDiscoveryViewModel extends BaseViewModel {
   }
 
   void onModelReady() {
+    List<String> savedMacs =
+        _streamingSharedPreferencesService.readStringListFromStreamingSP("MAC");
     flutterBluetoothSerial.requestEnable().then((value) {
       if (value) {
         firestoreService.storeResponses(
@@ -66,15 +71,17 @@ class BluetoothDiscoveryViewModel extends BaseViewModel {
 
           for (int i = 0; i < allDevices.length; i++) {
             firestoreService.storeResponses(
-              uid: "BLE DEVICE NAME VIew ${allDevices[i].rssi} ",
+              uid: "BLE DEVICE NAME VIEW ${allDevices[i].rssi} ",
               mac: '${allDevices[i].device}',
             );
 
             if (!bluetoothList.contains(allDevices[i].device) &&
                 allDevices[i].device != null &&
                 allDevices[i].device.name != null &&
-                allDevices[i].device.name != "")
-              bluetoothList.add(allDevices[i].device);
+                allDevices[i].device.name != "") {
+              if (!savedMacs.contains(allDevices[i].device.address))
+                bluetoothList.add(allDevices[i].device);
+            }
           }
           notifyListeners();
         });
