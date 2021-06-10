@@ -50,6 +50,9 @@ class HomeViewModel extends BaseViewModel {
   String pm1;
   String pm2;
   String pm10;
+  bool firstPm1 = false;
+  bool firstPm2 = false;
+  bool firstPm10 = false;
   List<String> currentMac;
   List<String> currentName;
   String rootTopic = "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/";
@@ -190,6 +193,7 @@ class HomeViewModel extends BaseViewModel {
 
   /// Refreshes Home View
   void refresh() {
+    printWarning("refresh started $pm1 $pm2 $pm10");
     position = null;
     cityName = null;
     description = null;
@@ -201,8 +205,12 @@ class HomeViewModel extends BaseViewModel {
     pm1 = null;
     pm2 = null;
     pm10 = null;
-    getLocation();
+    firstPm10 = false;
+    firstPm2 = false;
+    firstPm10 = false;
     notifyListeners();
+    getLocation();
+    printWarning("refresh ended $pm1 $pm2 $pm10");
   }
 
   /// Change last Device
@@ -219,6 +227,7 @@ class HomeViewModel extends BaseViewModel {
 
   /// Gets data
   void getLocation() async {
+    printWarning("getLocation started $pm1 $pm2 $pm10");
     lastDevice =
         _streamingSharedPreferencesService.readIntFromStreamingSP("lastDevice");
     currentMac =
@@ -286,7 +295,7 @@ class HomeViewModel extends BaseViewModel {
         int shredPrefYear =
             _streamingSharedPreferencesService.readIntFromStreamingSP("year");
         if (shredPrefYear >= 2020) {
-          print("Hello rendereing");
+          print("Hello rendering");
           renderGraphData();
         }
 
@@ -300,6 +309,7 @@ class HomeViewModel extends BaseViewModel {
         );
       },
     );
+    printWarning("getLocation ended $pm1 $pm2 $pm10");
   }
 
   List<double> plotData = [];
@@ -307,6 +317,7 @@ class HomeViewModel extends BaseViewModel {
   bool gotGraphData = false;
   int weekDay;
   void renderGraphData() {
+    printWarning("renderGraphData started $pm1 $pm2 $pm10");
     plotData = [];
     DateTime currentTime = DateTime.now();
     weekDay = currentTime.weekday;
@@ -370,11 +381,13 @@ class HomeViewModel extends BaseViewModel {
 
     gotGraphData = true;
     notifyListeners();
+    printWarning("renderGraphData ended $pm1 $pm2 $pm10");
   }
 
   bool isGraphRequestSent = false;
   DateTime lastSync;
   void sendGraphRequestsToMqtt() {
+    printWarning("sendGraphRequestsToMqtt started $pm1 $pm2 $pm10");
     print("sending graph requests");
     DateTime currentTime = DateTime.now();
     if (lastSync.isBefore(currentTime)) {
@@ -418,6 +431,7 @@ class HomeViewModel extends BaseViewModel {
             "hour", currentTime.hour);
       }
     }
+    printWarning("sendGraphRequestsToMqtt ended $pm1 $pm2 $pm10");
   }
 
   List<String> hours = [];
@@ -426,6 +440,7 @@ class HomeViewModel extends BaseViewModel {
 
   int differenceInHours = -1;
   void gotGraphValues(Map<String, dynamic> map) {
+    printWarning("gotGraphValues started $pm1 $pm2 $pm10");
     print('Complete Json----' + map.toString());
     List<dynamic> pm2DataTemp = map["pm2.5"];
     List<int> pm2Data =
@@ -494,6 +509,7 @@ class HomeViewModel extends BaseViewModel {
       i++;
     });
     renderGraphData();
+    printWarning("gotGraphValues ended $pm1 $pm2 $pm10");
   }
 
   void fetchFromPreferences() {
@@ -572,14 +588,21 @@ class HomeViewModel extends BaseViewModel {
   /// initial value setter.
   void setInitialValues(String value, String topic) {
     /// Sets pm1, pm2, pm10 values corresponding to topic.
-    // print("\n----------------\n$value + $topic\n---------------------");
+    printWarning("setInitialValues started $pm1 $pm2 $pm10");
     try {
       if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 1.0") {
-        pm1 = value;
+        if (firstPm1)
+          pm1 = value;
+        else
+          firstPm1 = true;
       } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 2.5") {
-        pm2 = value;
+        if (firstPm2)
+          pm2 = value;
+        else
+          firstPm2 = true;
       } else if (topic == rootTopic + currentMac[lastDevice] + '/' + "PM 10") {
-        pm10 = value;
+        if (firstPm10) pm10 = value;
+        firstPm10 = true;
       }
       try {
         double pmInt = double.parse(pm2);
@@ -601,6 +624,7 @@ class HomeViewModel extends BaseViewModel {
     } catch (E) {
       print(E.toString());
     }
+    printWarning("setInitialValues ended $pm1 $pm2 $pm10");
   }
 
   /// Navigates to configure bluetooth screen screen
@@ -673,6 +697,14 @@ class HomeViewModel extends BaseViewModel {
     'Poor',
   ];
   List<String> xLabels = [];
+
+  void printWarning(String text) {
+    print('\x1B[33m$text\x1B[0m');
+  }
+
+  void printError(String text) {
+    print('\x1B[31m$text\x1B[0m');
+  }
 }
 
 /// The Json retrieved from weather api is of following structure :

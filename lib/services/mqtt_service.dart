@@ -115,13 +115,17 @@ class MqttService {
     _client.subscribe(topic, MqttQos.atLeastOnce);
   }
 
+  void printWarning(String text) {
+    print('\x1B[33m$text\x1B[0m');
+  }
+
   void listener() {
     _client.updates.listen((event) {}).onData((c) {
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
-      print(
-        'Received message:$payload own Message:$ownMessage fromTopic:${c[0].topic}',
+      printWarning(
+        'Received message:$payload \n own Message:$ownMessage fromTopic:${c[0].topic} \n ${DateTime.now()}',
       );
 
       ///comment in prod
