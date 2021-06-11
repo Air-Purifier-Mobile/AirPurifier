@@ -16,6 +16,7 @@ class MqttService {
   String ownMessage;
   String mac;
   String rootTopic = "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/";
+  bool mqttReceivedGraphData = false;
   List<MqttReceivedMessage<MqttMessage>> responseList = [];
   final StreamingSharedPreferencesService _streamingSharedPreferencesService =
       locator<StreamingSharedPreferencesService>();
@@ -148,7 +149,9 @@ class MqttService {
         // }
 
         if (c[0].topic ==
-            "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/GRAPH") {
+                "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/$mac/GRAPH" &&
+            mqttReceivedGraphData) {
+          mqttReceivedGraphData = false;
           setGraphValues(jsonDecode(payload));
         }
         if (c[0].topic ==

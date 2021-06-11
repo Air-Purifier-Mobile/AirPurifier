@@ -386,28 +386,28 @@ class HomeViewModel extends BaseViewModel {
     print('raw data length 10 - ${data10.length}');
     for (int x = data.length - 1; x >= 0; x--) {
       for (int y = 11; y >= 0; y--) {
-        print('individaul data ${data[x][y]} + $startHourIndex \n');
+        //print('individaul data ${data[x][y]} + $startHourIndex \n');
         if (startHourIndex >= 0) plotData[startHourIndex--] = data[x][y];
       }
     }
     for (int x = data10.length - 1; x >= 0; x--) {
       for (int y = 11; y >= 0; y--) {
-        print('individaul data ${data10[x][y]} + $startHourIndex10 \n');
+        //print('individaul data ${data10[x][y]} + $startHourIndex10 \n');
         if (startHourIndex10 >= 0)
           plotData10[startHourIndex10--] = data10[x][y];
       }
     }
 
     print("Plot data---" + plotData.length.toString());
-    plotData.forEach((element) {
-      print("${element.toString()}");
-    });
+    // plotData.forEach((element) {
+    //   print("${element.toString()}");
+    // });
     print("${plotData.length}");
     // Constructing xLabel List
     print("Plot data10---" + plotData10.length.toString());
-    plotData10.forEach((element) {
-      print("${element.toString()}");
-    });
+    // plotData10.forEach((element) {
+    //   print("${element.toString()}");
+    // });
     print("${plotData10.length}");
     // Constructing xLabel List
     int totalDays = 6;
@@ -440,6 +440,23 @@ class HomeViewModel extends BaseViewModel {
       renderList10.add(FlSpot(i.toDouble(), plotData10[i]));
     }
     gotGraphData = true;
+    printWarning("$showTillIndex   $showTillIndex10");
+    printWarning(plotData
+        .getRange(plotData.length - 30, plotData.length - 1)
+        .toString());
+    printWarning(plotData10
+        .getRange(plotData10.length - 30, plotData10.length - 1)
+        .toString());
+    printError(renderList
+        .map((e) => e.y.toString())
+        .toList()
+        .getRange(showTillIndex - 30, showTillIndex)
+        .toString());
+    printError(renderList10
+        .map((e) => e.y.toString())
+        .toList()
+        .getRange(showTillIndex10 - 30, showTillIndex10)
+        .toString());
     notifyListeners();
     printWarning("renderGraphData ended $pm1 $pm2 $pm10");
   }
@@ -460,6 +477,7 @@ class HomeViewModel extends BaseViewModel {
               "first", true);
         print("sending graph requests 2");
         isGraphRequestSent = true;
+        _mqttService.mqttReceivedGraphData = true;
         _mqttService.publishPayload(
           "GRAPH",
           "/patwardhankaiwalya@gmail.com/AP EMBEDDED/Airpurifier/" +
