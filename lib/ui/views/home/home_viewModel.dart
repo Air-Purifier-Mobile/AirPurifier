@@ -209,6 +209,7 @@ class HomeViewModel extends BaseViewModel {
     firstPm10 = false;
     firstPm2 = false;
     firstPm10 = false;
+    gotGraphData = false;
     renderList = [];
     weekDay = null;
     renderList10 = [];

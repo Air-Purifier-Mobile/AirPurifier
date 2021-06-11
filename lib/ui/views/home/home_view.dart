@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:air_purifier/app/constants.dart';
+import 'package:air_purifier/app/locator.dart';
 import 'package:air_purifier/main.dart';
 import 'package:air_purifier/ui/views/home/circularKnob/circularKnobView.dart';
 import 'package:air_purifier/ui/views/home/line_graph.dart';
@@ -13,6 +14,7 @@ import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import 'home_viewModel.dart';
 
@@ -302,14 +304,21 @@ class HomeView extends StatelessWidget {
             if (e.primaryVelocity > 0) {
             } else if (e.primaryVelocity < 0) {
               if (model.gotGraphData) {
-                _modalGraphSheetMenu();
-                Future.delayed(Duration(milliseconds: 200), () {
-                  model.graphScrollController.position.animateTo(
-                    model.graphScrollController.position.maxScrollExtent,
-                    duration: Duration(seconds: 1),
-                    curve: Curves.linearToEaseOut,
+                if (model.gotGraphData) {
+                  _modalGraphSheetMenu();
+                  Future.delayed(Duration(milliseconds: 200), () {
+                    model.graphScrollController.position.animateTo(
+                      model.graphScrollController.position.maxScrollExtent,
+                      duration: Duration(seconds: 1),
+                      curve: Curves.linearToEaseOut,
+                    );
+                  });
+                } else {
+                  locator<DialogService>().showDialog(
+                    title: "Please Wait",
+                    description: "Data is being loaded. Please wait patiently",
                   );
-                });
+                }
               }
             }
           },
@@ -351,9 +360,7 @@ class HomeView extends StatelessWidget {
                   icon: Icon(
                     Icons.refresh,
                   ),
-                  onPressed: () {
-                    model.refresh();
-                  },
+                  onPressed: model.gotGraphData ? model.refresh : null,
                 ),
               ],
             ),

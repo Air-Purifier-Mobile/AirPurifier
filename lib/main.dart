@@ -11,7 +11,8 @@ import 'package:stacked_services/stacked_services.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
+  );
   await Firebase.initializeApp();
   setupLocator();
   print("locator initialised");
