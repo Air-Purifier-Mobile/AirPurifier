@@ -65,7 +65,7 @@ dependencies:
   hsv_color_pickers: ^0.1.0
   flutter_switch: ^0.3.1
   flutter_toggle_tab: ^1.1.0
-
+  device_info: ^2.0.2
   # Alerts
   fluttertoast:
 
