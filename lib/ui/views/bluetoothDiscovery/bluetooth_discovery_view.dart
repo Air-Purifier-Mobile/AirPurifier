@@ -23,135 +23,139 @@ class BluetoothDiscoveryView extends StatelessWidget {
               isScrollControlled: true,
               context: context,
               builder: (builder) {
-                return Container(
-                  height: height / 3,
-                  decoration: BoxDecoration(
-                    color: Color(0xFF05051C),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(width / 10),
-                      topRight: Radius.circular(width / 10),
+                return Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: Container(
+                    height: height / 3,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF05051C),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(width / 10),
+                        topRight: Radius.circular(width / 10),
+                      ),
                     ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: width / 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Enter MAC ID mentioned on your Aeolus device's package box:",
-                          softWrap: true,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: height / 45,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: "Noah",
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: width / 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Enter MAC ID mentioned on your Aeolus device's package box:",
+                            softWrap: true,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: height / 45,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Noah",
+                            ),
                           ),
-                        ),
-                        Text(
-                          "(Important: Please make sure your Aeolus device is discoverable in your phone's bluetooth settings)",
-                          softWrap: true,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: height / 45,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: "Noah",
+                          Text(
+                            "(Important: Please make sure your Aeolus device is discoverable in your phone's bluetooth settings)",
+                            softWrap: true,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: height / 45,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Noah",
+                            ),
                           ),
-                        ),
-                        TextFormField(
-                          controller: model.macEditor,
-                          cursorColor: Colors.white70,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: height / 40,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "XX:XX:XX:XX:XX:XX",
-                            labelStyle: TextStyle(
+                          TextFormField(
+                            controller: model.macEditor,
+                            cursorColor: Colors.white70,
+                            style: TextStyle(
                               color: Colors.white70,
                               fontSize: height / 40,
                             ),
-                            hintStyle: TextStyle(
-                              color: Colors.white70,
-                              fontSize: height / 40,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: height / 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Container(
-                                width: width / 3,
-                                height: height / 15,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(height / 30),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                      color: Color(0xFF05051C),
-                                      fontSize: height / 40,
-                                    ),
-                                  ),
-                                ),
+                            decoration: InputDecoration(
+                              hintText: "XX:XX:XX:XX:XX:XX",
+                              labelStyle: TextStyle(
+                                color: Colors.white70,
+                                fontSize: height / 40,
+                              ),
+                              hintStyle: TextStyle(
+                                color: Colors.white70,
+                                fontSize: height / 40,
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                if (model.macEditor.text.contains(":") &&
-                                    model.macEditor.text.trim().length == 17) {
-                                  print("Mac Address");
-                                  model.connectViaMacAddress(
-                                    model.macEditor.text.trim(),
-                                  );
+                          ),
+                          SizedBox(
+                            height: height / 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () {
                                   Navigator.of(context).pop();
-                                } else {
-                                  Fluttertoast.showToast(
-                                    msg: "Please Enter valid MAC ID",
-                                  );
-                                }
-                              },
-                              child: Container(
-                                width: width / 3,
-                                height: height / 15,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(height / 30),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 1,
+                                },
+                                child: Container(
+                                  width: width / 3,
+                                  height: height / 15,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(height / 30),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 1,
+                                    ),
                                   ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Save",
-                                    style: TextStyle(
-                                      color: Color(0xFF05051C),
-                                      fontSize: height / 40,
+                                  child: Center(
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextStyle(
+                                        color: Color(0xFF05051C),
+                                        fontSize: height / 40,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              InkWell(
+                                onTap: () {
+                                  if (model.macEditor.text.contains(":") &&
+                                      model.macEditor.text.trim().length ==
+                                          17) {
+                                    print("Mac Address");
+                                    model.connectViaMacAddress(
+                                      model.macEditor.text.trim(),
+                                    );
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    Fluttertoast.showToast(
+                                      msg: "Please Enter valid MAC ID",
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  width: width / 3,
+                                  height: height / 15,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(height / 30),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Save",
+                                      style: TextStyle(
+                                        color: Color(0xFF05051C),
+                                        fontSize: height / 40,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -251,7 +255,7 @@ class BluetoothDiscoveryView extends StatelessWidget {
                 model.bluetoothList.length != 0
                     ? Container(
                         width: width / 1.2,
-                        height: height / 2.5,
+                        height: height / 3.2,
                         child: ListView.builder(
                           itemCount: model.bluetoothList.length,
                           itemBuilder: (context, index) {
@@ -300,8 +304,9 @@ class BluetoothDiscoveryView extends StatelessWidget {
                       )
                     : Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical:
-                                model.searchOngoing ? height / 7 : height / 8),
+                          vertical:
+                              model.searchOngoing ? height / 10 : height / 8,
+                        ),
                         child: Container(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -311,11 +316,6 @@ class BluetoothDiscoveryView extends StatelessWidget {
                                       strokeWidth: 2,
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                           Colors.white),
-                                    )
-                                  : Container(),
-                              model.searchOngoing
-                                  ? SizedBox(
-                                      height: height / 20,
                                     )
                                   : Container(),
                               Text(
@@ -330,40 +330,6 @@ class BluetoothDiscoveryView extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              model.searchOngoing
-                                  ? Container()
-                                  : Column(
-                                      children: [
-                                        Text(
-                                          "\n\nor\n",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: height / 40,
-                                            fontFamily: 'Noah',
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            print("Hello");
-                                            _modalBottomSheetMenu();
-                                          },
-                                          child: Text(
-                                            "Enter MAC manually?",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: height / 35,
-                                              fontFamily: 'Noah',
-                                              color: Colors.white,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                             ],
                           ),
                         ),
@@ -375,6 +341,33 @@ class BluetoothDiscoveryView extends StatelessWidget {
                   color: Colors.white70,
                   height: 1,
                   width: width / 1.2,
+                ),
+                Text(
+                  "\n\nor\n",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 17,
+                    fontFamily: 'Noah',
+                    color: Colors.white,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    print("Hello");
+                    _modalBottomSheetMenu();
+                  },
+                  child: Text(
+                    "Enter MAC manually?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      fontFamily: 'Noah',
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
               ],
             ),

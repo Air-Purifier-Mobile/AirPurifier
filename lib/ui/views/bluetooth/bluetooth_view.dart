@@ -175,112 +175,117 @@ class Wifi extends StatelessWidget {
           isScrollControlled: true,
           context: context,
           builder: (builder) {
-            return Container(
-              height: height / 3,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(width / 10),
-                  topRight: Radius.circular(width / 10),
+            return Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: Container(
+                height: height / 3,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(width / 10),
+                    topRight: Radius.circular(width / 10),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: width / 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Enter Password : ",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: height / 30,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "Noah",
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: width / 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Enter Password : ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: height / 30,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: "Noah",
+                        ),
                       ),
-                    ),
-                    TextFormField(
-                      controller: password,
-                      cursorColor: Colors.white70,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: height / 40,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        labelStyle: TextStyle(
+                      TextFormField(
+                        controller: password,
+                        cursorColor: Colors.white70,
+                        style: TextStyle(
                           color: Colors.white70,
                           fontSize: height / 40,
                         ),
-                        hintStyle: TextStyle(
-                          color: Colors.white70,
-                          fontSize: height / 40,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: height / 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                            width: width / 3,
-                            height: height / 15,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(height / 30),
-                              color: Colors.black,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 1,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Cancel",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: height / 40,
-                                ),
-                              ),
-                            ),
+                        decoration: InputDecoration(
+                          hintText: "Password",
+                          labelStyle: TextStyle(
+                            color: Colors.white70,
+                            fontSize: height / 40,
+                          ),
+                          hintStyle: TextStyle(
+                            color: Colors.white70,
+                            fontSize: height / 40,
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            connect(password.text.trim());
-                            Navigator.of(context).pop();
-                          },
-                          child: Container(
-                            width: width / 3,
-                            height: height / 15,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(height / 30),
-                              color: Colors.white,
-                              border: Border.all(
+                      ),
+                      SizedBox(
+                        height: height / 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              width: width / 3,
+                              height: height / 15,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(height / 30),
                                 color: Colors.black,
-                                width: 1,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Connect",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: height / 40,
+                              child: Center(
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: height / 40,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          InkWell(
+                            onTap: () {
+                              connect(password.text.trim());
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              width: width / 3,
+                              height: height / 15,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(height / 30),
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Connect",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: height / 40,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

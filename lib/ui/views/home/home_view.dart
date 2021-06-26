@@ -66,117 +66,120 @@ class HomeView extends StatelessWidget {
               isScrollControlled: true,
               context: context,
               builder: (builder) {
-                return Container(
-                  height: height / 3,
-                  decoration: BoxDecoration(
-                    color: Color(0xFF05051C),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(width / 10),
-                      topRight: Radius.circular(width / 10),
+                return Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: Container(
+                    height: height / 3,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF05051C),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(width / 10),
+                        topRight: Radius.circular(width / 10),
+                      ),
                     ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: width / 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Enter Device Name : ",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: height / 30,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: "Noah",
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: width / 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Enter Device Name : ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: height / 30,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: "Noah",
+                            ),
                           ),
-                        ),
-                        TextFormField(
-                          controller: model.nameEditor,
-                          cursorColor: Colors.white70,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: height / 40,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: model.currentName[model.lastDevice],
-                            labelStyle: TextStyle(
+                          TextFormField(
+                            controller: model.nameEditor,
+                            cursorColor: Colors.white70,
+                            style: TextStyle(
                               color: Colors.white70,
                               fontSize: height / 40,
                             ),
-                            hintStyle: TextStyle(
-                              color: Colors.white70,
-                              fontSize: height / 40,
+                            decoration: InputDecoration(
+                              hintText: model.currentName[model.lastDevice],
+                              labelStyle: TextStyle(
+                                color: Colors.white70,
+                                fontSize: height / 40,
+                              ),
+                              hintStyle: TextStyle(
+                                color: Colors.white70,
+                                fontSize: height / 40,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: height / 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                model.nameEditor.text =
-                                    model.currentName[model.lastDevice];
-                                Navigator.of(context).pop();
-                              },
-                              child: Container(
-                                width: width / 3,
-                                height: height / 15,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(height / 30),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 1,
+                          SizedBox(
+                            height: height / 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  model.nameEditor.text =
+                                      model.currentName[model.lastDevice];
+                                  Navigator.of(context).pop();
+                                },
+                                child: Container(
+                                  width: width / 3,
+                                  height: height / 15,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(height / 30),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 1,
+                                    ),
                                   ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                      color: Color(0xFF05051C),
-                                      fontSize: height / 40,
+                                  child: Center(
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextStyle(
+                                        color: Color(0xFF05051C),
+                                        fontSize: height / 40,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                model.updateName(
-                                    model.nameEditor.value.text.trim());
-                                Navigator.of(context).pop();
-                              },
-                              child: Container(
-                                width: width / 3,
-                                height: height / 15,
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.circular(height / 30),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 1,
+                              InkWell(
+                                onTap: () {
+                                  model.updateName(
+                                      model.nameEditor.value.text.trim());
+                                  Navigator.of(context).pop();
+                                },
+                                child: Container(
+                                  width: width / 3,
+                                  height: height / 15,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(height / 30),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.black,
+                                      width: 1,
+                                    ),
                                   ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Save",
-                                    style: TextStyle(
-                                      color: Color(0xFF05051C),
-                                      fontSize: height / 40,
+                                  child: Center(
+                                    child: Text(
+                                      "Save",
+                                      style: TextStyle(
+                                        color: Color(0xFF05051C),
+                                        fontSize: height / 40,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
