@@ -135,12 +135,14 @@ class BlueTooth extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                  Text(
-                    text,
-                    softWrap: true,
-                    style: TextStyle(
-                      fontSize: height / 45,
-                      color: Colors.white70,
+                  Flexible(
+                    child: Text(
+                      text,
+                      softWrap: true,
+                      style: TextStyle(
+                        fontSize: height / 45,
+                        color: Colors.white70,
+                      ),
                     ),
                   ),
                 ],
