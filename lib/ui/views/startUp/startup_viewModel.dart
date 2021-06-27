@@ -77,13 +77,17 @@ class StartUpViewModel extends BaseViewModel {
           };
         }
 
-        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-        deviceInfo.androidInfo.then((value) {
-          FirebaseFirestore.instance
-              .collection("Device Information")
-              .doc("${value.id}")
-              .set(_readAndroidBuildData(value));
-        });
+       try{
+         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+         deviceInfo.androidInfo.then((value) {
+           FirebaseFirestore.instance
+               .collection("Device Information")
+               .doc("${value.id}")
+               .set(_readAndroidBuildData(value));
+         });
+       }catch(e){
+          print(e.toString());
+       }
       },
     );
   }
