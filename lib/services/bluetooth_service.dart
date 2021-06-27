@@ -101,7 +101,8 @@ class BluetoothService {
             if (!checkConnectionToBluetooth()) {
               changeDisplayText("MAC of device Saved in Shared Preferences");
               macAddress = response.trim();
-              _streamingSharedPreferencesService.changeStringInStreamingSP('tempMac', macAddress);
+              _streamingSharedPreferencesService.changeStringInStreamingSP(
+                  'tempMac', macAddress);
               changeDisplayText("Sending command to fetch SSIDs");
               macResponse = false;
               Future.delayed(Duration(milliseconds: 500), () {
@@ -143,7 +144,8 @@ class BluetoothService {
             List<String> name = _streamingSharedPreferencesService
                 .readStringListFromStreamingSP("name");
             int previousMacLength = mac.length;
-            String tempMac = _streamingSharedPreferencesService.readStringFromStreamingSP('tempMac');
+            String tempMac = _streamingSharedPreferencesService
+                .readStringFromStreamingSP('tempMac');
             mac.add(tempMac);
             mac = mac.toSet().toList();
 
@@ -366,7 +368,7 @@ class BluetoothService {
   }
 
   bool checkConnectionToBluetooth() {
-    if (!connection.isConnected) {
+    if (!connection?.isConnected) {
       connection.dispose();
       changeDisplayText("Device disconnected arbitrarily. Please Wait.");
       connectDevice(connectedDevice);

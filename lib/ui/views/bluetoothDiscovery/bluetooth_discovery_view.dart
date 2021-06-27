@@ -119,10 +119,10 @@ class BluetoothDiscoveryView extends StatelessWidget {
                                       model.macEditor.text.trim().length ==
                                           17) {
                                     print("Mac Address");
+                                    Navigator.of(context).pop();
                                     model.connectViaMacAddress(
                                       model.macEditor.text.trim(),
                                     );
-                                    Navigator.of(context).pop();
                                   } else {
                                     Fluttertoast.showToast(
                                       msg: "Please Enter valid MAC ID",

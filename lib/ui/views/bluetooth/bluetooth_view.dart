@@ -67,75 +67,75 @@ class BlueTooth extends StatelessWidget {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Container(
-      height: height,
-      width: width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: height / 15,
-          ),
-          Text(
-            "Bluetooth Configuration",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: height / 36,
-              fontFamily: 'Noah',
-              color: Colors.white,
+    return SingleChildScrollView(
+      child: Container(
+        height: height,
+        width: width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: height / 15,
             ),
-          ),
-          SizedBox(
-            height: height / 40,
-          ),
-          Container(
-            width: width / 1.5,
-            alignment: Alignment.center,
-            child: Text(
-              "Please wait while we establish your bluetooth connection. This process may take up to 3-4 minutes.",
-              softWrap: true,
+            Text(
+              "Bluetooth Configuration",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: height / 45,
+                fontWeight: FontWeight.w800,
+                fontSize: height / 36,
                 fontFamily: 'Noah',
-                color: Colors.white70,
+                color: Colors.white,
               ),
             ),
-          ),
-          SizedBox(
-            height: height / 15,
-          ),
-          Container(
-            height: height / 2.5,
-            width: width / 1.5,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  "assets/bluetooth.png",
+            SizedBox(
+              height: height / 40,
+            ),
+            Container(
+              width: width / 1.5,
+              alignment: Alignment.center,
+              child: Text(
+                "Please wait while we establish your bluetooth connection. This process may take up to 3-4 minutes.",
+                softWrap: true,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: height / 45,
+                  fontFamily: 'Noah',
+                  color: Colors.white70,
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: height / 20,
-          ),
-          Container(
-            width: width / 1.5,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Status: ",
-                  style: TextStyle(
-                    fontSize: height / 45,
-                    color: Colors.white,
+            SizedBox(
+              height: height / 15,
+            ),
+            Container(
+              height: height / 2.5,
+              width: width / 1.5,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    "assets/bluetooth.png",
                   ),
                 ),
-                Flexible(
-                  child: Text(
+              ),
+            ),
+            SizedBox(
+              height: height / 20,
+            ),
+            Container(
+              width: width / 1.5,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Status: ",
+                    style: TextStyle(
+                      fontSize: height / 45,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
                     text,
                     softWrap: true,
                     style: TextStyle(
@@ -143,11 +143,11 @@ class BlueTooth extends StatelessWidget {
                       color: Colors.white70,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -301,145 +301,147 @@ class Wifi extends StatelessWidget {
     //   "Blazkowicz",
     //   "Popoye",
     // ];
-    return Container(
-      height: height,
-      width: width,
-      child: Flex(
-        direction: Axis.vertical,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: height / 50,
-          ),
-          Container(
-            height: height / 5,
-            width: width / 3,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  "assets/wifi.png",
+    return SingleChildScrollView(
+      child: Container(
+        height: height,
+        width: width,
+        child: Flex(
+          direction: Axis.vertical,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: height / 50,
+            ),
+            Container(
+              height: height / 5,
+              width: width / 3,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    "assets/wifi.png",
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: height / 15,
-          ),
-          Container(
-            width: width / 1.2,
-            height: height / 12,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Connect your device",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: height / 30,
-                    fontFamily: 'Noah',
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(
-                  height: height / 300,
-                ),
-                Text(
-                  "Select wifi",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: height / 45,
-                    fontFamily: 'Noah',
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
+            SizedBox(
+              height: height / 15,
             ),
-          ),
-          SizedBox(
-            height: height / 80,
-          ),
-          Container(
-            color: Colors.white70,
-            height: 1,
-            width: width / 1.2,
-          ),
-          SizedBox(
-            height: height / 80,
-          ),
-          wifiList.length != 0
-              ? Container(
-                  width: width / 1.2,
-                  height: height / 2.5,
-                  child: ListView.builder(
-                    itemCount: wifiList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: width / 20,
-                          vertical: height / 100,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            connectSSID(wifiList[index].trim());
-                            _modalBottomSheetMenu();
-                          },
-                          child: Container(
-                            width: width / 1.2,
-                            height: height / 13,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.wifi,
-                                  color: Colors.white70,
-                                  size: height / 30,
-                                ),
-                                SizedBox(
-                                  width: width / 20,
-                                ),
-                                Text(
-                                  wifiList[index].trim(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: height / 37,
-                                    fontFamily: 'Noah',
+            Container(
+              width: width / 1.2,
+              height: height / 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Connect your device",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: height / 30,
+                      fontFamily: 'Noah',
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: height / 300,
+                  ),
+                  Text(
+                    "Select wifi",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: height / 45,
+                      fontFamily: 'Noah',
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: height / 80,
+            ),
+            Container(
+              color: Colors.white70,
+              height: 1,
+              width: width / 1.2,
+            ),
+            SizedBox(
+              height: height / 80,
+            ),
+            wifiList.length != 0
+                ? Container(
+                    width: width / 1.2,
+                    height: height / 2.5,
+                    child: ListView.builder(
+                      itemCount: wifiList.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width / 20,
+                            vertical: height / 100,
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              connectSSID(wifiList[index].trim());
+                              _modalBottomSheetMenu();
+                            },
+                            child: Container(
+                              width: width / 1.2,
+                              height: height / 13,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.wifi,
                                     color: Colors.white70,
+                                    size: height / 30,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(
+                                    width: width / 20,
+                                  ),
+                                  Text(
+                                    wifiList[index].trim(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: height / 37,
+                                      fontFamily: 'Noah',
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
+                        );
+                      },
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.symmetric(vertical: height / 6),
+                    child: Container(
+                      child: Text(
+                        "Searching for Wifi networks available ",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: height / 35,
+                          fontFamily: 'Noah',
+                          color: Colors.white,
                         ),
-                      );
-                    },
-                  ),
-                )
-              : Padding(
-                  padding: EdgeInsets.symmetric(vertical: height / 6),
-                  child: Container(
-                    child: Text(
-                      "Searching for Wifi networks available ",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: height / 35,
-                        fontFamily: 'Noah',
-                        color: Colors.white,
                       ),
                     ),
                   ),
-                ),
-          SizedBox(
-            height: height / 80,
-          ),
-          Container(
-            color: Colors.white70,
-            height: 1,
-            width: width / 1.2,
-          ),
-        ],
+            SizedBox(
+              height: height / 80,
+            ),
+            Container(
+              color: Colors.white70,
+              height: 1,
+              width: width / 1.2,
+            ),
+          ],
+        ),
       ),
     );
   }
